@@ -1,0 +1,74 @@
+{
+    "productName": "zfs-tool",
+    "appId": "com.sanjie.zfs",
+    "copyright": "© 2024 eval. All rights reserved.",
+    "directories": {
+        "output": "dist",
+        "buildResources": "build"
+    },
+    "asarUnpack": false,
+    "files": {
+        "filter": [
+            "**/*",
+            "!node_modules/*",
+            "!resources/texture/*",
+            "!.vscode/*",
+            "!*.eslintignore",
+            "!*.editorconfig",
+            "!*.yml",
+            "!*.yaml",
+            "!*.npmrc",
+            "!*.md",
+            "!.prettierignore",
+            "!.prettierrc",
+            "!tsconfig.json",
+            "!tsconfig.*.json",
+            "!src/renderer/*",
+            "!src/*/*.ts",
+            "!src/bin/@zfs_encryp/*",
+            "!config/*",
+            "!zfsLog/*",
+            "!threeZFS/*"
+        ]
+    },
+    "extraResources": [
+        {
+            "from": "build/extraResources/",
+            "to": "extraResources"
+        },
+        {
+            "from": "resources/assets/",
+            "to": "assets/"
+        }
+    ],
+    "nsis": {
+        "oneClick": false,
+        "allowElevation": true,
+        "allowToChangeInstallationDirectory": true,
+        "installerIcon": "./resources/assets/icon.ico",
+        "uninstallerIcon": "./resources/assets/icon.ico",
+        "installerHeaderIcon": "./resources/assets/icon.ico",
+        "createDesktopShortcut": true,
+        "createStartMenuShortcut": true,
+        "shortcutName": "真封神小工具"
+    },
+    "mac": {
+        "icon": "./resources/assets/icon.ico",
+        "artifactName": "${productName}-${os}-${version}-${arch}.${ext}",
+        "darkModeSupport": true,
+        "hardenedRuntime": false
+    },
+    "win": {
+        "artifactName": "${productName}-${os}-${version}-${arch}.${ext}",
+        "target": ["nsis"],
+        "icon": "./resources/assets/icon.ico",
+        "compression": "maximum",
+        "signingHashAlgorithms": ["sha1", "sha256"]
+    },
+    "linux": {
+        "icon": "./resources/assets/linux-icon.ico",
+        "artifactName": "${productName}-${os}-${version}-${arch}.${ext}",
+        "target": ["deb"],
+        "category": "Utility"
+    }
+}
