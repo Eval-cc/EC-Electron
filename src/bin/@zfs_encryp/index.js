@@ -89,7 +89,7 @@ const findDir = (dirPath) => {
                         stringArray: true,
                         selfDefending:true,
                         disableConsoleOutput:true,
-                        // stringArrayEncoding: ["base64",'rc4'], // 使用 rc4转为字节码之后,运行太卡了
+                        stringArrayEncoding: ['rc4'], // 使用 rc4转为字节码之后,运行太卡了
                         stringArrayEncoding: [],
                         stringArrayThreshold: 1,
                         unicodeEscapeSequence: true,

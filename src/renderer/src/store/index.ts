@@ -1,10 +1,13 @@
 import {createStore} from "vuex";
 import {IPCModelTypeRender, IPCModelTypeMain} from "@renderer/Models/model";
+import utils from "@renderer/utils";
 
 const store = createStore({
     state() {
         return {
             win: null as any,
+            // 主进程窗体对象
+            mainWin: null as any,
             childID: "" as string,
         };
     },
@@ -16,16 +19,34 @@ const store = createStore({
          */
         async initIPC(state, value: any) {
             state.win = value;
+            store.commit("initChildIPC", value);
             // 监听来自主进程的消息
             value.electron.ipcRenderer.removeAllListeners();
             value.electron.ipcRenderer.on("message-from-main", (_: any, message: IPCModelTypeRender) => {
-                console.log("收到主进程信息", message);
+                // console.log("收到主进程信息", message);
+                if (message.data.type === "tip") {
+                    utils.message(message.msg, message.data.type);
+                }
             });
-            // 负责通过主进程在子进程之间通信
-            value.electron.ipcRenderer.on("message-child-channel", (_: any, message: IPCModelTypeRender) => {
-                console.log("收到其他子进程信息", message);
-                if(message.data.type === "childID" && !this.childID){
-                    this.childID = message.data.id;
+        },
+
+        /**
+         * 初始化子进程IPC
+         * @param state
+         * @param value
+         */
+        async initChildIPC(state, value: any) {
+            if (value.win_type == "main") return;
+            state.win = value;
+            value.electron.ipcRenderer.on("message-from-child", (_: any, message: IPCModelTypeRender) => {
+                // console.log("子进程消息", message);
+                if (message.data.type === "winID") {
+                    state.mainWin = {
+                        winID: message.data.winID,
+                        transparent: message.data.transparent,
+                    };
+                } else if (message.data.type === "tip") {
+                    utils.message(message.msg, message.data.type);
                 }
             });
         },
@@ -41,6 +62,8 @@ const store = createStore({
             if (!state.win) {
                 return {success: false, msg: "出错了,请重启!"};
             }
+            value.win_type = state.win.win_type;
+            value.winID = state.mainWin?.winID || null;
             const res = await state.win.IPCcontrol.IPCcontrol(value);
             return res;
         },

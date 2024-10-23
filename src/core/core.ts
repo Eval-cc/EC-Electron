@@ -17,17 +17,16 @@ import EC_Shortcut from "../lib/ec-shortcut";
 import {randomUUID} from "crypto";
 
 class Core {
-    private winList: Array<BrowserWindow>;
     private icon: any;
     public contr: Controller;
-    downSta: any;
-    constructor(win: any, icon: any) {
+    constructor(win: BrowserWindow, icon: any) {
         GlobalStatus.winMain = win;
         new EC_Event();
         new EC_Shortcut();
         // 设置窗口类型
         win["win_type"] = "main";
-        this.winList = [win];
+        // 保存窗口对象
+        GlobalStatus.childWin[win.id] = win;
         this.icon = icon;
         this.contr = new Controller(this);
         if (isDev()) {
@@ -51,11 +50,20 @@ class Core {
             // 关闭主窗口
             AppMange.quit();
         }
-        const childWin = this.winList.find((win: BrowserWindow) => String(win["win_uid"]) === winID);
+        const childWin = GlobalStatus.childWin[winID];
         if (!childWin) {
             return;
         }
         childWin.destroy();
+    }
+
+    /**
+     * 根据传入的窗口ID获取窗口对象
+     * @param winID
+     * @returns
+     */
+    GetWinByWinID(winID: string): BrowserWindow {
+        return GlobalStatus.childWin[winID];
     }
 
     /**
@@ -85,10 +93,10 @@ class Core {
             minHeight: 700,
             show: false,
             autoHideMenuBar: true,
-            // parent: this.win,
+            parent: GlobalStatus.winMain,
             ...(process.platform === "linux" ? {icon} : {icon}),
             webPreferences: {
-                preload: path.join(__dirname, "../preload/index.js"), // 加载预加载脚本
+                preload: path.join(__dirname, "../preload-child/child-preload.js"), // 加载预加载脚本
                 contextIsolation: true,
                 sandbox: false,
             },
@@ -96,14 +104,18 @@ class Core {
         win.setSkipTaskbar(false); // 不显示子窗口的任务栏图标
 
         win.on("ready-to-show", () => {
-            win.title = `子窗体:${this.winList.length}`;
+            win.title = `EC框架-子窗体:${win.id}`;
             // 设置窗口类型-为子窗口
             win["win_type"] = "child-win";
             win["win_uid"] = randomUUID();
-            this.winList.push(win);
+            // 保存窗口对象
             GlobalStatus.childWin[win.id] = win;
-            GlobalStatus.control.SendRenderMsg(IPCResult(true, "", {type: "childID", id: win["win_uid"]}), "message-child-channel");
             win.show();
+            // 测试环境,以及不是设置透明窗口的时候才显示控制台
+            if (isDev() && !win.webContents.isDevToolsOpened()) {
+                win.webContents.toggleDevTools();
+            }
+            this.contr.SendRenderMsgChild(win, {success: true, msg: "", data: {winID: win.id, type: "winID"}});
         });
 
         win.webContents.setWindowOpenHandler((details) => {
@@ -113,14 +125,7 @@ class Core {
 
         // 关闭子窗口之后,从主进程的窗口管理里面去除
         win.on("close", () => {
-            for (let wi in this.winList) {
-                if (this.winList[wi].id === win.id) {
-                    // 从全局状态管理处踢出此子窗口
-                    delete GlobalStatus.childWin[win.id];
-                    this.winList.splice(Number(wi), 1);
-                    break;
-                }
-            }
+            delete GlobalStatus.childWin[win.id];
         });
         // 如果没有传入地址,那就默认新增小工具窗口
         if (!url) {

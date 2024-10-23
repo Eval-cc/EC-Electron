@@ -28,8 +28,9 @@ export class Service {
      * @returns 
      */
     static Invoke(name: string, data: IPCModelTypeMain) {
+        // 如果没有找到注入的方法，则抛出异常
         if (!Service.contro.get(name)) {
-            throw new Error("未将对象引用设置到对象的实例," + name);
+            throw new Error(`[未将对象引用设置到对象的实例] ${name}`);
         }
         return Service.contro.get(name)(data);
     }

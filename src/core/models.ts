@@ -23,4 +23,6 @@ export interface IPCModelTypeMain {
         IpcMainInvokeEvent?: IpcMainInvokeEventType;
         [key: string]: string | number | boolean | any;
     };
+    win_type: string; // 当前发送消息的窗体类型
+    winID: string; // 窗口ID,  没有ID的视为主窗体
 }

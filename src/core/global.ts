@@ -21,7 +21,7 @@ class GlobalStatus {
     public static winMain: BrowserWindow;
 
     /** 保存子窗口对象,以子窗口的id作为键 */
-    public static childWin: any = {};
+    public static childWin: {[key: string]: BrowserWindow} = {};
 
     /** 托盘 */
     public static tray: TrayMgr;

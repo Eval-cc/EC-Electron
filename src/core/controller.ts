@@ -3,16 +3,13 @@
  * @author Eval
  * @description 接受事件控制层
  */
-import {ipcMain, shell} from "electron";
+import {ipcMain, shell, IpcMainInvokeEvent, BrowserWindow} from "electron";
 import Core from "./core";
 import Logger from "./logger";
 import {IPCModelTypeMain, IPCModelTypeRender} from "./models";
-import {IpcMainInvokeEvent} from "electron";
 import {IPCResult} from "./IPCResult";
 import GlobalStatus from "./global";
 import {Service} from "./service";
-
-import Test from "../services/test";
 
 class Controller {
     core: Core;
@@ -36,7 +33,12 @@ class Controller {
                     // 返回处理结果
                     return this[data.fun](data);
                 }
-                return Service.Invoke(data.fun, data);
+                try {
+                    return Service.Invoke(data.fun, data);
+                } catch (e: any) {
+                    this.logger.error(`调用服务出错:${e.stack}`);
+                    return IPCResult(false, "出错了");
+                }
             });
         } catch (error: any) {
             this.logger.error("监听handleIPC事件出错:" + error.stack);
@@ -47,8 +49,12 @@ class Controller {
     /**
      * 注册服务
      */
-    RegisterService = () => {
-        new Test();
+    RegisterService = async () => {
+        try {
+            [await import("../services/test")].forEach((model) => new model.default());
+        } catch (error) {
+            this.logger.error("注册服务时出错:" + error);
+        }
     };
 
     /**
@@ -68,10 +74,31 @@ class Controller {
     };
 
     /**
+     * 主动向子进程的也没推送消息
+     * @param msg
+     */
+    SendRenderMsgChild = (win: BrowserWindow, msg: IPCModelTypeRender) => {
+        // 如果没有指定类型,那么默认就是普通的弹窗消息
+        if (!msg.data) {
+            msg.data = {};
+        }
+        if (!msg.data?.type) {
+            msg.data["type"] = "tip";
+        }
+        win.webContents.send("message-from-child", msg);
+    };
+
+    /**
      * 打开新窗口
      * @param args
      */
     openWin = (args?: IPCModelTypeMain): void => {
+        if (!args) return;
+        if (args?.win_type === "child-win" && args.winID) {
+            const win = this.core.GetWinByWinID(args.winID);
+            win && this.SendRenderMsgChild(win, {success: true, msg: "已关闭子窗口调用新窗口功能"});
+            return;
+        }
         this.core.openWin(args?.data?.url);
     };
 

@@ -23,6 +23,8 @@ export interface IPCModelTypeMain {
     fun: string;
     /** 传递的参数 */
     data?: any;
+    win_type: string; // 当前发送消息的窗体类型
+    winID: string; // 窗口ID,  没有ID的视为主窗体
 }
 
 // 弹窗类型

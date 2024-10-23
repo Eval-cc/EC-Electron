@@ -1,6 +1,6 @@
 {
-    "productName": "zfs-tool",
-    "appId": "com.sanjie.zfs",
+    "productName": "EC",
+    "appId": "com.ec.eval",
     "copyright": "© 2024 eval. All rights reserved.",
     "directories": {
         "output": "dist",
@@ -50,7 +50,7 @@
         "installerHeaderIcon": "./resources/assets/icon.ico",
         "createDesktopShortcut": true,
         "createStartMenuShortcut": true,
-        "shortcutName": "真封神小工具"
+        "shortcutName": "EC框架"
     },
     "mac": {
         "icon": "./resources/assets/icon.ico",
@@ -63,7 +63,8 @@
         "target": ["nsis"],
         "icon": "./resources/assets/icon.ico",
         "compression": "maximum",
-        "signingHashAlgorithms": ["sha1", "sha256"]
+        "signingHashAlgorithms": ["sha1", "sha256"],
+        "requestedExecutionLevel": "requireAdministrator"
     },
     "linux": {
         "icon": "./resources/assets/linux-icon.ico",
