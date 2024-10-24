@@ -20,33 +20,33 @@ class Core {
     private icon: any;
     public contr: Controller;
     constructor(win: BrowserWindow, icon: any) {
-        GlobalStatus.winMain = win;
         new EC_Event();
+        // 初始化全局配置
+        GlobalStatus.loadConfig(win);
         new EC_Shortcut();
-        // 设置窗口类型
-        win["win_type"] = "main";
-        // 保存窗口对象
-        GlobalStatus.childWin[win.id] = win;
         this.icon = icon;
         this.contr = new Controller(this);
         if (isDev()) {
             if (!win.webContents.isDevToolsOpened()) {
                 win.webContents.toggleDevTools();
             }
-        } else {
-            // debug模式的热更新会导致出现托盘残影,放在生产模式才出现
-            GlobalStatus.tray = new TrayMgr(win, this);
         }
+        // 当窗口首次创建时,创建托盘图标
+        if (!win.isVisible()) {
+            GlobalStatus.tray = new TrayMgr(this);
+        }
+        win.title = GlobalStatus.config.app_name || "EC框架 @Eval";
         // 基础的加载完成之后在显示窗口
         win.show();
+        this.contr.SendRenderMsgChild(win, {success: true, msg: "", data: {winID: win.id, type: "winID"}});
     }
 
     /**
      * 关闭指定ID的窗口
      * @param winID
      */
-    closeWin(winID: string) {
-        if (winID === "-1") {
+    closeWin(winID: number) {
+        if (winID === GlobalStatus.winMain.id) {
             // 关闭主窗口
             AppMange.quit();
         }

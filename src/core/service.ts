@@ -14,7 +14,7 @@ export class Service {
         // 将每个方法存储在 contro 中，使用 Symbol 作为键
         methodNames.forEach((name) => {
             if (Service.contro.get(name)) {
-                throw new Error("注入失败,重复的名称:" + name);
+                throw new Error("注入失败,重复的脚本:" + name);
             }
             const method = this[name];
             Service.contro.set(name, method.bind(this));

@@ -24,7 +24,11 @@ const store = createStore({
             value.electron.ipcRenderer.removeAllListeners();
             value.electron.ipcRenderer.on("message-from-main", (_: any, message: IPCModelTypeRender) => {
                 // console.log("收到主进程信息", message);
-                if (message.data.type === "tip") {
+                if (message.data.type === "winID") {
+                    state.mainWin = {
+                        winID: message.data.winID,
+                    };
+                } else if (message.data.type === "tip") {
                     utils.message(message.msg, message.data.type);
                 }
             });
@@ -43,7 +47,6 @@ const store = createStore({
                 if (message.data.type === "winID") {
                     state.mainWin = {
                         winID: message.data.winID,
-                        transparent: message.data.transparent,
                     };
                 } else if (message.data.type === "tip") {
                     utils.message(message.msg, message.data.type);

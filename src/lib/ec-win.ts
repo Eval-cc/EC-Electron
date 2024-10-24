@@ -37,7 +37,7 @@ class EC_Win {
             autoHideMenuBar: true,
             ...(process.platform === "linux" ? {icon} : {icon}),
             webPreferences: {
-                // webviewTag: true,
+                webviewTag: true,
                 contextIsolation: true,
                 preload: join(__dirname, "../preload/index.js"), // 加载预加载脚本
                 sandbox: false,
@@ -52,7 +52,6 @@ class EC_Win {
             return {action: "deny"};
         });
         mainWindow.on("ready-to-show", () => {
-            mainWindow.title = "EC框架 @Eval";
             // 确保应用程序只有一个实例
             if (!app.requestSingleInstanceLock()) {
                 // 退出当前重复打开的实例-

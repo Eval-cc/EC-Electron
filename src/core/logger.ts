@@ -41,7 +41,7 @@ class Logger {
         let date = new Date();
         let dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         // 自定义文件保存位置为安装目录下 \log\年-月-日.log
-        log.transports.file.resolvePathFn = () => path.join(process.cwd(), "Log\\" + dateStr + "-info.log");
+        log.transports.file.resolvePathFn = () => path.join(process.cwd(), "EC-Log\\" + dateStr + "-info.log");
         log.info(this.serialArg(args));
     }
 
@@ -53,7 +53,7 @@ class Logger {
         let date = new Date();
         let dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         // 自定义文件保存位置为安装目录下 \log\年-月-日.log
-        log.transports.file.resolvePathFn = () => path.join(process.cwd(), "Log\\" + dateStr + "-warn.log");
+        log.transports.file.resolvePathFn = () => path.join(process.cwd(), "EC-Log\\" + dateStr + "-warn.log");
         log.warn(this.serialArg(args));
     }
     /**
@@ -64,7 +64,7 @@ class Logger {
         let date = new Date();
         let dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         // 自定义文件保存位置为安装目录下 \log\年-月-日.log
-        log.transports.file.resolvePathFn = () => path.join(process.cwd(), "Log\\" + dateStr + "-error.log");
+        log.transports.file.resolvePathFn = () => path.join(process.cwd(), "EC-Log\\" + dateStr + "-error.log");
         log.error(this.serialArg(args));
     }
 }

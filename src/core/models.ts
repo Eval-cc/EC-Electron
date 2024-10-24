@@ -26,3 +26,26 @@ export interface IPCModelTypeMain {
     win_type: string; // 当前发送消息的窗体类型
     winID: string; // 窗口ID,  没有ID的视为主窗体
 }
+
+interface Tray {
+    /** 是否激活托盘图标 */
+    active: boolean;
+    /** 托盘图标标题 */
+    title: string;
+    /** 托盘正常状态图标路径 */
+    icon: string;
+    /** 托盘隐藏状态图标路径 */
+    "icon-hide": string;
+    /** 托盘图标悬停提示 */
+    tooltip: string;
+}
+
+/**
+ * 全局配置的类型声明
+ */
+export interface ECFrameworkModelType {
+    /** 应用名称 */
+    app_name?: string;
+    /** 托盘的类型声明 */
+    tray?: Tray;
+}

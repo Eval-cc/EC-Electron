@@ -8,6 +8,9 @@ import iconv from "iconv-lite";
 import Controller from "./controller";
 import {BrowserWindow} from "electron";
 import TrayMgr from "./tray";
+import fs from "fs-extra";
+import path from "path";
+import {ECFrameworkModelType} from "./models";
 
 class GlobalStatus {
     /**
@@ -25,6 +28,31 @@ class GlobalStatus {
 
     /** 托盘 */
     public static tray: TrayMgr;
+
+    /** 全局配置信息,禁止外部修改 */
+    private static __config: ECFrameworkModelType = {};
+
+    /** 全局配置信息 */
+    public static get config(): ECFrameworkModelType {
+        return GlobalStatus.__config;
+    }
+    /**
+     * 初始化全局配置信息,已经保存当前的主窗体对象
+     * @param win
+     */
+    public static loadConfig(win: BrowserWindow): void {
+        // 设置窗口类型
+        win["win_type"] = "main";
+        GlobalStatus.winMain = win;
+        // 保存窗口对象
+        GlobalStatus.childWin[win.id] = win;
+        const configPath = path.join(process.cwd(), "src/bin/ec.config.json");
+        if (!fs.pathExistsSync(configPath)) {
+            throw new Error("[Warning] 配置文件[ec.config.json]不存在！");
+        }
+        GlobalStatus.__config = fs.readJSONSync(configPath, "utf-8");
+    }
+
     /**
      * 字符串转MD5 密文
      * @param str 需要加密的字符串

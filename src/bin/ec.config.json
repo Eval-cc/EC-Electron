@@ -1,0 +1,10 @@
+{
+    "app_name": "EC框架 @Eval",
+    "tray": {
+        "active": true,
+        "title": "EC-Electron EC框架",
+        "icon": "icon.png",
+        "icon-hide": "none.png",
+        "tooltip": "EC框架 @Eval"
+    }
+}

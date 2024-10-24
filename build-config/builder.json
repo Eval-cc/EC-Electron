@@ -26,6 +26,7 @@
             "!src/renderer/*",
             "!src/*/*.ts",
             "!src/bin/@zfs_encryp/*",
+            "!src/bin/@zfs_preload_child/*",
             "!config/*",
             "!zfsLog/*",
             "!threeZFS/*"

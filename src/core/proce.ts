@@ -22,15 +22,3 @@ export const ScriptPath = ():string => {
     }
     return script_path;
 };
-
-
-/** 返回部署远程的服务端资源部位置 */
-export const ServerPath = ():string => {
-    // 默认使用生产环境的路径
-    let script_path = path.join(process.cwd(), "resources/extraResources/server.exe");
-    if (isDev()) {
-        // 测试环境需要在套一级build目录
-        script_path = path.join(process.cwd(), "build/extraResources/server.exe");
-    }
-    return script_path;
-};

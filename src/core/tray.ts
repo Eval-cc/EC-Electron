@@ -3,40 +3,49 @@
  * @author Eval
  * @description 托盘控件
  */
-import {BrowserWindow, Tray, Menu, nativeImage} from "electron";
+import {Tray, Menu, nativeImage} from "electron";
 import path from "path";
 import Core from "./core";
 import GlobalStatus from "./global";
 
+
 class TrayMgr {
-    private tray: Tray;
-    private win: BrowserWindow;
+    private tray!: Tray;
     private core: Core;
     private fliTime!: NodeJS.Timeout | null; // 闪烁定时器
     private iconDict: any;
-    constructor(win: BrowserWindow, core: Core) {
-        this.win = win;
+    constructor(core: Core) {
         this.core = core;
+        this.LoadConfig();
+    }
+
+    /**
+     * 读取本地文件并初始化配置
+     */
+    private LoadConfig() {
+        if (!GlobalStatus.config.tray) {
+            throw new Error("tray配置不存在");
+        }
+        const contextMenu = Menu.buildFromTemplate([
+            {label: "打开新窗口", type: "normal", click: () => GlobalStatus.control.openWin()},
+            {label: "显  示", type: "normal", click: () => GlobalStatus.winMain.show()},
+            {label: "隐  藏", type: "normal", click: () => GlobalStatus.winMain.hide()},
+            {label: "退  出", type: "normal", click: () => this.core.closeWin(GlobalStatus.winMain.id)},
+        ]);
+
         this.iconDict = {
-            icon1: nativeImage.createFromPath(path.join(process.cwd(), "resources/assets/icon.png")),
-            icon2: nativeImage.createFromPath(path.join(process.cwd(), "resources/assets/none.png")),
+            icon1: nativeImage.createFromPath(path.join(process.cwd(), "resources/assets", GlobalStatus.config.tray.icon)),
+            icon2: nativeImage.createFromPath(path.join(process.cwd(), "resources/assets", GlobalStatus.config.tray["icon-hide"])),
         };
 
         this.tray = new Tray(this.iconDict.icon1);
-        const contextMenu = Menu.buildFromTemplate([
-            {label: "打开新窗口", type: "normal", click: () => GlobalStatus.control.openWin()},
-            {label: "关闭闪烁", type: "normal", click: () => this.flicker(false)},
-            {label: "显  示", type: "normal", click: () => this.win.show()},
-            {label: "隐  藏", type: "normal", click: () => this.win.hide()},
-            {label: "退  出", type: "normal", click: () => this.core.closeWin("-1")},
-        ]);
         // 双击托盘图标时显示主窗口
         this.tray.on("double-click", () => {
-            this.win.show();
+            GlobalStatus.winMain.show();
         });
         this.tray.setContextMenu(contextMenu);
-        this.tray.setToolTip("EC框架 @Eval");
-        this.tray.setTitle("EC框架");
+        this.tray.setToolTip(GlobalStatus.config.tray.tooltip);
+        this.tray.setTitle(GlobalStatus.config.tray.title);
     }
 
     /**
