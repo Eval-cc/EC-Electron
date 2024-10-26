@@ -3,8 +3,7 @@
  * @author Eval
  * @description 接受事件控制层
  */
-import {ipcMain, shell, IpcMainInvokeEvent, BrowserWindow} from "electron";
-import Core from "../core/core";
+import {ipcMain, IpcMainInvokeEvent, BrowserWindow} from "electron";
 import Logger from "../core/logger";
 import {IPCModelTypeMain, IPCModelTypeRender} from "../core/models";
 import {IPCResult} from "../core/IPCResult";
@@ -12,10 +11,8 @@ import GlobalStatus from "../core/global";
 import {Service} from "../core/service";
 
 class Controller {
-    core: Core;
     logger: Logger;
-    constructor(core: Core) {
-        this.core = core;
+    constructor() {
         this.logger = new Logger();
         // 把controller注入到全局-避免主线程重复监听事件抛出异常
         if (GlobalStatus.control) return;
@@ -76,7 +73,7 @@ class Controller {
     };
 
     /**
-     * 主动向子进程的也没推送消息
+     * 主动向子进程推送消息
      * @param msg
      */
     SendRenderMsgChild = (win: BrowserWindow, msg: IPCModelTypeRender) => {
@@ -88,67 +85,6 @@ class Controller {
             msg.data["type"] = "tip";
         }
         win.webContents.send("message-from-child", msg);
-    };
-
-    /**
-     * 打开新窗口
-     * @param args
-     */
-    openWin = (args?: IPCModelTypeMain): void => {
-        if (!args) return;
-        if (args?.win_type === "child-win" && args.winID) {
-            const win = this.core.GetWinByWinID(args.winID);
-            win && this.SendRenderMsgChild(win, {success: true, msg: "已关闭子窗口调用新窗口功能"});
-            return;
-        }
-        this.core.openWin(args?.data?.url);
-    };
-
-    /**
-     * 使用浏览器打开网页
-     * @param args
-     */
-    openUrl = (args: IPCModelTypeMain): IPCModelTypeRender => {
-        if (args.data?.url) {
-            shell.openExternal(args.data.url);
-            return IPCResult(true, "正在打开浏览器...");
-        }
-        return IPCResult(false, "无法打开未知连接");
-    };
-
-    /**
-     * 弹出气泡消息
-     * @param args
-     * @returns
-     */
-    nityfier = (args: IPCModelTypeMain): IPCModelTypeRender => {
-        if (!args.data || !args.data.message) {
-            return IPCResult(false, "未传入必要参数:消息内容");
-        }
-        const {message, callback} = args.data;
-        this.core.show_notifier(message, callback);
-        return IPCResult(true, "气泡已弹出");
-    };
-
-    /**
-     *
-     * @param args 监听 ACTION:CAPTURE_PAGE 事件，截图后转为 base64 向渲染进程传递
-     * @returns
-     */
-    CAPTURE_PAGE = async (_: IPCModelTypeMain): Promise<IPCModelTypeRender> => {
-        return {
-            success: true,
-            msg: "",
-            data: await GlobalStatus.winMain.webContents.capturePage().then((page) => page.toDataURL()),
-        };
-    };
-
-    /**
-     * 重启
-     * @param _
-     */
-    ReloadTool = (_: IPCModelTypeMain) => {
-        this.core.reloadWin();
     };
 }
 

@@ -5,7 +5,7 @@
  */
 import {ElMessage, ElLoading, ElMessageBox} from "element-plus";
 import type {MessageHandler, MessageOptions} from "element-plus";
-import {MsgBoxType, MsgBoxPromptType, LoadingType} from "@renderer/Models/model";
+import {MsgBoxType, MsgBoxPromptType, LoadingType} from "@renderer/models/model";
 
 class Utils {
     private debounTime: any; // 防抖定时器
@@ -197,10 +197,10 @@ class Utils {
     };
 
     /**
-     *
-     * @returns 生成uuid
+     * 生成uuid
+     * @returns
      */
-    UUID() {
+    get uuid() {
         return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
             var r = (Math.random() * 16) | 0,
                 v = c === "x" ? r : (r & 0x3) | 0x8;

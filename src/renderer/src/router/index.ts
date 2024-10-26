@@ -13,9 +13,4 @@ const router = createRouter({
     routes,
 });
 
-// router.beforeResolve(() => {
-//     if (document.title == "Electron") {
-//         document.title = "EC框架 @Eval";
-//     }
-// });
 export default router;

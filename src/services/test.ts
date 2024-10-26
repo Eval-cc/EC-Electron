@@ -10,7 +10,9 @@ import path from "path";
 import {extraPath} from "../core/proce";
 
 import Logger from "../core/logger";
-import {IPCModelTypeMain} from "../core/models";
+import {IPCModelTypeMain, IPCModelTypeRender} from "../core/models";
+import GlobalStatus from "../core/global";
+import {shell} from "electron";
 
 export default class Test extends Service {
     logger: Logger;
@@ -30,7 +32,7 @@ export default class Test extends Service {
      */
     InvokerDll(args: IPCModelTypeMain) {
         // 程序和 DLL 的路径
-        const exePath = path.resolve(extraPath(), "ECDLL.exe");
+        const exePath = path.resolve(extraPath(), "ec-dll.exe");
         const dllPath = path.resolve(extraPath(), "test.dll");
         const className = "Test.Add"; // 命名空间.类名 (没有命名空间的可忽略)
         const methodName = "addNum"; // 方法名
@@ -54,4 +56,71 @@ export default class Test extends Service {
             });
         });
     }
+    /**
+     * 重启
+     * @param _
+     */
+    Restart(_: IPCModelTypeMain) {
+        GlobalStatus.core.reloadWin();
+    }
+
+    /**
+     * 退出
+     * @param _
+     */
+    Exit(_: IPCModelTypeMain) {
+        GlobalStatus.core.closeWin(GlobalStatus.winMain.id);
+    }
+    /**
+     * 弹出气泡消息
+     * @param args
+     * @returns
+     */
+    nityfier = (args: IPCModelTypeMain): IPCModelTypeRender => {
+        if (!args.data || !args.data.message) {
+            return IPCResult(false, "未传入必要参数:消息内容");
+        }
+        const {message, callback} = args.data;
+        GlobalStatus.core.show_notifier(message, callback);
+        return IPCResult(true, "气泡已弹出");
+    };
+
+    /**
+     * 打开新窗口
+     * @param args
+     */
+    openWin = (args?: IPCModelTypeMain): void => {
+        if (!args) return;
+        if (args?.win_type === "child-win" && args.winID) {
+            const win = GlobalStatus.core.GetWinByWinID(args.winID);
+            win && GlobalStatus.control.SendRenderMsgChild(win, {success: true, msg: "已关闭子窗口调用新窗口功能"});
+            return;
+        }
+        GlobalStatus.core.openWin(args?.data?.url);
+    };
+
+    /**
+     * 使用浏览器打开网页
+     * @param args
+     */
+    openUrl = (args: IPCModelTypeMain): IPCModelTypeRender => {
+        if (args.data?.url) {
+            shell.openExternal(args.data.url);
+            return IPCResult(true, "正在打开浏览器...");
+        }
+        return IPCResult(false, "无法打开未知连接");
+    };
+
+    /**
+     *
+     * @param args 监听 ACTION:CAPTURE_PAGE 事件，截图后转为 base64 向渲染进程传递
+     * @returns
+     */
+    CAPTURE_PAGE = async (_: IPCModelTypeMain): Promise<IPCModelTypeRender> => {
+        return {
+            success: true,
+            msg: "",
+            data: await GlobalStatus.winMain.webContents.capturePage().then((page) => page.toDataURL()),
+        };
+    };
 }

@@ -20,11 +20,11 @@ class Core {
     public contr: Controller;
     constructor(win: BrowserWindow, icon: any) {
         // 初始化全局配置
-        GlobalStatus.loadConfig(win);
+        GlobalStatus.loadConfig(win, this);
         new EC_Event();
         new EC_Shortcut();
         this.icon = icon;
-        this.contr = new Controller(this);
+        this.contr = new Controller();
         if (!GlobalStatus.config.app_name) {
             win.show();
             win.title = "EC框架 - 请设置应用名称";

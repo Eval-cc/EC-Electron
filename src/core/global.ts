@@ -11,12 +11,16 @@ import TrayMgr from "../core/tray";
 import fs from "fs-extra";
 import path from "path";
 import {ECFrameworkModelType} from "../core/models";
+import Core from "./core";
 
 class GlobalStatus {
     /**
      * 注入全局 controller
      */
     public static control: Controller;
+
+    /** 注入全局 */
+    public static core: Core;
 
     /**
      * 保存主窗体对象
@@ -40,10 +44,11 @@ class GlobalStatus {
      * 初始化全局配置信息,已经保存当前的主窗体对象
      * @param win
      */
-    public static loadConfig(win: BrowserWindow): void {
+    public static loadConfig(win: BrowserWindow, core: Core): void {
         // 设置窗口类型
         win["win_type"] = "main";
         GlobalStatus.winMain = win;
+        GlobalStatus.core = core;
         // 保存窗口对象
         GlobalStatus.childWin[win.id] = win;
         const configPath = path.join(process.cwd(), "src/bin/ec.config.json");
