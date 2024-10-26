@@ -5,14 +5,17 @@
  */
 import log from "electron-log";
 import path from "path";
+import GlobalStatus from "./global";
 
 class Logger {
     constructor() {
+        if (!GlobalStatus.config.logConfig) {
+            throw new Error("日志配置未设置");
+        }
         // 修改自定义的日志输出路径
-        log.transports.file.level = "debug";
-        log.transports.file.maxSize = 10024300; // 文件最大不超过 10M
+        log.transports.file.maxSize = GlobalStatus.config.logConfig.maxsize; // 文件最大不超过 10M
         // 输出格式
-        log.transports.file.format = "[{h}:{i}:{s}] [{level}]{scope} {text}";
+        log.transports.file.format = GlobalStatus.config.logConfig.format;
     }
 
     /**
@@ -41,7 +44,8 @@ class Logger {
         let date = new Date();
         let dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         // 自定义文件保存位置为安装目录下 \log\年-月-日.log
-        log.transports.file.resolvePathFn = () => path.join(process.cwd(), "EC-Log\\" + dateStr + "-info.log");
+        log.transports.file.level = "debug";
+        log.transports.file.resolvePathFn = () => path.join(process.cwd(), GlobalStatus.config.logConfig!.path, dateStr + "-info.log");
         log.info(this.serialArg(args));
     }
 
@@ -53,7 +57,8 @@ class Logger {
         let date = new Date();
         let dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         // 自定义文件保存位置为安装目录下 \log\年-月-日.log
-        log.transports.file.resolvePathFn = () => path.join(process.cwd(), "EC-Log\\" + dateStr + "-warn.log");
+        log.transports.file.level = "warn";
+        log.transports.file.resolvePathFn = () => path.join(process.cwd(), GlobalStatus.config.logConfig!.path, dateStr + "-warn.log");
         log.warn(this.serialArg(args));
     }
     /**
@@ -64,7 +69,8 @@ class Logger {
         let date = new Date();
         let dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         // 自定义文件保存位置为安装目录下 \log\年-月-日.log
-        log.transports.file.resolvePathFn = () => path.join(process.cwd(), "EC-Log\\" + dateStr + "-error.log");
+        log.transports.file.level = "error";
+        log.transports.file.resolvePathFn = () => path.join(process.cwd(), GlobalStatus.config.logConfig!.path, dateStr + "-error.log");
         log.error(this.serialArg(args));
     }
 }

@@ -5,8 +5,8 @@
  */
 import {Tray, Menu, nativeImage} from "electron";
 import path from "path";
-import Core from "./core";
-import GlobalStatus from "./global";
+import Core from "../core/core";
+import GlobalStatus from "../core/global";
 
 
 class TrayMgr {
@@ -35,7 +35,7 @@ class TrayMgr {
 
         this.iconDict = {
             icon1: nativeImage.createFromPath(path.join(process.cwd(), "resources/assets", GlobalStatus.config.tray.icon)),
-            icon2: nativeImage.createFromPath(path.join(process.cwd(), "resources/assets", GlobalStatus.config.tray["icon-hide"])),
+            icon2: nativeImage.createFromPath(path.join(process.cwd(), "resources/assets", GlobalStatus.config.tray.iconHide)),
         };
 
         this.tray = new Tray(this.iconDict.icon1);

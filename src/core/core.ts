@@ -14,18 +14,22 @@ import GlobalStatus from "./global";
 import Controller from "./controller";
 import EC_Event from "../lib/ec-event";
 import EC_Shortcut from "../lib/ec-shortcut";
-import {randomUUID} from "crypto";
 
 class Core {
     private icon: any;
     public contr: Controller;
     constructor(win: BrowserWindow, icon: any) {
-        new EC_Event();
         // 初始化全局配置
         GlobalStatus.loadConfig(win);
+        new EC_Event();
         new EC_Shortcut();
         this.icon = icon;
         this.contr = new Controller(this);
+        if (!GlobalStatus.config.app_name) {
+            win.show();
+            win.title = "EC框架 - 请设置应用名称";
+            throw new Error("请设置应用名称");
+        }
         if (isDev()) {
             if (!win.webContents.isDevToolsOpened()) {
                 win.webContents.toggleDevTools();
@@ -35,8 +39,8 @@ class Core {
         if (!win.isVisible()) {
             GlobalStatus.tray = new TrayMgr(this);
         }
-        win.title = GlobalStatus.config.app_name || "EC框架 @Eval";
-        // 基础的加载完成之后在显示窗口
+        win.title = GlobalStatus.config.app_name;
+        // 基础的加载完成之后再显示窗口
         win.show();
         this.contr.SendRenderMsgChild(win, {success: true, msg: "", data: {winID: win.id, type: "winID"}});
     }
@@ -107,7 +111,6 @@ class Core {
             win.title = `EC框架-子窗体:${win.id}`;
             // 设置窗口类型-为子窗口
             win["win_type"] = "child-win";
-            win["win_uid"] = randomUUID();
             // 保存窗口对象
             GlobalStatus.childWin[win.id] = win;
             win.show();

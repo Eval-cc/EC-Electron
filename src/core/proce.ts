@@ -12,13 +12,13 @@ export const isDev = (): boolean => {
     return is.dev && process.env["ELECTRON_RENDERER_URL"] != null;
 };
 
-/** 返回转换图标的脚本程序路径 */
-export const ScriptPath = ():string => {
+/** 返回额外资源的路径 */
+export const extraPath = (): string => {
     // 默认使用生产环境的路径
-    let script_path = path.join(process.cwd(), "resources/extraResources/script.exe");
+    let script_path = path.join(process.cwd(), "resources/extraResources");
     if (isDev()) {
         // 测试环境需要在套一级build目录
-        script_path = path.join(process.cwd(), "build/extraResources/script.exe");
+        script_path = path.join(process.cwd(), "build/extraResources");
     }
     return script_path;
 };

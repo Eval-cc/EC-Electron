@@ -3,7 +3,7 @@
  * @author Eval
  * @description 服务注册类
  */
-import {IPCModelTypeMain} from "./models";
+import {IPCModelTypeMain} from "../core/models";
 
 export class Service {
     private static contro: any = new Map();
@@ -12,7 +12,7 @@ export class Service {
         // 获取原型链上的所有方法名
         const methodNames = Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter((name) => name !== "constructor");
         // 将每个方法存储在 contro 中，使用 Symbol 作为键
-        methodNames.forEach((name) => {
+        methodNames.forEach((name: string) => {
             if (Service.contro.get(name)) {
                 throw new Error("注入失败,重复的脚本:" + name);
             }
@@ -23,9 +23,9 @@ export class Service {
 
     /**
      * 执行注入的方法
-     * @param name 
-     * @param data 
-     * @returns 
+     * @param name
+     * @param data
+     * @returns
      */
     static Invoke(name: string, data: IPCModelTypeMain) {
         // 如果没有找到注入的方法，则抛出异常

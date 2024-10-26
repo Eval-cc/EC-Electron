@@ -1,11 +1,12 @@
 {
-    "productName": "EC",
+    "productName": "EC Framework",
     "appId": "com.ec.eval",
     "copyright": "© 2024 eval. All rights reserved.",
     "directories": {
         "output": "dist",
         "buildResources": "build"
     },
+    "asar": false,
     "asarUnpack": false,
     "files": {
         "filter": [

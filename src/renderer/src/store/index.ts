@@ -30,6 +30,8 @@ const store = createStore({
                     };
                 } else if (message.data.type === "tip") {
                     utils.message(message.msg, message.data.type);
+                } else if (message.data.type === "dialog") {
+                    utils.messageBox(message.data.title, message.msg, message.data.type);
                 }
             });
         },
@@ -43,13 +45,14 @@ const store = createStore({
             if (value.win_type == "main") return;
             state.win = value;
             value.electron.ipcRenderer.on("message-from-child", (_: any, message: IPCModelTypeRender) => {
-                // console.log("子进程消息", message);
                 if (message.data.type === "winID") {
                     state.mainWin = {
                         winID: message.data.winID,
                     };
                 } else if (message.data.type === "tip") {
                     utils.message(message.msg, message.data.type);
+                } else if (message.data.type === "dialog") {
+                    utils.messageBox(message.data.title, message.msg, message.data.type);
                 }
             });
         },

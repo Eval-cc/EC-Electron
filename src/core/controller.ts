@@ -4,12 +4,12 @@
  * @description 接受事件控制层
  */
 import {ipcMain, shell, IpcMainInvokeEvent, BrowserWindow} from "electron";
-import Core from "./core";
-import Logger from "./logger";
-import {IPCModelTypeMain, IPCModelTypeRender} from "./models";
-import {IPCResult} from "./IPCResult";
-import GlobalStatus from "./global";
-import {Service} from "./service";
+import Core from "../core/core";
+import Logger from "../core/logger";
+import {IPCModelTypeMain, IPCModelTypeRender} from "../core/models";
+import {IPCResult} from "../core/IPCResult";
+import GlobalStatus from "../core/global";
+import {Service} from "../core/service";
 
 class Controller {
     core: Core;
@@ -34,7 +34,9 @@ class Controller {
                     return this[data.fun](data);
                 }
                 try {
-                    return Service.Invoke(data.fun, data);
+                    const result = await Service.Invoke(data.fun, data);
+                    if (result) return result;
+                    return IPCResult(false, "无返回值");
                 } catch (e: any) {
                     this.logger.error(`调用服务出错:${e.stack}`);
                     return IPCResult(false, "出错了");
@@ -149,5 +151,6 @@ class Controller {
         this.core.reloadWin();
     };
 }
+
 Controller.toString = () => "[class Controller]";
 export default Controller;

@@ -5,12 +5,12 @@
  */
 import crypto from "crypto";
 import iconv from "iconv-lite";
-import Controller from "./controller";
+import Controller from "../core/controller";
 import {BrowserWindow} from "electron";
-import TrayMgr from "./tray";
+import TrayMgr from "../core/tray";
 import fs from "fs-extra";
 import path from "path";
-import {ECFrameworkModelType} from "./models";
+import {ECFrameworkModelType} from "../core/models";
 
 class GlobalStatus {
     /**
@@ -48,7 +48,25 @@ class GlobalStatus {
         GlobalStatus.childWin[win.id] = win;
         const configPath = path.join(process.cwd(), "src/bin/ec.config.json");
         if (!fs.pathExistsSync(configPath)) {
-            throw new Error("[Warning] 配置文件[ec.config.json]不存在！");
+            fs.outputJSONSync(
+                configPath,
+                {
+                    app_name: "EC框架 @Eval",
+                    tray: {
+                        active: true,
+                        title: "EC-Electron EC框架",
+                        icon: "icon.png",
+                        iconHide: "none.png",
+                        tooltip: "EC框架 @Eval",
+                    },
+                    logConfig: {
+                        path: "./ec-logs",
+                        maxsize: 10485760,
+                        format: "[{h}:{i}:{s}] [{level}]{scope} {text}",
+                    },
+                },
+                {spaces: 4, EOL: "\r\n", encoding: "utf-8"},
+            );
         }
         GlobalStatus.__config = fs.readJSONSync(configPath, "utf-8");
     }
@@ -72,11 +90,14 @@ class GlobalStatus {
      * @returns {gbk} 转义后的 gbk 编码
      */
     static zh_to_gbk = (str: string): string => {
+        if (str === null || str === undefined) {
+            return "";
+        }
         try {
-            let gbkBuffer_gbk = iconv.encode(String(str || "null"), "gbk");
+            let gbkBuffer_gbk = iconv.encode(str, "gbk");
             return gbkBuffer_gbk.toString("binary");
         } catch (e) {
-            return String(e);
+            throw new Error("gbk编码转换失败");
         }
     };
 
@@ -86,11 +107,14 @@ class GlobalStatus {
      * @returns {str} 转义后的的字符串
      */
     static gbk_to_zh = (gbkStr: string): string => {
+        if (gbkStr === null || gbkStr === undefined) {
+            return "";
+        }
         try {
-            let gbkBuffer_zh = Buffer.from(gbkStr || "null", "binary");
+            let gbkBuffer_zh = Buffer.from(gbkStr, "binary");
             return iconv.decode(gbkBuffer_zh, "gbk");
         } catch (e) {
-            return String(e);
+            throw new Error("gbk编码转换失败");
         }
     };
 
@@ -100,12 +124,20 @@ class GlobalStatus {
      * @returns {str} 转义后的的字符串
      */
     static gb2312_to_zh = (gbkStr: Buffer): string => {
+        if (gbkStr === null || gbkStr === undefined) {
+            return "";
+        }
         try {
             return iconv.decode(gbkStr, "gb2312");
         } catch (e) {
-            return String(e);
+            throw new Error("gb2312编码转换失败");
         }
     };
+
+    /** 返回 uuid字符串 */
+    static get uuid() {
+        return crypto.randomUUID();
+    }
 }
 
 GlobalStatus.toString = () => "[class GlobalStatus]";

@@ -25,18 +25,22 @@ class EC_Event {
             if (GlobalStatus.winMain.isDestroyed()) {
                 return;
             }
-            GlobalStatus.winMain?.hide(); // 隐藏主窗口
             this.logger.error(`程序出现异常,${error.stack}`);
-            dialog
-                .showMessageBox({
-                    type: "warning",
-                    title: "警告",
-                    message: "程序崩溃了,见日志文件", // 自定义警告消息
-                    buttons: ["退出"], // 自定义按钮文本
-                })
-                .then(() => {
-                    app.quit();
-                });
+            if (GlobalStatus.control) {
+                GlobalStatus.control.SendRenderMsg({success: false, msg: error.message, data: {title: "程序出现异常", type: "dialog"}});
+            } else {
+                GlobalStatus.winMain?.hide(); // 隐藏主窗口
+                dialog
+                    .showMessageBox({
+                        type: "warning",
+                        title: "警告",
+                        message: "程序崩溃了,见日志文件", // 自定义警告消息
+                        buttons: ["退出"], // 自定义按钮文本
+                    })
+                    .then(() => {
+                        app.quit();
+                    });
+            }
         });
 
         /** 重复启动实例时,显示主窗口 */

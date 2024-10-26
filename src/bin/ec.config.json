@@ -1,10 +1,15 @@
 {
-    "app_name": "EC框架 @Eval",
+    "app_name":"EC-Electron EC框架",
     "tray": {
         "active": true,
         "title": "EC-Electron EC框架",
         "icon": "icon.png",
-        "icon-hide": "none.png",
+        "iconHide": "none.png",
         "tooltip": "EC框架 @Eval"
+    },
+    "logConfig": {
+        "path": "./ec-logs",
+        "maxsize": 10485760,
+        "format": "[{h}:{i}:{s}] [{level}]{scope} {text}"
     }
 }

@@ -6,8 +6,8 @@
 
 import http from "http";
 import https from "https";
-import {IPCResult} from "./IPCResult";
-import Logger from "./logger";
+import {IPCResult} from "../core/IPCResult";
+import Logger from "../core/logger";
 
 class Request {
     logger: Logger;

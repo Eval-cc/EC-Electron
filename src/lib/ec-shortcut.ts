@@ -20,7 +20,7 @@ class EC_Shortcut {
      */
     private OnRegister() {
         // 注册全局快捷键---方便调试
-        const ret = globalShortcut.register("CommandOrControl+F10", () => {
+        const ret = globalShortcut.register("CommandOrControl+Shift+F10", () => {
             // 当快捷键被触发时执行的操作
             GlobalStatus.winMain.webContents.toggleDevTools();
         });

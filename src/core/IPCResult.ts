@@ -4,7 +4,7 @@
  * @description IPC通信响应
  */
 
-import {IPCModelTypeRender} from "./models";
+import {IPCModelTypeRender} from "../core/models";
 export const IPCResult = (success: boolean, msg: string, data: any = {}): IPCModelTypeRender => {
     return {success, msg, data};
 };
