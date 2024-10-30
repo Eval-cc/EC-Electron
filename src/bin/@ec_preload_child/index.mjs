@@ -3,9 +3,10 @@
  * @author Eval
  * @description 处理预加载脚本
  */
-const ts = require("typescript");
-const fs = require("fs");
-const path = require("path");
+
+import ts from "typescript";
+import fs from "fs-extra";
+import path from "path";
 
 function compileTypeScript() {
     const tsFilePath = path.join(process.cwd(), "src/preload/child-preload.ts");

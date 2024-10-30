@@ -29,9 +29,9 @@ const store = createStore({
                         winID: message.data.winID,
                     };
                 } else if (message.data.type === "tip") {
-                    utils.message(message.msg, message.data.type);
+                    utils.message(message.msg, message.success);
                 } else if (message.data.type === "dialog") {
-                    utils.messageBox(message.data.title, message.msg, message.data.type);
+                    utils.messageBox(message.data.title, message.msg, message.data.options);
                 }
             });
         },
@@ -50,9 +50,9 @@ const store = createStore({
                         winID: message.data.winID,
                     };
                 } else if (message.data.type === "tip") {
-                    utils.message(message.msg, message.data.type);
+                    utils.message(message.msg, message.success);
                 } else if (message.data.type === "dialog") {
-                    utils.messageBox(message.data.title, message.msg, message.data.type);
+                    utils.messageBox(message.data.title, message.msg, message.data.options);
                 }
             });
         },
@@ -70,8 +70,16 @@ const store = createStore({
             }
             value.win_type = state.win.win_type;
             value.winID = state.mainWin?.winID || null;
-            const res = await state.win.IPCcontrol.IPCcontrol(value);
-            return res;
+            try {
+                const res = await state.win.IPCcontrol.IPCcontrol(value);
+                return res;
+            } catch (e: any) {
+                console.error(value);
+                if (String(e).includes("Error: An object could not be cloned.")) {
+                    return {success: false, msg: "无法传递对象,请检查数据类型![不可克隆的对象]"};
+                }
+                return {success: false, msg: "出错了,请重启!"};
+            }
         },
     },
     getters: {},

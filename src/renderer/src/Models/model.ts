@@ -5,6 +5,11 @@
  */
 
 /**
+ * 消息类型
+ */
+type MessageType = "success" | "error" | "info" | "warning";
+
+/**
  * IPC通信模型--返回给渲染进程
  */
 export interface IPCModelTypeRender {
@@ -41,6 +46,18 @@ export interface MsgBoxType {
     confirmText?: string;
     /** 关闭按钮的文本,默认:关闭 */
     cancelText?: string;
+    /** 开窗是否用html渲染 */
+    dangerouslyUseHTMLString?: boolean;
+    /** 消息类型 */
+    type?: MessageType;
+    /** MessageBox 是否显示右上角关闭按钮 */
+    "show-close"?: boolean;
+    /**是否可通过点击遮罩层关闭 MessageBox */
+    closeOnClickModal?: boolean;
+    /** 是否可通过按下 ESC 键关闭 MessageBox */
+    closeOnPressEscape?: boolean;
+    /** 是否有需要执行的ipc回调 */
+    ipc?: string
 }
 // 弹窗类型
 export interface MsgBoxPromptType {

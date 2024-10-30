@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: zfs_tool
+productName: ec-electron
 directories:
   buildResources: build
 files:
@@ -12,11 +12,11 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: zfs_tool
+  executableName: ec-electron
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
-  uninstallDisplayName: ${productName}
+  uninstallDisplayName: EC框架卸载程序
   createDesktopShortcut: always
 mac:
   entitlementsInherit: build/entitlements.mac.plist
@@ -40,6 +40,6 @@ appImage:
 npmRebuild: false
 publish:
   provider: generic
-  url: https://example.com/auto-updates
+  url: http://localhost:8089/latest.json
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/

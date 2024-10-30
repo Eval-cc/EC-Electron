@@ -1,8 +1,9 @@
-/**
- * @time   2024/04/15 19:23:33
+/** 
+ * @time   2024/10/30 16:45:18
  * @author Eval
  * @description 程序日志
  */
+
 import log from "electron-log";
 import path from "path";
 import GlobalStatus from "./global";

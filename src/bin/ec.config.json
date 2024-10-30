@@ -1,5 +1,5 @@
 {
-    "app_name":"EC-Electron EC框架",
+    "app_name": "EC-Electron EC框架",
     "tray": {
         "active": true,
         "title": "EC-Electron EC框架",
@@ -11,5 +11,10 @@
         "path": "./ec-logs",
         "maxsize": 10485760,
         "format": "[{h}:{i}:{s}] [{level}]{scope} {text}"
+    },
+    "update": {
+        "url": "http://localhost:8089/latest.yml",
+        "autoDownload": false,
+        "autoInstallOnAppQuit": false
     }
 }

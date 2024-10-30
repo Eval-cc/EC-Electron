@@ -7,7 +7,7 @@
 <template>
     <div class="aside-container">
         <el-scrollbar>
-            <el-menu default-active="2" class="el-menu-vertical-demo" :collapse="isCollapse" @open="handleOpen" @close="handleClose">
+            <el-menu default-active="2" class="el-menu-vertical-demo" :collapse="isCollapse">
                 <template v-for="(menu, key) in menuList" :key="key">
                     <el-sub-menu :index="String(key)" v-if="menu.children">
                         <template #title>
@@ -47,7 +47,7 @@
 
 <script lang="ts" setup>
 // 引入 icon-menu 图标
-import {Menu as IconMenu, Setting, ArrowRightBold, ArrowLeftBold} from "@element-plus/icons-vue";
+import {Menu as IconMenu, Setting, ArrowRightBold, ArrowLeftBold, House} from "@element-plus/icons-vue";
 import {reactive, ref, markRaw} from "vue";
 
 defineProps({
@@ -58,12 +58,6 @@ defineProps({
 });
 
 const isCollapse = ref(true);
-const handleOpen = (key: string, keyPath: string[]) => {
-    console.log(key, keyPath);
-};
-const handleClose = (key: string, keyPath: string[]) => {
-    console.log(key, keyPath);
-};
 
 const menuList = reactive([
     {
@@ -81,9 +75,18 @@ const menuList = reactive([
                         menuname: "重启程序",
                         type: "restart",
                     },
+                    {
+                        menuname: "检查更新",
+                        type: "update",
+                    },
                 ],
             },
         ],
+    },
+    {
+        menuname: "主页",
+        icon: markRaw(House),
+        type: "home",
     },
     {
         menuname: "设置",
@@ -102,18 +105,16 @@ const menuList = reactive([
     align-items: center;
     transition: width 0.3s ease-in-out;
     width: var(--container-width);
-
+    position: relative;
     &:hover {
         .aside-bar {
             opacity: 1;
         }
     }
-    // :deep(.el-scrollbar) {
-    //     z-index: 9;
-    //     background-color: white;
-    // }
-
     .aside-bar {
+        position: absolute;
+        right: -20px;
+
         opacity: 0;
         padding: 5px;
         height: 20px !important;

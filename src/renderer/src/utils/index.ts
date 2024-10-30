@@ -5,11 +5,23 @@
  */
 import {ElMessage, ElLoading, ElMessageBox} from "element-plus";
 import type {MessageHandler, MessageOptions} from "element-plus";
-import {MsgBoxType, MsgBoxPromptType, LoadingType} from "@renderer/models/model";
+import {MsgBoxType, MsgBoxPromptType, LoadingType, IPCModelTypeRender} from "@renderer/models/model";
+import store from "@renderer/store";
 
 class Utils {
     private debounTime: any; // 防抖定时器
     constructor() {}
+
+    /**
+     * 调用主进程方法
+     * @param method 主进程方法名
+     * @param args 参数对象
+     * @returns
+     */
+    ipc = (method: string, args?: any): Promise<IPCModelTypeRender> => {
+        return store.dispatch("sendIPC", {fun: method, data: args}) as Promise<IPCModelTypeRender>;
+    };
+
     /**
      * 开窗弹出消息
      * @param msg
@@ -104,11 +116,11 @@ class Utils {
         ElMessageBox.confirm(content, title, {
             confirmButtonText: confirmText,
             cancelButtonText: cancelText,
-            type: "warning",
-            center: options.center,
             draggable: true,
+            ...options,
         })
             .then(() => {
+                options.ipc && store.dispatch("sendIPC", {fun: options.ipc, data: {...options}});
                 options.confirm && options.confirm();
             })
             .catch(() => {

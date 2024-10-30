@@ -7,7 +7,7 @@ import crypto from "crypto";
 import iconv from "iconv-lite";
 import Controller from "../core/controller";
 import {BrowserWindow} from "electron";
-import TrayMgr from "../core/tray";
+import TrayMgr from "../plugins/ec-tray";
 import fs from "fs-extra";
 import path from "path";
 import {ECFrameworkModelType} from "../core/models";

@@ -6,7 +6,7 @@
         "output": "dist",
         "buildResources": "build"
     },
-    "asar": false,
+    "asar": true,
     "asarUnpack": false,
     "files": {
         "filter": [
@@ -16,7 +16,7 @@
             "!.vscode/*",
             "!*.eslintignore",
             "!*.editorconfig",
-            "!*.yml",
+            "!pnpm-lock.yml",
             "!*.yaml",
             "!*.npmrc",
             "!*.md",
@@ -28,7 +28,7 @@
             "!src/*/*.ts",
             "!src/bin/@zfs_encryp/*",
             "!src/bin/@zfs_preload_child/*",
-            "!config/*",
+            "!build-config/*",
             "!zfsLog/*",
             "!threeZFS/*"
         ]

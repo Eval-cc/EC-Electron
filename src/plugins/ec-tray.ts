@@ -27,7 +27,6 @@ class TrayMgr {
             throw new Error("tray配置不存在");
         }
         const contextMenu = Menu.buildFromTemplate([
-            {label: "打开新窗口", type: "normal", click: () => GlobalStatus.control.openWin()},
             {label: "显  示", type: "normal", click: () => GlobalStatus.winMain.show()},
             {label: "隐  藏", type: "normal", click: () => GlobalStatus.winMain.hide()},
             {label: "退  出", type: "normal", click: () => this.core.closeWin(GlobalStatus.winMain.id)},

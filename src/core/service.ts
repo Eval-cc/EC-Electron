@@ -11,6 +11,7 @@ export class Service {
     constructor() {
         // 获取原型链上的所有方法名
         const methodNames = Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter((name) => name !== "constructor");
+
         // 将每个方法存储在 contro 中，使用 Symbol 作为键
         methodNames.forEach((name: string) => {
             if (Service.contro.get(name)) {

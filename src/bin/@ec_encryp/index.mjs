@@ -1,7 +1,6 @@
-const fs = require("fs");
-const path = require("path");
-const JavaScriptObfuscator = require("javascript-obfuscator");
-
+import fs from "fs-extra";
+import path from "path";
+import JavaScriptObfuscator from "javascript-obfuscator";
 
 /**
  *  compact: 压缩输出的代码。
@@ -40,7 +39,7 @@ const JavaScriptObfuscator = require("javascript-obfuscator");
     splitStringsChunkLength: 分割字符串的长度。
     stringArray: 使用字符串数组替换字符串。
     stringArrayIndexesType: 字符串数组的索引类型。
-    stringArrayEncoding: 字符串数组的编码方式。
+    stringArrayEncoding: 字符串数组的编码方式。 -- 支持 [none,base64,rc4]
     stringArrayIndexShift: 是否对字符串数组的索引进行移位。
     stringArrayWrappersCount: 字符串数组包装器的数量。
     stringArrayWrappersChainedCalls: 是否允许链式调用字符串数组包装器。
@@ -59,7 +58,7 @@ const directoryPath = process.cwd() + "/out";
 const findDir = (dirPath) => {
     fs.readdir(dirPath, (err, files) => {
         if (err) {
-            console.error("read Code dir fail:", err);
+            console.error("读取文件失败:", err);
             return;
         }
         // 遍历每个文件
@@ -70,16 +69,19 @@ const findDir = (dirPath) => {
             // 检查文件是否为 JavaScript 文件
             if (file.endsWith(".js")) {
                 const filePath = path.join(dirPath, file);
-                console.log(`encryp Code:${filePath}`);
+                const fileInfo = fs.statSync(filePath);
+                let stime = new Date().getTime();
+                // 根据读取到的 fileInfo 输出 文件名称和大小(单位 kb)
+                console.log(`文件就绪! 文件名称:[${file}] 大小:[${Math.max(Math.round(fileInfo.size / 1024), 1)} kb]`);
                 // 读取文件内容
                 try {
                     const fileData = fs.readFileSync(filePath, "utf8").toString();
-
+                    
                     // 混淆文件内容
                     const obfuscatedCode = JavaScriptObfuscator.obfuscate(fileData, {
                         // 设置混淆选项，根据需要进行调整
                         compact: true,
-                        debugProtection:true,
+                        debugProtection: true,
                         controlFlowFlattening: true,
                         controlFlowFlatteningThreshold: 1,
                         numbersToExpressions: true,
@@ -87,10 +89,9 @@ const findDir = (dirPath) => {
                         shuffleStringArray: true,
                         splitStrings: true,
                         stringArray: true,
-                        selfDefending:true,
-                        disableConsoleOutput:true,
-                        stringArrayEncoding: ['rc4'], // 使用 rc4转为字节码之后,运行太卡了
-                        stringArrayEncoding: [],
+                        selfDefending: true,
+                        disableConsoleOutput: true,
+                        stringArrayEncoding: ["none"], // 使用 rc4转为字节码之后,可能会造成卡顿. 慎用
                         stringArrayThreshold: 1,
                         unicodeEscapeSequence: true,
                     }).getObfuscatedCode();
@@ -98,12 +99,12 @@ const findDir = (dirPath) => {
                     // 将混淆后的代码写回文件
                     try {
                         fs.writeFileSync(filePath, obfuscatedCode, "utf8");
-                        console.log("encryp Code success:", filePath);
+                        console.log(`编译完成:${file},耗时:${new Date().getTime() - stime}ms`);
                     } catch (err) {
-                        console.error("encryp Code Content fail:", filePath, err);
+                        console.error("编译失败:", filePath, err);
                     }
                 } catch (err) {
-                    console.error("read Code File fail:", err);
+                    console.error("源文件加载失败:", err);
                     return;
                 }
             }

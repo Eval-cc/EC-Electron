@@ -57,4 +57,17 @@ export interface ECFrameworkModelType {
         maxsize: number;
         format: string;
     };
+    /**
+     * 更新插件的地址
+     * @property url 更新插件的地址
+     * @property autoDownload 是否自动下载更新
+     * @property autoInstallOnAppQuit 是否在应用退出时自动安装更新
+     */
+    update?: {
+        url: string;
+        /** 是否自动下载更新 */
+        autoDownload: boolean;
+        /** 是否在应用退出时自动安装更新 */
+        autoInstallOnAppQuit: boolean;
+    };
 }

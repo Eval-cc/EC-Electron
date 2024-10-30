@@ -7,9 +7,9 @@ import {app as AppMange, shell, BrowserWindow} from "electron";
 import {is} from "@electron-toolkit/utils";
 import path from "path";
 import notifier from "node-notifier";
-import TrayMgr from "./tray";
+import TrayMgr from "../plugins/ec-tray";
 import {IPCResult} from "./IPCResult";
-import {isDev} from "./proce";
+import {isDev} from "../plugins/ec-proce";
 import GlobalStatus from "./global";
 import Controller from "./controller";
 import EC_Event from "../lib/ec-event";
@@ -30,15 +30,17 @@ class Core {
             win.title = "EC框架 - 请设置应用名称";
             throw new Error("请设置应用名称");
         }
-        if (isDev()) {
-            if (!win.webContents.isDevToolsOpened()) {
-                win.webContents.toggleDevTools();
-            }
-        }
+        // 高版本在窗体加载的时候显示 开发者控制台  会输出警告. 旧版本 ^22.3.4 正常
+        // if (isDev()) {
+        //     if (!win.webContents.isDevToolsOpened()) {
+        //         win.webContents.toggleDevTools();
+        //     }
+        // }
         // 当窗口首次创建时,创建托盘图标
         if (!win.isVisible()) {
             GlobalStatus.tray = new TrayMgr(this);
         }
+
         win.title = GlobalStatus.config.app_name;
         // 基础的加载完成之后再显示窗口
         win.show();
