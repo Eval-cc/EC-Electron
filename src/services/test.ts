@@ -38,7 +38,7 @@ export default class Test extends Service {
         if (!params) {
             return IPCResult(false, "参数错误");
         }
-        const dllPath = path.resolve(extraPath(), "test.dll");
+        const dllPath = path.resolve(extraPath, "test.dll");
         // 默认尝试读取C++ 类型的程序集
         try {
             const myLibrary = Koffi.load(dllPath); // 定义函数
@@ -66,8 +66,8 @@ export default class Test extends Service {
                     });
                 });
             } catch (error) {
-                // 程序和 DLL 的路径
-                const exePath = path.resolve(extraPath(), "ec-dll.exe");
+                // 如果是其他类型的不规范接口, 那么就 通过中间程序来调用DLL
+                const exePath = path.resolve(extraPath, "ec-dll.exe");
                 const className = "Test.Add"; // 命名空间.类名 (没有命名空间的可忽略)
                 const methodName = "addNum"; // 方法名
                 // 构建命令行参数
@@ -101,8 +101,8 @@ export default class Test extends Service {
      * 退出
      * @param _
      */
-    Exit(_: IPCModelTypeMain) {
-        GlobalStatus.core.closeWin(GlobalStatus.winMain.id);
+    Exit(args: IPCModelTypeMain) {
+        GlobalStatus.core.closeWin(args.winID);
     }
     /**
      * 弹出气泡消息
@@ -125,7 +125,7 @@ export default class Test extends Service {
     openWin(args?: IPCModelTypeMain): void {
         if (!args) return;
         if (args?.win_type === "child-win" && args.winID) {
-            const win = GlobalStatus.core.GetWinByWinID(args.winID);
+            const win = GlobalStatus.core.GetWinByWinID(String(args.winID));
             win && GlobalStatus.control.SendRenderMsgChild(win, {success: true, msg: "已关闭子窗口调用新窗口功能"});
             return;
         }

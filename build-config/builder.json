@@ -41,6 +41,10 @@
         {
             "from": "resources/assets/",
             "to": "assets/"
+        },
+        {
+            "from": "src/bin/ec.config.json",
+            "to": "ec.config.json"
         }
     ],
     "nsis": {

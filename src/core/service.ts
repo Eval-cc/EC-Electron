@@ -12,7 +12,7 @@ export class Service {
         // 获取原型链上的所有方法名
         const methodNames = Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter((name) => name !== "constructor");
 
-        // 将每个方法存储在 contro 中，使用 Symbol 作为键
+        // 将每个方法存储在 contro 中
         methodNames.forEach((name: string) => {
             if (Service.contro.get(name)) {
                 throw new Error("注入失败,重复的脚本:" + name);

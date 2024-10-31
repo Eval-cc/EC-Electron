@@ -11,6 +11,7 @@ import Core from "../core/core";
 
 class EC_Win {
     constructor() {
+        app.removeAllListeners();
         // Electron 完成初始化并准备创建浏览器窗口时调用此方法。
         app.whenReady().then(() => {
             // 为 Windows 设置应用程序用户模型 ID。

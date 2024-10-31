@@ -7,18 +7,11 @@
 import {is} from "@electron-toolkit/utils";
 import path from "path";
 
-/** 返回当前的运行环境是不是测试环境 */
-export const isDev = (): boolean => {
-    return is.dev && process.env["ELECTRON_RENDERER_URL"] != null;
-};
+/** 返回当前框架的运行环境是不是测试环境 */
+export const ec_is_test = is.dev && process.env["ELECTRON_RENDERER_URL"] != null;
 
-/** 返回额外资源的路径 */
-export const extraPath = (): string => {
-    // 默认使用生产环境的路径
-    let script_path = path.join(process.cwd(), "resources/extraResources");
-    if (isDev()) {
-        // 测试环境需要在套一级build目录
-        script_path = path.join(process.cwd(), "build/extraResources");
-    }
-    return script_path;
-};
+/** 返回框架额外资源的路径 */
+export const extraPath = path.join(process.cwd(), ec_is_test ? "build/extraResources" : "resources/extraResources");
+
+/** 返回框架配置文件路径 */
+export const ec_config_path = path.join(process.cwd(), ec_is_test ? "src/bin/ec.config.json" : "resources/ec.config.json");

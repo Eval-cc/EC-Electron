@@ -19,23 +19,24 @@ class EC_Event {
                 app.quit();
             }
         });
-
+        // 手动触发了页面刷新之后, 会导致重复监听.
+        process.removeAllListeners();
         process.on("uncaughtException", (error) => {
             // 如果窗口已经被销毁了就不执行
             if (GlobalStatus.winMain.isDestroyed()) {
                 return;
             }
-            this.logger.error(`程序出现异常,${error.stack}`);
+            this.logger.error(`EC框架异常,${error.stack}`);
             if (GlobalStatus.control) {
-                GlobalStatus.control.SendRenderMsg({success: false, msg: error.message, data: {title: "程序出现异常", type: "dialog"}});
+                GlobalStatus.control.SendRenderMsg({success: false, msg: error.message, data: {title: "EC框架异常", type: "dialog"}});
             } else {
-                GlobalStatus.winMain?.hide(); // 隐藏主窗口
+                GlobalStatus.winMain.hide(); // 隐藏主窗口
                 dialog
                     .showMessageBox({
                         type: "warning",
                         title: "警告",
-                        message: "程序崩溃了,见日志文件", // 自定义警告消息
-                        buttons: ["退出"], // 自定义按钮文本
+                        message: "EC框架异常,见日志文件",
+                        buttons: ["退出"],
                     })
                     .then(() => {
                         app.quit();

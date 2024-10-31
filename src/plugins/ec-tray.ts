@@ -5,17 +5,13 @@
  */
 import {Tray, Menu, nativeImage} from "electron";
 import path from "path";
-import Core from "../core/core";
 import GlobalStatus from "../core/global";
-
 
 class TrayMgr {
     private tray!: Tray;
-    private core: Core;
     private fliTime!: NodeJS.Timeout | null; // 闪烁定时器
     private iconDict: any;
-    constructor(core: Core) {
-        this.core = core;
+    constructor() {
         this.LoadConfig();
     }
 
@@ -23,13 +19,14 @@ class TrayMgr {
      * 读取本地文件并初始化配置
      */
     private LoadConfig() {
+        if (GlobalStatus.tray) return; // 如果已经创建过了,那就不允许再次创建
         if (!GlobalStatus.config.tray) {
             throw new Error("tray配置不存在");
         }
         const contextMenu = Menu.buildFromTemplate([
             {label: "显  示", type: "normal", click: () => GlobalStatus.winMain.show()},
             {label: "隐  藏", type: "normal", click: () => GlobalStatus.winMain.hide()},
-            {label: "退  出", type: "normal", click: () => this.core.closeWin(GlobalStatus.winMain.id)},
+            {label: "退  出", type: "normal", click: () => GlobalStatus.core.closeWin(GlobalStatus.winMain.id)},
         ]);
 
         this.iconDict = {

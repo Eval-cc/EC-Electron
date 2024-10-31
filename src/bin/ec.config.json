@@ -16,5 +16,9 @@
         "url": "http://localhost:8089/latest.yml",
         "autoDownload": false,
         "autoInstallOnAppQuit": false
+    },
+    "dev_tool": {
+        "active": false,
+        "cmd": "CommandOrControl+Shift+F10"
     }
 }

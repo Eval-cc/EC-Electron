@@ -19,15 +19,23 @@ class EC_Shortcut {
      * 监听未捕获的异常
      */
     private OnRegister() {
-        // 注册全局快捷键---方便调试
-        const ret = globalShortcut.register("CommandOrControl+Shift+F10", () => {
-            // 当快捷键被触发时执行的操作
-            GlobalStatus.winMain.webContents.toggleDevTools();
-        });
+        if (GlobalStatus.config.dev_tool?.cmd) {
+            // 注册 切换控制台的快捷键
+            const ret = globalShortcut.register(GlobalStatus.config.dev_tool.cmd, () => {
+                // 当快捷键被触发时执行的操作
+                GlobalStatus.winMain.webContents.toggleDevTools();
+                // 包括子窗体
+                Object.values(GlobalStatus.childWin)
+                    .filter((win) => win.id !== GlobalStatus.winMain.id)
+                    .forEach((win) => {
+                        win.webContents.toggleDevTools();
+                    });
+            });
 
-        // 检查快捷键是否注册成功
-        if (!ret) {
-            this.logger.error("注册快捷键失败");
+            // 检查快捷键是否注册成功
+            if (!ret) {
+                this.logger.error("注册快捷键失败");
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ class ECUpdate {
     logger: Logger;
     constructor() {
         this.logger = new Logger();
-        this.logger.debug("ECUpdate 更新插件初始化");
+        this.logger.info("ECUpdate 更新插件初始化");
         this.initialize();
     }
 
@@ -92,12 +92,27 @@ class ECUpdate {
             GlobalStatus.control.SendRenderMsg(IPCResult(false, "开发环境无法检查更新,请先打包"));
             return;
         }
-        autoUpdater.checkForUpdates();
+        this.DownloadUpdate();
     }
 
     /** 下载更新 */
     DownloadUpdate() {
-        // 下载逻辑在事件中处理
+        // 检查是否已检测到可用更新
+        autoUpdater
+            .checkForUpdates()
+            .then((updateInfo) => {
+                if (updateInfo && updateInfo.updateInfo && updateInfo.updateInfo.version) {
+                    GlobalStatus.control.SendRenderMsg(IPCResult(true, "开始下载更新..."));
+                    autoUpdater.downloadUpdate(); // 手动开始下载
+                } else {
+                    GlobalStatus.control.SendRenderMsg(IPCResult(false, "没有可用的更新进行下载"));
+                    this.logger.info("没有可用的更新进行下载");
+                }
+            })
+            .catch((error) => {
+                GlobalStatus.control.SendRenderMsg(IPCResult(false, `检查更新失败: ${error}`));
+                this.logger.error(`检查更新失败: ${error}`);
+            });
     }
 
     /** 安装更新 */

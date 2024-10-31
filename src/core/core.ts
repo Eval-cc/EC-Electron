@@ -3,13 +3,12 @@
  * @author Eval
  * @description 全局控制脚本
  */
-import {app as AppMange, shell, BrowserWindow} from "electron";
-import {is} from "@electron-toolkit/utils";
-import path from "path";
-import notifier from "node-notifier";
+import {app as EC_APP, shell as EC_SHELL, BrowserWindow} from "electron";
+import {join as EC_Join} from "path";
+import {notify as EC_Notify} from "node-notifier";
 import TrayMgr from "../plugins/ec-tray";
 import {IPCResult} from "./IPCResult";
-import {isDev} from "../plugins/ec-proce";
+import {ec_is_test} from "../plugins/ec-proce";
 import GlobalStatus from "./global";
 import Controller from "./controller";
 import EC_Event from "../lib/ec-event";
@@ -31,20 +30,20 @@ class Core {
             throw new Error("请设置应用名称");
         }
         // 高版本在窗体加载的时候显示 开发者控制台  会输出警告. 旧版本 ^22.3.4 正常
-        // if (isDev()) {
-        //     if (!win.webContents.isDevToolsOpened()) {
-        //         win.webContents.toggleDevTools();
-        //     }
-        // }
-        // 当窗口首次创建时,创建托盘图标
-        if (!win.isVisible()) {
-            GlobalStatus.tray = new TrayMgr(this);
+        if (ec_is_test && GlobalStatus.config.dev_tool?.active) {
+            if (!win.webContents.isDevToolsOpened()) {
+                win.webContents.toggleDevTools();
+            }
         }
+        // 当窗口首次创建时,创建托盘图标
+        // if (!win.isVisible()) {
+        // }
 
+        GlobalStatus.tray = new TrayMgr();
         win.title = GlobalStatus.config.app_name;
         // 基础的加载完成之后再显示窗口
         win.show();
-        this.contr.SendRenderMsgChild(win, {success: true, msg: "", data: {winID: win.id, type: "winID"}});
+        this.contr.SendRenderMsg({success: true, msg: "", data: {winID: win.id, type: "winID"}});
     }
 
     /**
@@ -54,7 +53,7 @@ class Core {
     closeWin(winID: number) {
         if (winID === GlobalStatus.winMain.id) {
             // 关闭主窗口
-            AppMange.quit();
+            EC_APP.quit();
         }
         const childWin = GlobalStatus.childWin[winID];
         if (!childWin) {
@@ -77,11 +76,11 @@ class Core {
      */
     reloadWin() {
         // 仅正式环境能正常使用重启应用
-        if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
+        if (ec_is_test && process.env["ELECTRON_RENDERER_URL"]) {
             GlobalStatus.control.SendRenderMsg(IPCResult(false, "开发环境无法重启应用", {type: "tip"}));
         } else {
-            AppMange.relaunch();
-            AppMange.exit();
+            EC_APP.relaunch();
+            EC_APP.exit();
         }
     }
 
@@ -102,7 +101,7 @@ class Core {
             parent: GlobalStatus.winMain,
             ...(process.platform === "linux" ? {icon} : {icon}),
             webPreferences: {
-                preload: path.join(__dirname, "../preload-child/child-preload.js"), // 加载预加载脚本
+                preload: EC_Join(__dirname, "../preload-child/child-preload.js"), // 加载预加载脚本
                 contextIsolation: true,
                 sandbox: false,
             },
@@ -116,15 +115,15 @@ class Core {
             // 保存窗口对象
             GlobalStatus.childWin[win.id] = win;
             win.show();
-            // 测试环境,以及不是设置透明窗口的时候才显示控制台
-            if (isDev() && !win.webContents.isDevToolsOpened()) {
+            // 测试环境 才显示控制台
+            if (ec_is_test && !win.webContents.isDevToolsOpened() && GlobalStatus.config.dev_tool?.active) {
                 win.webContents.toggleDevTools();
             }
             this.contr.SendRenderMsgChild(win, {success: true, msg: "", data: {winID: win.id, type: "winID"}});
         });
 
         win.webContents.setWindowOpenHandler((details) => {
-            shell.openExternal(details.url);
+            EC_SHELL.openExternal(details.url);
             return {action: "deny"};
         });
 
@@ -134,7 +133,7 @@ class Core {
         });
         // 如果没有传入地址,那就默认新增小工具窗口
         if (!url) {
-            win.loadFile(path.join(__dirname, "../renderer/index.html"));
+            win.loadFile(EC_Join(__dirname, "../renderer/index.html"));
         } else {
             win.loadURL(url);
         }
@@ -147,11 +146,11 @@ class Core {
      */
     show_notifier = (message: string, options: any = {}): any => {
         const title = options?.title ? options.title : "气泡消息";
-        const obj = notifier.notify({
+        const obj = EC_Notify({
             appID: "EC-eval",
             title,
             message,
-            icon: path.join(process.cwd(), "resources\\assets\\icon.png"),
+            icon: EC_Join(process.cwd(), "resources\\assets\\icon.png"),
         });
         return obj;
     };

@@ -1,17 +1,17 @@
 /**
  * @time   2024/04/24 17:16:42
  * @author Eval
- * @description 全局静态状态管理
+ * @description 全局状态管理
  */
 import crypto from "crypto";
 import iconv from "iconv-lite";
 import Controller from "../core/controller";
-import {BrowserWindow} from "electron";
+import {BrowserWindow, dialog} from "electron";
 import TrayMgr from "../plugins/ec-tray";
 import fs from "fs-extra";
-import path from "path";
 import {ECFrameworkModelType} from "../core/models";
 import Core from "./core";
+import {ec_config_path, ec_is_test} from "../plugins/ec-proce";
 
 class GlobalStatus {
     /**
@@ -22,16 +22,23 @@ class GlobalStatus {
     /** 注入全局 */
     public static core: Core;
 
-    /**
-     * 保存主窗体对象
-     */
+    /** 主窗体 */
     public static winMain: BrowserWindow;
 
-    /** 保存子窗口对象,以子窗口的id作为键 */
+    /** 子窗口,以窗口的id作为键 */
     public static childWin: {[key: string]: BrowserWindow} = {};
 
     /** 托盘 */
-    public static tray: TrayMgr;
+    private static __tray: TrayMgr;
+    public static get tray(): TrayMgr {
+        return GlobalStatus.__tray;
+    }
+    public static set tray(value: TrayMgr) {
+        if (GlobalStatus.__tray) {
+            throw new Error("重复设置托盘实例");
+        }
+        GlobalStatus.__tray = value;
+    }
 
     /** 全局配置信息,禁止外部修改 */
     private static __config: ECFrameworkModelType = {};
@@ -40,6 +47,10 @@ class GlobalStatus {
     public static get config(): ECFrameworkModelType {
         return GlobalStatus.__config;
     }
+    public static set config(_: ECFrameworkModelType) {
+        throw new Error("禁止修改全局配置信息");
+    }
+
     /**
      * 初始化全局配置信息,已经保存当前的主窗体对象
      * @param win
@@ -51,29 +62,25 @@ class GlobalStatus {
         GlobalStatus.core = core;
         // 保存窗口对象
         GlobalStatus.childWin[win.id] = win;
-        const configPath = path.join(process.cwd(), "src/bin/ec.config.json");
+        const configPath = ec_config_path;
         if (!fs.pathExistsSync(configPath)) {
-            fs.outputJSONSync(
-                configPath,
-                {
-                    app_name: "EC框架 @Eval",
-                    tray: {
-                        active: true,
-                        title: "EC-Electron EC框架",
-                        icon: "icon.png",
-                        iconHide: "none.png",
-                        tooltip: "EC框架 @Eval",
-                    },
-                    logConfig: {
-                        path: "./ec-logs",
-                        maxsize: 10485760,
-                        format: "[{h}:{i}:{s}] [{level}]{scope} {text}",
-                    },
-                },
-                {spaces: 4, EOL: "\r\n", encoding: "utf-8"},
-            );
+            dialog
+                .showMessageBox({
+                    type: "error",
+                    title: "EC 框架错误",
+                    message: "框架配置文件不存在",
+                    buttons: ["退出"],
+                })
+                .then(() => {
+                    GlobalStatus.core.closeWin(GlobalStatus.winMain.id);
+                });
+            throw new Error("框架配置文件不存在");
         }
         GlobalStatus.__config = fs.readJSONSync(configPath, "utf-8");
+        // 生产环境下移除控制台配置信息
+        if (!ec_is_test) {
+            delete GlobalStatus.__config.dev_tool;
+        }
     }
 
     /**
@@ -90,7 +97,7 @@ class GlobalStatus {
     };
 
     /**
-     * 将中文转换为 gbk编码, 例如游戏角色的名称必须要转,否则无法识别
+     * 字符串 转换为 gbk编码
      * @param 目标文本
      * @returns {gbk} 转义后的 gbk 编码
      */
@@ -107,7 +114,7 @@ class GlobalStatus {
     };
 
     /**
-     * 将 gbk编码 转换为 中文, 从数据库中读取出来的数据要经过转换, 否则是乱码
+     * 将 gbk编码 转换为 中文
      * @param gbkStr
      * @returns {str} 转义后的的字符串
      */
@@ -124,7 +131,7 @@ class GlobalStatus {
     };
 
     /**
-     * 将 gbk编码 转换为 中文, 从数据库中读取出来的数据要经过转换, 否则是乱码
+     * 将 gbk2312编码 转换为 中文
      * @param  gbkStr
      * @returns {str} 转义后的的字符串
      */
@@ -142,6 +149,9 @@ class GlobalStatus {
     /** 返回 uuid字符串 */
     static get uuid() {
         return crypto.randomUUID();
+    }
+    static set uuid(_: any) {
+        throw new Error("禁止修改EC框架集成的 uuid 模块");
     }
 }
 

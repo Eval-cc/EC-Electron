@@ -41,7 +41,7 @@ class Logger {
      * 输出普通日志--保留日志文件
      * @param args
      */
-    debug(...args: Array<any>) {
+    info(...args: Array<any>) {
         let date = new Date();
         let dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         // 自定义文件保存位置为安装目录下 \log\年-月-日.log

@@ -9,22 +9,29 @@ import {IpcMainInvokeEvent as IpcMainInvokeEventType} from "electron";
  * IPC通信模型--返回给渲染进程
  */
 export interface IPCModelTypeRender {
+    /** 返回类型 */
     success: boolean;
-    msg: string; // 返回的消息
-    data?: any; // 传递的参数
+    /** 返回的消息 */
+    msg: string;
+    /** 传递的参数 */
+    data?: any;
 }
 
 /**
  * IPC通信模型--主进程
  */
 export interface IPCModelTypeMain {
-    fun: string; // 控制器函数名
+    /** 控制器函数名 */
+    fun: string;
+    /** 通信主体 */
     data?: {
         IpcMainInvokeEvent?: IpcMainInvokeEventType;
         [key: string]: string | number | boolean | any;
     };
-    win_type: string; // 当前发送消息的窗体类型
-    winID: string; // 窗口ID,  没有ID的视为主窗体
+    /** 当前发送消息的窗体类型  [main | child-win] */
+    win_type: string;
+    /** 窗口ID */
+    winID: number;
 }
 
 /**
@@ -69,5 +76,16 @@ export interface ECFrameworkModelType {
         autoDownload: boolean;
         /** 是否在应用退出时自动安装更新 */
         autoInstallOnAppQuit: boolean;
+    };
+    /**
+     * 控制台配置--生产环境下无效
+     * @property active 是否激活控制台
+     * @property cmd 控制台快捷键
+     */
+    dev_tool?: {
+        /** 是否在启动的时候激活控制台 */
+        active: true;
+        /** 激活/关闭 控制台的快捷键 */
+        cmd: "CommandOrControl+Shift+F10";
     };
 }
