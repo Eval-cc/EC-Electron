@@ -82,6 +82,24 @@ class Controller {
         }
         win.webContents.send("message-from-child", msg);
     };
+
+    /**
+     * 给所有的窗体推送消息
+     * @param msg 
+     */
+    SendRenderMsgToAll = (msg: IPCModelTypeRender) => {
+        // 如果没有指定类型,那么默认就是普通的弹窗消息
+        if (!msg.data) {
+            msg.data = {};
+        }
+        if (!msg.data?.type) {
+            msg.data["type"] = "tip";
+        }
+        GlobalStatus.winMain.webContents.send("message-from-main", msg);
+        Object.values(GlobalStatus.childWin).forEach((win) => {
+            win.webContents.send("message-from-child", msg);
+        });
+    };
 }
 
 Controller.toString = () => "[class Controller]";

@@ -89,10 +89,10 @@ class ECUpdate {
     /** 手动检查更新 */
     CheckUpdate() {
         if (!app.isPackaged) {
-            GlobalStatus.control.SendRenderMsg(IPCResult(false, "开发环境无法检查更新,请先打包"));
-            return;
+            return IPCResult(false, "开发环境无法检查更新,请先打包");
         }
         this.DownloadUpdate();
+        return IPCResult(true, "开始检查更新...");
     }
 
     /** 下载更新 */

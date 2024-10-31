@@ -45,6 +45,7 @@ export default class Test extends Service {
      * @param _
      */
     Restart(_: IPCModelTypeMain) {
+        // 仅正式环境能正常使用重启应用
         GlobalStatus.core.reloadWin();
     }
 

@@ -30,7 +30,9 @@
             "!src/bin/@zfs_preload_child/*",
             "!build-config/*",
             "!zfsLog/*",
-            "!threeZFS/*"
+            "!threeZFS/*",
+            "!test_1.dll",
+            "!test_2.dll"
         ]
     },
     "extraResources": [

@@ -121,16 +121,21 @@ class EC_DLL {
                     resolve(IPCResult(false, `执行出错: ${error}`));
                 } else if (stderr) {
                     this.logger.error(`执行出错: ${stderr}`);
+                    const hex = stderr.trim();
+                    // 将十六进制字符串分割成字节对并转换为 Uint8Array
+                    const bytes = new Uint8Array(hex.match(/.{1,2}/g)?.map((byte: string) => parseInt(byte, 16)));
+                    // 使用 TextDecoder 解码为字符串
+                    const decoder = new TextDecoder("utf-8");
 
-                    resolve(IPCResult(false, stderr));
+                    resolve(IPCResult(false, decoder.decode(bytes)));
                 } else {
                     const hex = stdout.trim();
                     // 将十六进制字符串分割成字节对并转换为 Uint8Array
-                    const bytes = new Uint8Array(hex.match(/.{1,2}/g).map((byte: string) => parseInt(byte, 16)));
+                    const bytes = new Uint8Array(hex.match(/.{1,2}/g)?.map((byte: string) => parseInt(byte, 16)));
                     // 使用 TextDecoder 解码为字符串
                     const decoder = new TextDecoder("utf-8");
                     // 将字节转换为字符串
-                    resolve(IPCResult(true, `中间程序调用:${decoder.decode(bytes)}`));
+                    resolve(IPCResult(true, `中间程序调用:${decoder.decode(bytes) || "无返回值"}`));
                 }
             });
         });

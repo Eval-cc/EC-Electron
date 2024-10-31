@@ -19,7 +19,7 @@ class Utils {
      * @returns
      */
     ipc = (method: string, args?: any): Promise<IPCModelTypeRender> => {
-        return store.dispatch("sendIPC", {fun: method, data: args}) as Promise<IPCModelTypeRender>;
+        return store.dispatch("EC_Main_IPC_Send", {fun: method, data: args}) as Promise<IPCModelTypeRender>;
     };
 
     /**

@@ -77,7 +77,7 @@ class Core {
     reloadWin() {
         // 仅正式环境能正常使用重启应用
         if (ec_is_test && process.env["ELECTRON_RENDERER_URL"]) {
-            GlobalStatus.control.SendRenderMsg(IPCResult(false, "开发环境无法重启应用", {type: "tip"}));
+            GlobalStatus.control.SendRenderMsgToAll(IPCResult(false, "开发环境无法重启应用", {type: "tip"}));
         } else {
             EC_APP.relaunch();
             EC_APP.exit();

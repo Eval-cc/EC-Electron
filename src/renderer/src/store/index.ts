@@ -44,6 +44,7 @@ const store = createStore({
         async initChildIPC(state, value: any) {
             if (value.win_type == "main") return;
             state.win = value;
+            value.electron.ipcRenderer.removeAllListeners();
             value.electron.ipcRenderer.on("message-from-child", (_: any, message: IPCModelTypeRender) => {
                 if (message.data.type === "winID") {
                     state.mainWin = {
@@ -64,15 +65,18 @@ const store = createStore({
          * @param value
          * @returns
          */
-        async sendIPC({state}, value: IPCModelTypeMain): Promise<IPCModelTypeRender> {
+        async EC_Main_IPC_Send({state}, value: IPCModelTypeMain): Promise<IPCModelTypeRender> {
             if (!state.win) {
                 return {success: false, msg: "出错了,请重启!"};
             }
             value.win_type = state.win.win_type;
             value.winID = state.mainWin?.winID || null;
             try {
-                const res = await state.win.IPCcontrol.IPCcontrol(value);
-                return res;
+                if (state.win.win_type == "main") {
+                    return await state.win.IPCcontrol.IPCcontrol(value);
+                }
+
+                return await state.win.IPCcontrolChild.IPCcontrolChild(value);
             } catch (e: any) {
                 console.error(value);
                 if (String(e).includes("Error: An object could not be cloned.")) {

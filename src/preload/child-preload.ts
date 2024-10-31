@@ -10,8 +10,8 @@ if (process.contextIsolated) {
     try {
         contextBridge.exposeInMainWorld("win_type", "child-win");
         contextBridge.exposeInMainWorld("electron", electronAPI);
-        contextBridge.exposeInMainWorld("IPCcontrol", {
-            IPCcontrol: (args: any) => ipcRenderer.invoke("handleIPC", args),
+        contextBridge.exposeInMainWorld("IPCcontrolChild", {
+            IPCcontrolChild: (args: any) => ipcRenderer.invoke("handleIPC", args),
         });
     } catch (error) {
         console.error(error);

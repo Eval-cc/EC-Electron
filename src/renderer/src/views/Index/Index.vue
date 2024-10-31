@@ -164,11 +164,15 @@ const InvokerNotify = () => {
 // aside组件的回调
 const childCallback = (data: any): void => {
     if (data === "restart") {
-        utils.ipc("Restart");
+        utils.ipc("Restart").then((res) => {
+            utils.message(res.msg, res.success);
+        });
     } else if (data === "exit") {
         utils.ipc("Exit");
     } else if (data === "update") {
-        utils.ipc("CheckUpdate");
+        utils.ipc("CheckUpdate").then((res) => {
+            utils.message(res.msg, res.success);
+        });
     } else {
         notifyMsg.value = "";
         currMenu.value = data;
