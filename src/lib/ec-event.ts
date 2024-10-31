@@ -5,13 +5,13 @@
  */
 
 import {app, dialog} from "electron";
-import Logger from "../core/logger";
+import EC_Logger from "../plugins/ec-log";
 import GlobalStatus from "../core/global";
 
 class EC_Event {
-    private logger: Logger;
+    private logger: EC_Logger;
     constructor() {
-        this.logger = new Logger();
+        this.logger = new EC_Logger();
         // 当所有窗口关闭时退出应用程序，但在 macOS 上除外。
         // 在 macOS 上，应用程序和菜单栏通常会保持活动状态，直到用户使用 Cmd + Q 明确退出。
         app.on("window-all-closed", () => {

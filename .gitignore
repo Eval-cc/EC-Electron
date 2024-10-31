@@ -6,3 +6,4 @@ out
 test.js
 .vscode/launch.json
 *.yaml
+build/extraResources/test_1.dll

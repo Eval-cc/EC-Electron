@@ -8,12 +8,12 @@ import {autoUpdater, UpdateInfo} from "electron-updater";
 import GlobalStatus from "../core/global";
 import {IPCResult} from "../core/IPCResult";
 import {app} from "electron";
-import Logger from "../core/logger";
+import EC_Logger from "./ec-log";
 
 class ECUpdate {
-    logger: Logger;
+    logger: EC_Logger;
     constructor() {
-        this.logger = new Logger();
+        this.logger = new EC_Logger();
         this.logger.info("ECUpdate 更新插件初始化");
         this.initialize();
     }

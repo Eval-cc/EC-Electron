@@ -89,3 +89,28 @@ export interface ECFrameworkModelType {
         cmd: "CommandOrControl+Shift+F10";
     };
 }
+
+/**
+ * DLL插件类型声明
+ * @params dllName 动态链接库名称
+ * @params className 类名 -- 需要调用的类名
+ * @params methodName 方法名 -- 需要调用的方法名
+ * @params returnType 返回值类型 -- C++ 程序集使用  ["int", "string", "bool", "double", "float", "char", "long", "short"]
+ * @params argsType 参数类型 -- C++ 程序集使用  ["int", "string", "bool", "double", "float", "char", "long", "short"]
+ * @params args 参数列表 -- [1, "hello", true, 3.14, 2.5, "c", 10, 10000]
+ * @example
+ */
+export interface ECDllModelType {
+    /** 动态链接库名称 */
+    dllName: string;
+    /** 类名 */
+    className:string;
+    /** 方法名 */
+    methodName: string;
+    /** 返回值类型 */
+    returnType: string;
+    /** 参数类型 */
+    argsType: string[];
+    /** 参数列表 */
+    args: any[];
+}

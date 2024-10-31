@@ -1,14 +1,14 @@
-/** 
+/**
  * @time   2024/10/30 16:45:18
  * @author Eval
  * @description 程序日志
  */
 
 import log from "electron-log";
-import path from "path";
-import GlobalStatus from "./global";
+import {join as EC_Join} from "path";
+import GlobalStatus from "../core/global";
 
-class Logger {
+class EC_Logger {
     constructor() {
         if (!GlobalStatus.config.logConfig) {
             throw new Error("日志配置未设置");
@@ -46,7 +46,7 @@ class Logger {
         let dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         // 自定义文件保存位置为安装目录下 \log\年-月-日.log
         log.transports.file.level = "debug";
-        log.transports.file.resolvePathFn = () => path.join(process.cwd(), GlobalStatus.config.logConfig!.path, dateStr + "-info.log");
+        log.transports.file.resolvePathFn = () => EC_Join(process.cwd(), GlobalStatus.config.logConfig!.path, dateStr + "-info.log");
         log.info(this.serialArg(args));
     }
 
@@ -59,7 +59,7 @@ class Logger {
         let dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         // 自定义文件保存位置为安装目录下 \log\年-月-日.log
         log.transports.file.level = "warn";
-        log.transports.file.resolvePathFn = () => path.join(process.cwd(), GlobalStatus.config.logConfig!.path, dateStr + "-warn.log");
+        log.transports.file.resolvePathFn = () => EC_Join(process.cwd(), GlobalStatus.config.logConfig!.path, dateStr + "-warn.log");
         log.warn(this.serialArg(args));
     }
     /**
@@ -71,10 +71,10 @@ class Logger {
         let dateStr = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
         // 自定义文件保存位置为安装目录下 \log\年-月-日.log
         log.transports.file.level = "error";
-        log.transports.file.resolvePathFn = () => path.join(process.cwd(), GlobalStatus.config.logConfig!.path, dateStr + "-error.log");
+        log.transports.file.resolvePathFn = () => EC_Join(process.cwd(), GlobalStatus.config.logConfig!.path, dateStr + "-error.log");
         log.error(this.serialArg(args));
     }
 }
 
-Logger.toString = () => "[class Logger]";
-export default Logger;
+EC_Logger.toString = () => "[class EC_Logger]";
+export default EC_Logger;

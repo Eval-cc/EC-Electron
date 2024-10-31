@@ -5,13 +5,13 @@
  */
 
 import {globalShortcut} from "electron";
-import Logger from "../core/logger";
+import EC_Logger from "../plugins/ec-log";
 import GlobalStatus from "../core/global";
 
 class EC_Shortcut {
-    private logger: Logger;
+    private logger: EC_Logger;
     constructor() {
-        this.logger = new Logger();
+        this.logger = new EC_Logger();
         this.OnRegister();
     }
 

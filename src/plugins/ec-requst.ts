@@ -7,12 +7,12 @@
 import http from "http";
 import https from "https";
 import {IPCResult} from "../core/IPCResult";
-import Logger from "../core/logger";
+import EC_Logger from "./ec-log";
 
 class Request {
-    logger: Logger;
+    logger: EC_Logger;
     constructor() {
-        this.logger = new Logger();
+        this.logger = new EC_Logger();
     }
 
     /**

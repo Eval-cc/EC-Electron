@@ -4,16 +4,16 @@
  * @description 接受事件控制层
  */
 import {ipcMain, IpcMainInvokeEvent, BrowserWindow} from "electron";
-import Logger from "../core/logger";
+import EC_Logger from "../plugins/ec-log";
 import {IPCModelTypeMain, IPCModelTypeRender} from "../core/models";
 import {IPCResult} from "../core/IPCResult";
 import GlobalStatus from "../core/global";
 import {Service} from "../core/service";
 
 class Controller {
-    logger: Logger;
+    logger: EC_Logger;
     constructor() {
-        this.logger = new Logger();
+        this.logger = new EC_Logger();
         // 把controller注入到全局-避免主线程重复监听事件抛出异常
         if (GlobalStatus.control) return;
         GlobalStatus.control = this;
@@ -26,17 +26,13 @@ class Controller {
                         IpcMainInvokeEvent: event, // 将当前监听的 ipc 事件传过去
                     };
                 }
-                if (this[data.fun]) {
-                    // 返回处理结果
-                    return this[data.fun](data);
-                }
                 try {
                     const result = await Service.Invoke(data.fun, data);
                     if (result) return result;
                     return IPCResult(false, "无返回值");
                 } catch (e: any) {
                     this.logger.error(`调用服务出错:${e.stack}`);
-                    return IPCResult(false, "出错了");
+                    return IPCResult(false, e.message);
                 }
             });
         } catch (error: any) {

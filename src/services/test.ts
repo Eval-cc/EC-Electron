@@ -5,23 +5,21 @@
  */
 import {Service} from "../core/service";
 import {IPCResult} from "../core/IPCResult";
-import {exec} from "child_process";
-import path from "path";
-import {extraPath} from "../plugins/ec-proce";
-
-import Logger from "../core/logger";
+import EC_Logger from "../plugins/ec-log";
 import {IPCModelTypeMain, IPCModelTypeRender} from "../core/models";
 import GlobalStatus from "../core/global";
 import {shell} from "electron";
-import Koffi from "koffi";
-import edgeJSInvokerDLL from "electron-edge-js";
+
+import ECUpdate from "../plugins/ec-update";
+import EC_DLL from "../plugins/ec-dll";
 
 export default class Test extends Service {
-    logger: Logger;
-    ecupdate?: any;
+    logger: EC_Logger;
+    ecupdate?: ECUpdate;
+    ec_dll!: EC_DLL;
     constructor() {
         super();
-        this.logger = new Logger();
+        this.logger = new EC_Logger();
     }
 
     test() {
@@ -34,60 +32,13 @@ export default class Test extends Service {
      * @returns
      */
     InvokerDll(args: IPCModelTypeMain) {
-        const params = args.data as Array<number>; // 参数数组, (测试dll 接收的参数是 ,int a, int b,int c)
-        if (!params) {
+        if (!args.data) {
             return IPCResult(false, "参数错误");
         }
-        const dllPath = path.resolve(extraPath, "test.dll");
-        // 默认尝试读取C++ 类型的程序集
-        try {
-            const myLibrary = Koffi.load(dllPath); // 定义函数
-            const addNum = myLibrary.func("__stdcall", "addNum", "int", ["int", "int", "int"]); // 定义函数
-
-            // 调用函数
-            const result = addNum(...params);
-            return IPCResult(true, `通过Koffi调用 dll计算的结果是:${result}`);
-        } catch {
-            try {
-                // 读取失败 尝试读取C#类型的程序集
-                const AddNum = edgeJSInvokerDLL.func({
-                    assemblyFile: dllPath,
-                    typeName: "Test.Add",
-                    methodName: "addNum",
-                });
-                return new Promise((resolve) => {
-                    AddNum(params, (error: any, result: any) => {
-                        if (error) {
-                            this.logger.error(`调用 dll 出错: ${error}`);
-                            resolve(IPCResult(false, `调用 dll 出错: ${error}`));
-                        } else {
-                            resolve(IPCResult(true, `通过edge调用 dll计算的结果是:${result}`));
-                        }
-                    });
-                });
-            } catch (error) {
-                // 如果是其他类型的不规范接口, 那么就 通过中间程序来调用DLL
-                const exePath = path.resolve(extraPath, "ec-dll.exe");
-                const className = "Test.Add"; // 命名空间.类名 (没有命名空间的可忽略)
-                const methodName = "addNum"; // 方法名
-                // 构建命令行参数
-                const command = `"${exePath}" "${dllPath}" ${className} ${methodName} ${params.join(" ")}`;
-                // 执行中间程序来调用dll获取输出流
-                return new Promise((resolve, reject) => {
-                    exec(command, {encoding: "utf8"}, (error: any, stdout: any, stderr: any) => {
-                        if (error) {
-                            this.logger.error(`执行出错: ${error}`);
-                            reject(IPCResult(false, `执行出错: ${error}`));
-                        } else if (stderr) {
-                            this.logger.error(`执行出错: ${stderr}`);
-                            resolve(IPCResult(false, stderr));
-                        } else {
-                            resolve(IPCResult(true, `通过中间程序调用dll计算的结果是:${stdout.trim()}`));
-                        }
-                    });
-                });
-            }
+        if (!this.ec_dll) {
+            this.ec_dll = new EC_DLL();
         }
+        return this.ec_dll.InvokerDll(args.data as any);
     }
     /**
      * 重启
@@ -175,6 +126,6 @@ export default class Test extends Service {
     }
 
     DownLoadUpdate(_: IPCModelTypeMain): void {
-        this.ecupdate.DownloadUpdate();
+        this.ecupdate!.DownloadUpdate();
     }
 }

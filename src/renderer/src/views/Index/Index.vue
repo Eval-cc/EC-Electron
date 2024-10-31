@@ -15,8 +15,47 @@
                             <div class="ec-grid-item">
                                 <el-button type="primary" plain @click="Test" :loading>调用测试消息</el-button>
                             </div>
-                            <div class="ec-grid-item">
-                                <el-button type="success" plain @click="InvokerDll" :loading>调用测试DLL</el-button>
+                        </div>
+                    </div>
+                    <div class="ec-grid-from">
+                        <div class="ec-grid-lab">调用测试DLL</div>
+                        <div class="ec-grid-item-body">
+                            <div class="notify ec-grid-item">
+                                <div>
+                                    <div>
+                                        <el-input v-model="dllFrom.dllName" placeholder="输入DLL的名称" clearable show-word-limit maxlength="50">
+                                            <template #prepend>dll名称</template>
+                                        </el-input>
+                                    </div>
+                                    <div>
+                                        <el-input v-model="dllFrom.className" placeholder="输入DLL的命名空间/类名" clearable show-word-limit maxlength="50">
+                                            <template #prepend>类名</template>
+                                        </el-input>
+                                    </div>
+                                    <div>
+                                        <el-input v-model="dllFrom.methodName" placeholder="输入方法名" clearable show-word-limit maxlength="50">
+                                            <template #prepend>方法名</template>
+                                        </el-input>
+                                    </div>
+                                    <div>
+                                        <el-input v-model="dllFrom.returnType" placeholder="输入返回值类型" clearable show-word-limit maxlength="50">
+                                            <template #prepend>返回值类型</template>
+                                        </el-input>
+                                    </div>
+                                    <div>
+                                        <el-input v-model="dllFrom.argsType" placeholder="参数类型" clearable show-word-limit maxlength="50">
+                                            <template #prepend>参数类型</template>
+                                        </el-input>
+                                    </div>
+                                    <div>
+                                        <el-input v-model="dllFrom.args" placeholder="参数列表,逗号分隔" clearable show-word-limit maxlength="50">
+                                            <template #prepend>参数</template>
+                                        </el-input>
+                                    </div>
+                                    <div>
+                                        <el-button type="primary" plain @click="InvokerDll" :loading>确认</el-button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -66,7 +105,7 @@
 
 <script lang="ts" setup>
 import utils from "@renderer/utils";
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 
 import AsideView from "@renderer/components/Aside.vue";
 
@@ -76,7 +115,14 @@ const currMenu = ref<string>("home");
 
 const loading = ref<boolean>(false);
 
-
+const dllFrom = reactive<any>({
+    className: "Test.Add",
+    methodName: "addNum",
+    args: "1,2",
+    dllName: "test",
+    returnType: "int",
+    argsType: "int,int",
+});
 
 /**
  * 新建窗口
@@ -98,12 +144,11 @@ const Test = async (): Promise<void> => {
 
 // 测试调用Dll
 const InvokerDll = async (): Promise<void> => {
-    for (let i = 0; i < 10; i++) {
-        // 异步的提示, 不等待返回值
-        utils.ipc("InvokerDll", [i ** 2, (i + 1) ** 2, i + 1 * 2]).then((res) => {
-            utils.message(res.msg, res.success);
-        });
-    }
+    const data = {...dllFrom};
+    data.args = data.args.split(",");
+    utils.ipc("InvokerDll", JSON.parse(JSON.stringify(data))).then((res) => {
+        utils.message(res.msg, res.success);
+    });
 };
 
 // 调用气泡消息
@@ -178,6 +223,13 @@ const childCallback = (data: any): void => {
         flex: 0 0 30%;
         box-sizing: border-box;
         margin-bottom: 5px;
+        & > div {
+            flex: 0 0 40%;
+            text-align: center;
+            & :last-child {
+                margin: 2px 0;
+            }
+        }
     }
 }
 </style>
