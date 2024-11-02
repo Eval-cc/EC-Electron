@@ -11,7 +11,7 @@
     "scripts": {
         "format": "prettier --write .",
         "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.vue --fix",
-        "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
+        "typecheck:node": "vue-tsc --noEmit -p tsconfig.node.json --composite false",
         "typecheck:web": "vue-tsc --noEmit -p tsconfig.web.json --composite false",
         "typecheck": "npm run typecheck:node && npm run typecheck:web",
         "start": "chcp 65001 && electron-vite preview",
@@ -45,11 +45,12 @@
         "papaparse": "^5.4.1",
         "pnpm": "^9.12.2",
         "socket.io-client": "^4.7.5",
+        "tsc": "^2.0.4",
         "vue-router": "^4.3.0",
+        "vue-tsc": "^2.1.10",
         "vuex": "^4.1.0"
     },
     "devDependencies": {
-        "electron": "^32.2.2",
         "@electron-toolkit/eslint-config": "^1.0.2",
         "@electron-toolkit/eslint-config-ts": "^1.0.1",
         "@electron-toolkit/tsconfig": "^1.0.1",
@@ -60,14 +61,14 @@
         "@vitejs/plugin-vue": "^5.0.3",
         "@vue/eslint-config-prettier": "^9.0.0",
         "@vue/eslint-config-typescript": "^12.0.0",
+        "electron": "^32.2.2",
         "electron-builder": "^22.6.0",
         "eslint": "^8.56.0",
         "eslint-plugin-vue": "^9.20.1",
         "less": "^4.2.0",
         "prettier": "^3.2.4",
-        "typescript": "^5.3.3",
+        "typescript": "^5.6.3",
         "vite": "^5.0.12",
-        "vue": "^3.4.15",
-        "vue-tsc": "^1.8.27"
+        "vue": "^3.4.15"
     }
 }
