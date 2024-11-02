@@ -56,19 +56,14 @@ class GlobalStatus {
      * @param win
      */
     public static loadConfig(win: BrowserWindow, core: Core): void {
-        // 设置窗口类型
-        win["win_type"] = "main";
-        GlobalStatus.winMain = win;
-        GlobalStatus.core = core;
-        // 保存窗口对象
-        GlobalStatus.childWin[win.id] = win;
         const configPath = ec_config_path;
         if (!fs.pathExistsSync(configPath)) {
             dialog
                 .showMessageBox({
                     type: "error",
                     title: "EC 框架错误",
-                    message: "框架配置文件不存在",
+                    message: "初始化框架配置失败",
+                    detail: `EC框架异常,配置文件不存在,请检查配置文件路径是否正确: ${configPath}`,
                     buttons: ["退出"],
                 })
                 .then(() => {
@@ -81,6 +76,13 @@ class GlobalStatus {
         if (!ec_is_test) {
             delete GlobalStatus.__config.dev_tool;
         }
+        // 设置窗口类型
+        win["win_type"] = "main";
+        GlobalStatus.winMain = win;
+        GlobalStatus.core = core;
+        GlobalStatus.control = new Controller();
+        // 保存窗口对象
+        GlobalStatus.childWin[win.id] = win;
     }
 
     /**

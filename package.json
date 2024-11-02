@@ -21,7 +21,7 @@
         "pre:load": "node ./src/bin/@ec_preload_child/index.mjs",
         "build": "npm run typecheck && electron-vite build && npm run pre:load",
         "postinstall": "electron-builder install-app-deps",
-        "build:unpack": "npm run build && electron-builder --dir",
+        "build:unpack": "npm run build && electron-builder --config=build-config/builder.json --dir",
         "build:win": "npm run build && npm run encryp && electron-builder --config=build-config/builder.json -w=nsis --win",
         "build:mac": "npm run build && npm run encryp && electron-builder --config=build-config/builder.json --mac",
         "build:linux": "npm run build && npm run encryp && electron-builder --config=build-config/builder.json --linux",

@@ -120,7 +120,7 @@ class Utils {
             ...options,
         })
             .then(() => {
-                options.ipc && store.dispatch("sendIPC", {fun: options.ipc, data: {...options}});
+                options.ipc && this.ipc(options.ipc, {...options});
                 options.confirm && options.confirm();
             })
             .catch(() => {

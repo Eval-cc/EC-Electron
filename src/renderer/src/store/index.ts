@@ -32,6 +32,8 @@ const store = createStore({
                     utils.message(message.msg, message.success);
                 } else if (message.data.type === "dialog") {
                     utils.messageBox(message.data.title, message.msg, message.data.options);
+                } else if (message.data.type === "loading") {
+                    utils.loading(message.msg, {}, {stamp: message.data.stamp || 2});
                 }
             });
         },
@@ -54,6 +56,8 @@ const store = createStore({
                     utils.message(message.msg, message.success);
                 } else if (message.data.type === "dialog") {
                     utils.messageBox(message.data.title, message.msg, message.data.options);
+                } else if (message.data.type === "loading") {
+                    utils.loading(message.msg, {}, {stamp: message.data.stamp || 2});
                 }
             });
         },

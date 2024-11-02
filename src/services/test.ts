@@ -119,13 +119,22 @@ export default class Test extends Service {
         );
     }
 
-    async CheckUpdate(_: IPCModelTypeMain): Promise<void> {
+    /**
+     * 检查更新
+     * @param _ 
+     * @returns 
+     */
+    async CheckUpdate(_: IPCModelTypeMain): Promise<IPCModelTypeRender> {
         if (!this.ecupdate) {
             this.ecupdate = new (await import("../plugins/ec-update")).default();
         }
-        this.ecupdate.CheckUpdate();
+        return this.ecupdate.CheckUpdate();
     }
 
+    /**
+     * 手动下载更新
+     * @param _ 
+     */
     DownLoadUpdate(_: IPCModelTypeMain): void {
         this.ecupdate!.DownloadUpdate();
     }

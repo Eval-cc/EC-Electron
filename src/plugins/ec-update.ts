@@ -9,6 +9,7 @@ import GlobalStatus from "../core/global";
 import {IPCResult} from "../core/IPCResult";
 import {app} from "electron";
 import EC_Logger from "./ec-log";
+import { IPCModelTypeRender } from "../core/models";
 
 class ECUpdate {
     logger: EC_Logger;
@@ -36,7 +37,7 @@ class ECUpdate {
 
         // 监听更新事件
         autoUpdater.on("checking-for-update", () => {
-            GlobalStatus.control.SendRenderMsg(IPCResult(true, "正在检查更新..."));
+            GlobalStatus.control.SendRenderMsg(IPCResult(true, "正在检查更新...", {type: "loading"}));
         });
 
         autoUpdater.on("update-available", (info: UpdateInfo) => {
@@ -63,7 +64,7 @@ class ECUpdate {
         });
 
         autoUpdater.on("error", (error) => {
-            GlobalStatus.control.SendRenderMsg(IPCResult(false, `自动更新出错:${error}`));
+            GlobalStatus.control.SendRenderMsg(IPCResult(false, `更新出错:${error}`, {type: "dialog"}));
         });
 
         autoUpdater.on("download-progress", (progressObj) => {
@@ -87,12 +88,28 @@ class ECUpdate {
     }
 
     /** 手动检查更新 */
-    CheckUpdate() {
-        if (!app.isPackaged) {
-            return IPCResult(false, "开发环境无法检查更新,请先打包");
-        }
-        this.DownloadUpdate();
-        return IPCResult(true, "开始检查更新...");
+    CheckUpdate(): Promise<IPCModelTypeRender> {
+        // 检查是否已检测到可用更新
+        return new Promise((resolve, reject) => {
+            autoUpdater
+                .checkForUpdates()
+                .then((updateInfo) => {
+                    if (updateInfo && updateInfo.updateInfo && updateInfo.updateInfo.version) {
+                        resolve(
+                            IPCResult(true, "有可用的更新", {
+                                type: "dialog",
+                                title: "更新提示",
+                                options: {dangerouslyUseHTMLString: true, type: "success", "show-close": false, closeOnClickModal: false, closeOnPressEscape: false, ipc: "DownLoadUpdate"},
+                            }),
+                        );
+                    } else {
+                        resolve(IPCResult(false, "没有可用的更新"));
+                    }
+                })
+                .catch((error) => {
+                    reject(IPCResult(false, `检查更新失败: ${error}`));
+                });
+        });
     }
 
     /** 下载更新 */

@@ -164,9 +164,7 @@ const InvokerNotify = () => {
 // aside组件的回调
 const childCallback = (data: any): void => {
     if (data === "restart") {
-        utils.ipc("Restart").then((res) => {
-            utils.message(res.msg, res.success);
-        });
+        utils.ipc("Restart");
     } else if (data === "exit") {
         utils.ipc("Exit");
     } else if (data === "update") {

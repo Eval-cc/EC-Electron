@@ -10,20 +10,17 @@ import TrayMgr from "../plugins/ec-tray";
 import {IPCResult} from "./IPCResult";
 import {ec_is_test} from "../plugins/ec-proce";
 import GlobalStatus from "./global";
-import Controller from "./controller";
 import EC_Event from "../lib/ec-event";
 import EC_Shortcut from "../lib/ec-shortcut";
 
 class Core {
     private icon: any;
-    public contr: Controller;
     constructor(win: BrowserWindow, icon: any) {
         // 初始化全局配置
         GlobalStatus.loadConfig(win, this);
         new EC_Event();
         new EC_Shortcut();
         this.icon = icon;
-        this.contr = new Controller();
         if (!GlobalStatus.config.app_name) {
             win.show();
             win.title = "EC框架 - 请设置应用名称";
@@ -35,15 +32,11 @@ class Core {
                 win.webContents.toggleDevTools();
             }
         }
-        // 当窗口首次创建时,创建托盘图标
-        // if (!win.isVisible()) {
-        // }
-
         GlobalStatus.tray = new TrayMgr();
         win.title = GlobalStatus.config.app_name;
         // 基础的加载完成之后再显示窗口
         win.show();
-        this.contr.SendRenderMsg({success: true, msg: "", data: {winID: win.id, type: "winID"}});
+        GlobalStatus.control.SendRenderMsg({success: true, msg: "", data: {winID: win.id, type: "winID"}});
     }
 
     /**
@@ -119,7 +112,7 @@ class Core {
             if (ec_is_test && !win.webContents.isDevToolsOpened() && GlobalStatus.config.dev_tool?.active) {
                 win.webContents.toggleDevTools();
             }
-            this.contr.SendRenderMsgChild(win, {success: true, msg: "", data: {winID: win.id, type: "winID"}});
+            GlobalStatus.control.SendRenderMsgChild(win, {success: true, msg: "", data: {winID: win.id, type: "winID"}});
         });
 
         win.webContents.setWindowOpenHandler((details) => {

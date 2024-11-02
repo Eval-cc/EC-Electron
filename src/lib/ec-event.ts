@@ -36,6 +36,7 @@ class EC_Event {
                         type: "warning",
                         title: "警告",
                         message: "EC框架异常,见日志文件",
+                        detail: `EC框架异常,${error.stack}`,
                         buttons: ["退出"],
                     })
                     .then(() => {

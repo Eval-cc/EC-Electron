@@ -29,8 +29,7 @@
             "!src/bin/@zfs_encryp/*",
             "!src/bin/@zfs_preload_child/*",
             "!build-config/*",
-            "!zfsLog/*",
-            "!threeZFS/*",
+            "!ec-logs/*",
             "!test_1.dll",
             "!test_2.dll"
         ]
