@@ -5,7 +5,7 @@
  */
 import {ElMessage, ElLoading, ElMessageBox} from "element-plus";
 import type {MessageHandler, MessageOptions} from "element-plus";
-import {MsgBoxType, MsgBoxPromptType, LoadingType, IPCModelTypeRender} from "@renderer/models/model";
+import {MsgBoxType, MsgBoxPromptType, LoadingType, IPCModelTypeRender} from "@renderer/models";
 import store from "@renderer/store";
 
 class Utils {

@@ -1,5 +1,5 @@
 import {createStore} from "vuex";
-import {IPCModelTypeRender, IPCModelTypeMain} from "@renderer/models/model";
+import {IPCModelTypeRender, IPCModelTypeMain} from "@renderer/models";
 import utils from "@renderer/utils";
 
 const store = createStore({
