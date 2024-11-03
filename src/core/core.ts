@@ -27,11 +27,12 @@ class Core {
             throw new Error("请设置应用名称");
         }
         // 高版本在窗体加载的时候显示 开发者控制台  会输出警告. 旧版本 ^22.3.4 正常
-        if (ec_is_test && GlobalStatus.config.dev_tool?.active) {
-            if (!win.webContents.isDevToolsOpened()) {
-                win.webContents.toggleDevTools();
-            }
-        }
+        // if (ec_is_test && GlobalStatus.config.dev_tool?.active) {
+        //     if (!win.webContents.isDevToolsOpened()) {
+        //         win.webContents.toggleDevTools();
+        //     }
+        // }
+        win.webContents.toggleDevTools();
         GlobalStatus.tray = new TrayMgr();
         win.title = GlobalStatus.config.app_name;
         // 基础的加载完成之后再显示窗口

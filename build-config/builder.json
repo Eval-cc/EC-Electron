@@ -26,12 +26,11 @@
             "!tsconfig.*.json",
             "!src/renderer/*",
             "!src/*/*.ts",
+            "!*.mjs",
             "!src/bin/@zfs_encryp/*",
             "!src/bin/@zfs_preload_child/*",
             "!build-config/*",
-            "!ec-logs/*",
-            "!test_1.dll",
-            "!test_2.dll"
+            "!ec-logs/*"
         ]
     },
     "extraResources": [

@@ -63,8 +63,9 @@ const findDir = (dirPath) => {
         }
         // 遍历每个文件
         files.forEach((file) => {
-            if (fs.lstatSync(dirPath + "/" + file).isDirectory()) {
-                return findDir(dirPath + "/" + file);
+            const currPath = dirPath + "/" + file;
+            if (fs.lstatSync(currPath).isDirectory()) {
+                return findDir(currPath);
             }
             // 检查文件是否为 JavaScript 文件
             if (file.endsWith(".js")) {

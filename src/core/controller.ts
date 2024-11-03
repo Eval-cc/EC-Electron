@@ -44,14 +44,14 @@ class Controller {
     /**
      * 注册服务
      */
-    RegisterService = async () => {
+    RegisterService() {
         try {
-            [await import("../services/test")].forEach((model) => new model.default());
+            import("../services/test").then((model) => new model.default());
         } catch (error: any) {
             this.logger.error("注册服务时出错:" + error);
             throw new Error("注册服务时出错:" + error.stack);
         }
-    };
+    }
 
     /**
      * 主动向页面推送消息

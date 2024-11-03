@@ -96,9 +96,11 @@ const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
 const handleChange: UploadProps["onChange"] = (uploadFile, uploadFiles) => {
     // 检查文件类型
     if (uploadFile.raw?.type.startsWith("image/")) {
-        utils.ipc("ImageToBase64", {path: uploadFile.raw?.path}).then((res) => {
-            fileList.value.find((item) => item.uid === uploadFile.uid)!.url = res.data.url;
-        });
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            fileList.value.find((item) => item.uid === uploadFile.uid)!.url = e.target!.result as string;
+        };
+        reader.readAsDataURL(uploadFile.raw);
     }
     console.log(uploadFile, uploadFiles);
 };

@@ -6,10 +6,8 @@
 
 import {contextBridge, ipcRenderer} from "electron";
 import {electronAPI} from "@electron-toolkit/preload";
-
 if (process.contextIsolated) {
     try {
-        contextBridge.exposeInMainWorld("win_type", "main");
         contextBridge.exposeInMainWorld("electron", electronAPI);
         contextBridge.exposeInMainWorld("IPCcontrol", {
             IPCcontrol: (args: any) => ipcRenderer.invoke("handleIPC", args),

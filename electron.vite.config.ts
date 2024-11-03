@@ -1,13 +1,17 @@
 import {resolve} from "path";
-import {defineConfig, externalizeDepsPlugin} from "electron-vite";
+import {bytecodePlugin, defineConfig, externalizeDepsPlugin} from "electron-vite";
 import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
     main: {
-        plugins: [externalizeDepsPlugin()],
+        /**
+         * 有箭头函数需要转换的设置 transformArrowFunctions 为 false
+         * 是否保留编译为字节码文件的 bundle 文件。removeBundleJS
+         */
+        plugins: [externalizeDepsPlugin(), bytecodePlugin({transformArrowFunctions: false, removeBundleJS: true})],
     },
     preload: {
-        plugins: [externalizeDepsPlugin()],
+        plugins: [externalizeDepsPlugin(), bytecodePlugin({transformArrowFunctions: false, removeBundleJS: true})],
     },
     renderer: {
         resolve: {
@@ -15,6 +19,6 @@ export default defineConfig({
                 "@renderer": resolve("src/renderer/src"),
             },
         },
-        plugins: [vue()],
+        plugins: [vue(), externalizeDepsPlugin(), bytecodePlugin({transformArrowFunctions: false, removeBundleJS: true})],
     },
 });
