@@ -1,0 +1,23 @@
+{
+    "name": "el-renderer-electron",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {},
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@element-plus/icons-vue": "^2.3.1",
+        "@vue/eslint-config-prettier": "^9.0.0",
+        "@vue/eslint-config-typescript": "^12.0.0",
+        "element-plus": "^2.8.7",
+        "eslint-plugin-vue": "^9.30.0",
+        "pnpm": "^9.12.3",
+        "sortablejs": "^1.15.3",
+        "vite": "^5.4.10",
+        "vue": "^3.5.12",
+        "vue-router": "^4.4.5",
+        "vuex": "^4.1.0"
+    }
+}

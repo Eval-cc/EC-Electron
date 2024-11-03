@@ -47,8 +47,9 @@ class Controller {
     RegisterService = async () => {
         try {
             [await import("../services/test")].forEach((model) => new model.default());
-        } catch (error) {
+        } catch (error: any) {
             this.logger.error("注册服务时出错:" + error);
+            throw new Error("注册服务时出错:" + error.stack);
         }
     };
 
@@ -85,7 +86,7 @@ class Controller {
 
     /**
      * 给所有的窗体推送消息
-     * @param msg 
+     * @param msg
      */
     SendRenderMsgToAll = (msg: IPCModelTypeRender) => {
         // 如果没有指定类型,那么默认就是普通的弹窗消息

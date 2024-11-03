@@ -30,25 +30,20 @@
     "dependencies": {
         "@electron-toolkit/preload": "^3.0.0",
         "@electron-toolkit/utils": "^3.0.0",
+        "@vitejs/plugin-vue": "^5.0.3",
         "adm-zip": "^0.5.12",
         "electron-edge-js": "^33.0.0",
         "electron-log": "^5.1.2",
         "electron-updater": "^6.1.7",
         "electron-vite": "^2.3.0",
-        "element-plus": "^2.7.2",
-        "fast-csv": "^5.0.1",
         "iconv-lite": "^0.6.3",
         "javascript-obfuscator": "^4.1.0",
         "koffi": "^2.9.1",
         "mysql2": "^3.9.4",
         "node-notifier": "^10.0.1",
-        "papaparse": "^5.4.1",
         "pnpm": "^9.12.2",
-        "socket.io-client": "^4.7.5",
         "tsc": "^2.0.4",
-        "vue-router": "^4.3.0",
-        "vue-tsc": "^2.1.10",
-        "vuex": "^4.1.0"
+        "vue-tsc": "^2.1.10"
     },
     "devDependencies": {
         "@electron-toolkit/eslint-config": "^1.0.2",
@@ -58,17 +53,11 @@
         "@types/adm-zip": "^0.5.5",
         "@types/node": "^18.19.9",
         "@types/node-notifier": "^8.0.5",
-        "@vitejs/plugin-vue": "^5.0.3",
-        "@vue/eslint-config-prettier": "^9.0.0",
-        "@vue/eslint-config-typescript": "^12.0.0",
-        "electron": "^32.2.2",
+        "electron": "^29.4.6",
         "electron-builder": "^22.6.0",
         "eslint": "^8.56.0",
-        "eslint-plugin-vue": "^9.20.1",
         "less": "^4.2.0",
         "prettier": "^3.2.4",
-        "typescript": "^5.6.3",
-        "vite": "^5.0.12",
-        "vue": "^3.4.15"
+        "typescript": "^5.6.3"
     }
 }

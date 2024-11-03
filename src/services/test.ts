@@ -13,6 +13,8 @@ import {shell} from "electron";
 import ECUpdate from "../plugins/ec-update";
 import EC_DLL from "../plugins/ec-dll";
 
+import fs from "fs-extra";
+
 export default class Test extends Service {
     logger: EC_Logger;
     ecupdate?: ECUpdate;
@@ -121,8 +123,8 @@ export default class Test extends Service {
 
     /**
      * 检查更新
-     * @param _ 
-     * @returns 
+     * @param _
+     * @returns
      */
     async CheckUpdate(_: IPCModelTypeMain): Promise<IPCModelTypeRender> {
         if (!this.ecupdate) {
@@ -133,9 +135,27 @@ export default class Test extends Service {
 
     /**
      * 手动下载更新
-     * @param _ 
+     * @param _
      */
     DownLoadUpdate(_: IPCModelTypeMain): void {
         this.ecupdate!.DownloadUpdate();
+    }
+
+    /**
+     * 图片转base64
+     * @param args 
+     * @returns 
+     */
+    ImageToBase64(args: IPCModelTypeMain): IPCModelTypeRender {
+        if (!args.data) {
+            return IPCResult(false, "未传入必要参数:图片路径");
+        }
+        const imgData = fs.readFileSync(args.data.path);
+        // 将二进制数据转换为 Base64 字符串
+        const base64Image = imgData.toString("base64");
+        // 添加 MIME 类型前缀
+        const base64String = `data:image/png;base64,${base64Image}`;
+
+        return IPCResult(true, "图片转换成功", {url: base64String});
     }
 }
