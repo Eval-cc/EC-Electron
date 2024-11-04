@@ -1,45 +1,98 @@
-appId: com.electron.app
-productName: ec-electron
+appId: com.ec.eval
+productName: EC Framework
+copyright: © 2024 eval. All rights reserved.
 directories:
-  buildResources: build
+    output: dist
+    buildResources: build
 files:
-  - '!**/.vscode/*'
-  - '!src/*'
-  - '!electron.vite.config.{js,ts,mjs,cjs}'
-  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
-  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
-  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+    - "!**/.vscode/*"
+    - "!src/*"
+    - "!electron.vite.config.{js,ts,mjs,cjs}"
+    - "!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}"
+    - "!{.env,.env.*,.npmrc,pnpm-lock.yaml}"
+    - "!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
+    - "!node_modules/*"
+    - "!resources/texture/*"
+    - "!.vscode/*"
+    - "!*.eslintignore"
+    - "!*.editorconfig"
+    - "!pnpm-lock.yml"
+    - "!*.yaml"
+    - "!*.npmrc"
+    - "!*.md"
+    - "!.prettierignore"
+    - "!.prettierrc"
+    - "!tsconfig.json"
+    - "!tsconfig.*.json"
+    - "!src/renderer/*"
+    - "!src/*/*.ts"
+    - "!*.mjs"
+    - "!src/bin/@zfs_encryp/*"
+    - "!src/bin/@zfs_preload_child/*"
+    - "!build-config/*"
+    - "!ec-logs/*"
+# 指定保留的语言
+# electronLanguages:
+#       - en
+#       - zh-CN
+# 需要额外包含的文件或目录
+extraResources:
+    - from: "build/extraResources/"
+      to: "extraResources"
+    - from: "resources/assets/"
+      to: "assets/"
+    - from: "src/bin/ec.config.json"
+      to: "ec.config.json"
+asar: true
 asarUnpack:
-  - resources/**
+    - "**/node_modules/electron/**/*"
 win:
-  executableName: ec-electron
+    icon: ./resources/assets/icon.ico
+    executableName: EC 框架 @Eval
+    # 管理员
+    requestedExecutionLevel: requireAdministrator
 nsis:
-  artifactName: ${name}-${version}-setup.${ext}
-  shortcutName: ${productName}
-  uninstallDisplayName: EC框架卸载程序
-  createDesktopShortcut: always
+    artifactName: ${productName}-${version}-setup.${ext}
+    shortcutName: ${productName}
+    uninstallDisplayName: EC框架卸载程序
+    # 创建桌面图标
+    createDesktopShortcut: always
+    # 创建开始菜单图标
+    createStartMenuShortcut: true
+    # 禁止一键自动安装
+    oneClick: false
+    #  允许请求提升。 如果为false，则用户必须使用提升的权限重新启动安装程序。
+    allowElevation: true
+    # 允许修改安装目录
+    allowToChangeInstallationDirectory: true
+    # 安装图标
+    installerIcon: ./resources/assets/icon.ico
+    # 卸载图标
+    uninstallerIcon: ./resources/assets/icon.ico
+    # 安装时头部图标
+    installerHeaderIcon: ./resources/assets/icon.ico
 mac:
-  entitlementsInherit: build/entitlements.mac.plist
-  extendInfo:
-    - NSCameraUsageDescription: Application requests access to the device's camera.
-    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
-    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
-    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
-  notarize: false
+    entitlementsInherit: build/entitlements.mac.plist
+    extendInfo:
+        - NSCameraUsageDescription: Application requests access to the device's camera.
+        - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
+        - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
+        - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+    # notarize: false
 dmg:
-  artifactName: ${name}-${version}.${ext}
+    artifactName: ${productName}-${version}.${ext}
 linux:
-  target:
-    - AppImage
-    - snap
-    - deb
-  maintainer: electronjs.org
-  category: Utility
+    target:
+        - AppImage
+        - snap
+        - deb
+    maintainer: electronjs.org
+    category: Utility
 appImage:
-  artifactName: ${name}-${version}.${ext}
+    artifactName: ${productName}-${version}.${ext}
 npmRebuild: false
 publish:
-  provider: generic
-  url: http://localhost:8089/latest.json
+    provider: generic
+    url: http://localhost:8089/latest.json
 electronDownload:
-  mirror: https://npmmirror.com/mirrors/electron/
+    mirror: https://npmmirror.com/mirrors/electron/

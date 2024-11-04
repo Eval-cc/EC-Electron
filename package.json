@@ -4,7 +4,7 @@
     "description": "EC框架 一个基于Electron的跨平台桌面应用",
     "main": "./out/main/index.js",
     "author": {
-        "name": "eval",
+        "name": "@eval",
         "email": "eval-email@qq.com"
     },
     "homepage": "https://space.bilibili.com/389439013",
@@ -22,10 +22,10 @@
         "build": "npm run typecheck && electron-vite build && npm run pre:load",
         "postinstall": "electron-builder install-app-deps",
         "build:unpack": "npm run build && electron-builder --config=build-config/builder.json --dir",
-        "build:win": "npm run build && npm run encryp && electron-builder --config=build-config/builder.json -w=nsis --win",
+        "build:win": "npm run build && npm run encryp && electron-builder --config -w=nsis --win",
         "build:mac": "npm run build && npm run encryp && electron-builder --config=build-config/builder.json --mac",
         "build:linux": "npm run build && npm run encryp && electron-builder --config=build-config/builder.json --linux",
-        "build:wz": "npm run build  && npm run encryp && electron-builder  --config=build-config/builder.json  -w=7z --win"
+        "build:wz": "npm run build  && npm run encryp && electron-builder  --config  -w=7z --win"
     },
     "dependencies": {
         "@electron-toolkit/preload": "^3.0.0",

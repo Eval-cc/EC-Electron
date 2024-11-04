@@ -19,6 +19,6 @@ export default defineConfig({
                 "@renderer": resolve("src/renderer/src"),
             },
         },
-        plugins: [vue(), externalizeDepsPlugin(), bytecodePlugin({transformArrowFunctions: false, removeBundleJS: true})],
+        plugins: [vue(),externalizeDepsPlugin(), bytecodePlugin({transformArrowFunctions: false, removeBundleJS: true})],
     },
 });

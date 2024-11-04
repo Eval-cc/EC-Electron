@@ -56,7 +56,8 @@
         "installerHeaderIcon": "./resources/assets/icon.ico",
         "createDesktopShortcut": true,
         "createStartMenuShortcut": true,
-        "shortcutName": "EC框架"
+        "shortcutName": "EC框架",
+        "uninstallDisplayName": "EC框架卸载程序"
     },
     "mac": {
         "icon": "./resources/assets/icon.ico",
