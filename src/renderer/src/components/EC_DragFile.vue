@@ -14,12 +14,17 @@
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :on-change="handleChange"
-            :limit="3"
+            :limit="maxUpload"
             :on-exceed="handleExceed"
             :auto-upload="false"
         >
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-            <div class="el-upload__text">拖拽 或者 <em>点击</em></div>
+            <div class="el-upload__text">
+                拖拽 或者 <em>点击</em>
+                <p class="el-upload__tip">PS 1: 程序使用管理员权限启动的时候,文件是拖不进来的</p>
+                <p class="el-upload__tip">PS 2: 选中文件之后可以预览</p>
+                <p class="el-upload__tip">PS 3: 框架默认只能选择{{ maxUpload - fileList.length }}/{{ maxUpload }}个文件</p>
+            </div>
         </el-upload>
         <ul class="el-upload__list" v-if="fileList.length">
             <li v-for="(file, index) in fileList" :key="index" class="el-upload__list-item">
@@ -60,7 +65,8 @@ import type {UploadProps, UploadUserFile} from "element-plus";
 import utils from "@renderer/utils";
 
 const fileList = ref<UploadUserFile[]>([]);
-
+// 默认限制的上传数量
+const maxUpload = ref(10);
 /**
  * 	文件列表移除文件时的钩子
  * @param file
@@ -85,7 +91,30 @@ const handlePreview: UploadProps["onPreview"] = (uploadFile) => {
  */
 const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
     console.log(files, uploadFiles);
-    utils.message("文件数量超出限制");
+    const diffCount = maxUpload.value - fileList.value.length;
+    if (diffCount == 0) {
+        utils.message("文件数量超出限制");
+        return;
+    }
+    files
+        .slice(0, diffCount)
+        .filter(Boolean)
+        .forEach((file) => {
+            file["raw"] = file;
+            if (file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    file["raw"].url = e.target!.result as string;
+                    fileList.value.push(file);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                fileList.value.push(file);
+            }
+        });
+    if (files.length - diffCount > 0) {
+        utils.message(`舍弃了${files.length - diffCount}个文件`);
+    }
 };
 
 /**
@@ -122,8 +151,29 @@ const rmFile = (index: number) => {
         max-width: 50%;
         min-width: 50%;
     }
+    .el-upload__tip {
+        color: red;
+        font-size: 14px;
+        font-family: cursive;
+        word-break: break-all;
+        text-align: left;
+    }
     .el-upload__list {
         padding: 0 10px;
+        height: 240px;
+        overflow: auto;
+        overflow-x: hidden;
+        width: 100%;
+        &::-webkit-scrollbar {
+            width: 5px;
+        }
+        &::-webkit-scrollbar-button,
+        &::-webkit-scrollbar-thumb {
+            background-image: linear-gradient(to bottom, #438285, #54b7bb);
+            &:hover {
+                cursor: n-resize;
+            }
+        }
         .el-upload__list-item {
             font-size: 12px;
             word-break: break-all;
@@ -143,6 +193,7 @@ const rmFile = (index: number) => {
                 flex: 1;
                 user-select: none;
                 padding: 3px 5px;
+                word-break: break-all;
                 span {
                     display: inline-block;
                     width: 100%;
@@ -157,7 +208,7 @@ const rmFile = (index: number) => {
                 color: #999;
                 margin-top: 5px;
                 font-size: 18px;
-
+                min-width: 20px;
                 &:hover {
                     color: red;
                 }

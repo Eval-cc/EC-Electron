@@ -5,6 +5,6 @@
  */
 
 import {IPCModelTypeRender} from "../core/models";
-export const IPCResult = (success: boolean, msg: string, data: any = {}): IPCModelTypeRender => {
+export const IPCResult = (success: boolean, msg: string, data: IPCModelTypeRender["data"] = {type: "tip"}): IPCModelTypeRender => {
     return {success, msg, data};
 };

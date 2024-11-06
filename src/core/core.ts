@@ -26,7 +26,7 @@ class Core {
             win.title = "EC框架 - 请设置应用名称";
             throw new Error("请设置应用名称");
         }
-        // 高版本在窗体加载的时候显示 开发者控制台  会输出警告. 旧版本 ^22.3.4 正常
+        
         if (ec_is_test && GlobalStatus.config.dev_tool?.active) {
             if (!win.webContents.isDevToolsOpened()) {
                 win.webContents.toggleDevTools();
@@ -34,7 +34,7 @@ class Core {
         }
         // 托盘
         GlobalStatus.tray = new TrayMgr();
-        win.title = GlobalStatus.config.app_name;
+        win.title = GlobalStatus.config.app_name as string;
         // 基础的加载完成之后再显示窗口
         win.show();
         GlobalStatus.control.SendRenderMsg({success: true, msg: "", data: {winID: win.id, type: "winID"}});
@@ -53,6 +53,7 @@ class Core {
         if (!childWin) {
             return;
         }
+        delete GlobalStatus.childWin[winID];
         childWin.destroy();
     }
 
@@ -95,7 +96,7 @@ class Core {
             parent: GlobalStatus.winMain,
             ...(process.platform === "linux" ? {icon} : {icon}),
             webPreferences: {
-                preload: EC_Join(__dirname, "../preload-child/child-preload.js"), // 加载预加载脚本
+                preload: EC_Join(__dirname, "../preload/child-preload.js"), // 加载预加载脚本
                 contextIsolation: true,
                 sandbox: false,
             },
@@ -123,7 +124,7 @@ class Core {
 
         // 关闭子窗口之后,从主进程的窗口管理里面去除
         win.on("close", () => {
-            delete GlobalStatus.childWin[win.id];
+            // delete GlobalStatus.childWin[win.id];
         });
         // 如果没有传入地址,那就默认新增小工具窗口
         if (!url) {

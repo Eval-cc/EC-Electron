@@ -9,8 +9,10 @@ import {MsgBoxType, MsgBoxPromptType, LoadingType, IPCModelTypeRender} from "@re
 import store from "@renderer/store";
 
 class Utils {
-    private debounTime: any; // 防抖定时器
-    constructor() {}
+    private debounTime: Record<string, any>; // 防抖定时器
+    constructor() {
+        this.debounTime = {};
+    }
 
     /**
      * 调用主进程方法
@@ -20,6 +22,33 @@ class Utils {
      */
     ipc = (method: string, args?: any): Promise<IPCModelTypeRender> => {
         return store.dispatch("EC_Main_IPC_Send", {fun: method, data: args}) as Promise<IPCModelTypeRender>;
+    };
+
+    /**
+     * 增加全局监听
+     * @param name
+     * @param callback
+     */
+    on = (name: string, callback: Function) => {
+        store.dispatch("ec_on", {name, fn: callback});
+    };
+
+    /**
+     * 移除监听
+     * @param name
+     */
+    off = (name: string) => {
+        store.dispatch("ec_off", {name});
+    };
+
+    /**
+     * 触发事件
+     * @param name
+     * @param data
+     * @returns
+     */
+    emit = (name: string, data: any) => {
+        store.dispatch("ec_emit", {name, data});
     };
 
     /**
@@ -60,6 +89,7 @@ class Utils {
      * @param text
      * @param options
      * @param timeout  延时自动关闭/秒
+     * @returns 返回当前loading 实例
      */
     loading(
         text: string,
@@ -190,20 +220,21 @@ class Utils {
 
     /**
      * 事件防抖
+     * @param key 事件的key
      * @param callback
      * @param stamp  防抖的间隔,默认 0.5秒 ,
      * @returns
      */
-    Debouncing = (callback: Function, stamp: number = 0.5) => {
+    Debouncing = (key: string, callback: Function, stamp: number = 0.5) => {
         if (stamp >= 100) {
             this.message(`请注意,当前传入的定时器执行时间是${stamp}秒`, {type: "warning"});
         }
         if (!callback) return;
         // 清除防抖定时器
-        if (this.debounTime) {
-            clearTimeout(this.debounTime);
+        if (this.debounTime[key]) {
+            clearTimeout(this.debounTime[key]);
         }
-        this.debounTime = setTimeout(() => {
+        this.debounTime[key] = setTimeout(() => {
             callback && callback();
         }, stamp * 1000);
     };
@@ -254,6 +285,47 @@ class Utils {
         const second = String(date.getSeconds()).padStart(2, "0");
 
         return `${[year, month, day].join(end_1)} ${[hour, minute, second].join(end_2)}`;
+    };
+
+    /**
+     * 休眠
+     * @param time x秒 单位秒
+     * @returns
+     */
+    sleep = (time: number) => {
+        return new Promise((resolve) => setTimeout(resolve, time * 1000));
+    };
+
+    /**
+     * 全局数组动画
+     * @param targetNumber
+     * @param duration
+     */
+    animateNumber = (targetObj: any, key: string, targetNumber: number, duration: number): void => {
+        // 初始数字为 0
+        const startNumber = 0;
+        // 获取动画开始的时间
+        const startTime = performance.now();
+
+        // 定义更新函数
+        function update(): void {
+            // 获取当前时间
+            const currentTime = performance.now();
+            // 计算经过的时间
+            const elapsed = currentTime - startTime;
+            // 计算进度，确保不超过 1
+            const progress = Math.min(elapsed / duration, 1);
+
+            // 更新 Edata.created_at 的值
+            targetObj[key] = Math.floor(startNumber + (targetNumber - startNumber) * progress);
+
+            // 如果动画尚未结束，继续请求下一帧
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+        // 启动动画
+        requestAnimationFrame(update);
     };
 }
 Utils.toString = () => "[class Utils]";

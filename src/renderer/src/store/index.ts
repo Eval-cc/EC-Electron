@@ -9,6 +9,8 @@ const store = createStore({
             // 主进程窗体对象
             mainWin: null as any,
             childID: "" as string,
+            // 事件池
+            ECEVent: {} as Record<string, Function[]>,
         };
     },
     mutations: {
@@ -34,6 +36,9 @@ const store = createStore({
                     utils.messageBox(message.data.title, message.msg, message.data.options);
                 } else if (message.data.type === "loading") {
                     utils.loading(message.msg, {}, {stamp: message.data.stamp || 2});
+                } else if (message.data.type === "ec-timer") {
+                    // 调用 emit 方法
+                    utils.emit("ec-timer", {msg: message.msg, data: message.data});
                 }
             });
         },
@@ -58,8 +63,45 @@ const store = createStore({
                     utils.messageBox(message.data.title, message.msg, message.data.options);
                 } else if (message.data.type === "loading") {
                     utils.loading(message.msg, {}, {stamp: message.data.stamp || 2});
+                } else if (message.data.type === "ec-timer") {
+                    utils.emit("ec-timer", message);
                 }
             });
+        },
+
+        /**
+         * 追加事件
+         * @param state
+         * @param value
+         */
+        addListener(state, {name, fn}: {name: string; fn: Function}) {
+            if (!state.ECEVent[name]) {
+                state.ECEVent[name] = [];
+            }
+            state.ECEVent[name].push(fn);
+        },
+
+        /**
+         * 移除事件
+         * @param state
+         * @param value
+         */
+        removeListener(state, {name}: {name: string}) {
+            delete state.ECEVent[name];
+        },
+
+        /**
+         * 触发事件
+         * @param state
+         * @param value
+         */
+        triggerListener(state, {name, data}: {name: string; data: any}) {
+            const fn = state.ECEVent[name];
+            if (fn) {
+                fn.forEach((fun) => {
+                    fun.call(this, data);
+                });
+            }
         },
     },
     actions: {
@@ -88,6 +130,33 @@ const store = createStore({
                 }
                 return {success: false, msg: "出错了,请重启!"};
             }
+        },
+
+        /**
+         * 开始监听事件
+         * @param param0
+         * @param value
+         */
+        ec_on({commit}, value: any) {
+            commit("addListener", {name: value.name, fn: value.fn});
+        },
+
+        /**
+         * 移除监听
+         * @param param0
+         * @param value
+         */
+        ec_off({commit}, value: any) {
+            commit("removeListener", {name: value.name});
+        },
+
+        /**
+         * 触发事件
+         * @param param0
+         * @param param1
+         */
+        ec_emit({commit}, {name, data}) {
+            commit("triggerListener", {name, data});
         },
     },
     getters: {},

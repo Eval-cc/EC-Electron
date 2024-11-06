@@ -1,7 +1,7 @@
 {
     "name": "ec-electron",
     "version": "1.0.0",
-    "description": "EC框架 一个基于Electron的跨平台桌面应用",
+    "description": "EC框架 一个基于Electron的跨平台桌面应用框架",
     "main": "./out/main/index.js",
     "author": {
         "name": "@eval",
@@ -21,7 +21,7 @@
         "pre:load": "node ./src/bin/@ec_preload_child/index.mjs",
         "build": "npm run typecheck && electron-vite build && npm run pre:load",
         "postinstall": "electron-builder install-app-deps",
-        "build:unpack": "npm run build && electron-builder --config=build-config/builder.json --dir",
+        "build:unpack": "npm run build && electron-builder --config --dir",
         "build:win": "npm run build && npm run encryp && electron-builder --config -w=nsis --win",
         "build:mac": "npm run build && npm run encryp && electron-builder --config=build-config/builder.json --mac",
         "build:linux": "npm run build && npm run encryp && electron-builder --config=build-config/builder.json --linux",
@@ -30,6 +30,7 @@
     "dependencies": {
         "@electron-toolkit/preload": "^3.0.0",
         "@electron-toolkit/utils": "^3.0.0",
+        "@types/node-cron": "^3.0.11",
         "@vitejs/plugin-vue": "^5.0.3",
         "adm-zip": "^0.5.12",
         "electron-edge-js": "^33.0.0",
@@ -40,6 +41,7 @@
         "javascript-obfuscator": "^4.1.0",
         "koffi": "^2.9.1",
         "mysql2": "^3.9.4",
+        "node-cron": "^3.0.3",
         "node-notifier": "^10.0.1",
         "pnpm": "^9.12.2",
         "tsc": "^2.0.4",

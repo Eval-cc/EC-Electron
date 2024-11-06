@@ -3,7 +3,8 @@
  * @author Eval
  * @description 模型层
  */
-import {IpcMainInvokeEvent as IpcMainInvokeEventType} from "electron";
+import type {IpcMainInvokeEvent as IpcMainInvokeEventType} from "electron";
+import type {ScheduledTask} from "node-cron";
 
 /**
  * IPC通信模型--返回给渲染进程
@@ -14,7 +15,10 @@ export interface IPCModelTypeRender {
     /** 返回的消息 */
     msg: string;
     /** 传递的参数 */
-    data?: any;
+    data?: {
+        type?: "tip" | "ec-timer" | "dialog" | "loading" | "winID";
+        [key: string]: any; // 允许任意其他属性
+    };
 }
 
 /**
@@ -104,7 +108,7 @@ export interface ECDllModelType {
     /** 动态链接库名称 */
     dllName: string;
     /** 类名 */
-    className:string;
+    className: string;
     /** 方法名 */
     methodName: string;
     /** 返回值类型 */
@@ -113,4 +117,37 @@ export interface ECDllModelType {
     argsType: string[];
     /** 参数列表 */
     args: any[];
+}
+
+/**
+ * 读取方法的类型声明
+ */
+export interface ECReadFileModelType {
+    /** 读取文件的路径 */
+    path: string;
+}
+
+/**
+ * 写入方法的类型声明
+ */
+export interface ECWriteFileModelType {
+    /** 需要写入的内容 */
+    content: Object;
+    /** 写入文件的路径 */
+    path: string;
+    /** 配置参数 */
+    options?: {
+        /** r:只读, w:可读可写, a:追加 */
+        write: "r" | "w" | "a";
+    };
+}
+
+/**
+ * EC框架 定时任务的类型声明
+ */
+export interface ECScheduledTask extends ScheduledTask {
+    /**
+     * 任务名称
+     */
+    name: string;
 }

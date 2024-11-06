@@ -10,7 +10,7 @@ import path from "path";
 
 function compileTypeScript() {
     const tsFilePath = path.join(process.cwd(), "src/preload/child-preload.ts");
-    const outDir = path.join(process.cwd(), "out/preload-child");
+    const outDir = path.join(process.cwd(), "out/child-preload");
     const tsFile = fs.readFileSync(tsFilePath, "utf8");
 
     // 创建输出目录（如果不存在）

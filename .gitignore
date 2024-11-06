@@ -8,3 +8,4 @@ test.js
 *.yaml
 build/extraResources/test_1.dll
 build/extraResources/test_2.dll
+resources/timer.ec

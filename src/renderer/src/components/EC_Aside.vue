@@ -38,16 +38,15 @@
                 </template>
             </el-menu>
         </el-scrollbar>
-        <div class="aside-bar">
-            <el-icon v-if="!isCollapse"><ArrowLeftBold @click="isCollapse = true" /></el-icon>
-            <el-icon v-else><ArrowRightBold @click="isCollapse = false" /></el-icon>
+        <div class="aside-bar" @click="isCollapse = !isCollapse">
+            <el-icon :class="{'el-icon-hove-anim': !isCollapse}"><ArrowRightBold /></el-icon>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
 // 引入 icon-menu 图标
-import {Menu as IconMenu, Setting, ArrowRightBold, ArrowLeftBold, House} from "@element-plus/icons-vue";
+import {Menu as IconMenu, Setting, ArrowRightBold, House} from "@element-plus/icons-vue";
 import {reactive, ref, markRaw} from "vue";
 
 defineProps({
@@ -127,6 +126,13 @@ const menuList = reactive([
         &:hover {
             cursor: pointer;
             color: aqua;
+        }
+        .el-icon {
+            transition: transform 0.5s; /* 设置变换属性的过渡效果 */
+        }
+
+        .el-icon-hove-anim {
+            transform: rotate(180deg); /* 旋转效果 */
         }
     }
 }

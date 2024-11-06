@@ -77,7 +77,7 @@ const findDir = (dirPath) => {
                 // 读取文件内容
                 try {
                     const fileData = fs.readFileSync(filePath, "utf8").toString();
-                    
+
                     // 混淆文件内容
                     const obfuscatedCode = JavaScriptObfuscator.obfuscate(fileData, {
                         // 设置混淆选项，根据需要进行调整
@@ -100,7 +100,7 @@ const findDir = (dirPath) => {
                     // 将混淆后的代码写回文件
                     try {
                         fs.writeFileSync(filePath, obfuscatedCode, "utf8");
-                        console.log(`编译完成:${file},耗时:${new Date().getTime() - stime}ms`);
+                        console.log(`编译完成:${file},耗时:${Math.round((new Date().getTime() - stime) / 1000).toFixed(2)} 秒`);
                     } catch (err) {
                         console.error("编译失败:", filePath, err);
                     }

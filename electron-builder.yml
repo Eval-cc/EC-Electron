@@ -26,15 +26,13 @@ files:
     - "!tsconfig.*.json"
     - "!src/renderer/*"
     - "!src/*/*.ts"
-    - "!*.mjs"
-    - "!src/bin/@zfs_encryp/*"
-    - "!src/bin/@zfs_preload_child/*"
+    - "!src/bin/*"
     - "!build-config/*"
     - "!ec-logs/*"
-# 指定保留的语言
-# electronLanguages:
-#       - en
-#       - zh-CN
+
+
+# extraFiles: 适合不需要被打包进 asar 的文件，通常在应用运行时直接使用的文件。
+# extraResources: 适合要打包进 asar 的文件，通常是资源文件，在应用中需要加载和使用
 # 需要额外包含的文件或目录
 extraResources:
     - from: "build/extraResources/"
@@ -44,15 +42,17 @@ extraResources:
     - from: "src/bin/ec.config.json"
       to: "ec.config.json"
 asar: true
+# 把不需要打包进asar的模块放到这里
 asarUnpack:
     - "**/node_modules/electron/**/*"
 win:
-    icon: ./resources/assets/icon.ico
+    icon: ./resources/assets/icon-256.ico
+    # 程序安装之后显示的名称
     executableName: EC 框架 @Eval
-    # 管理员
-    requestedExecutionLevel: requireAdministrator
+    # 管理员--根据需要自行开启
+    # requestedExecutionLevel: requireAdministrator
 nsis:
-    artifactName: ${productName}-${version}-setup.${ext}
+    artifactName: ${productName}[${version}]安装程序.${ext}
     shortcutName: ${productName}
     uninstallDisplayName: EC框架卸载程序
     # 创建桌面图标
@@ -66,11 +66,11 @@ nsis:
     # 允许修改安装目录
     allowToChangeInstallationDirectory: true
     # 安装图标
-    installerIcon: ./resources/assets/icon.ico
+    installerIcon: ./resources/assets/icon-32.ico
     # 卸载图标
-    uninstallerIcon: ./resources/assets/icon.ico
+    uninstallerIcon: ./resources/assets/icon-32.ico
     # 安装时头部图标
-    installerHeaderIcon: ./resources/assets/icon.ico
+    installerHeaderIcon: ./resources/assets/icon-128.ico
 mac:
     entitlementsInherit: build/entitlements.mac.plist
     extendInfo:

@@ -6,17 +6,25 @@
 import {Service} from "../core/service";
 import {IPCResult} from "../core/IPCResult";
 import EC_Logger from "../plugins/ec-log";
-import {IPCModelTypeMain, IPCModelTypeRender} from "../core/models";
 import GlobalStatus from "../core/global";
 import {shell} from "electron";
 
 import ECUpdate from "../plugins/ec-update";
 import EC_DLL from "../plugins/ec-dll";
+import ECFileSystem from "../plugins/ec-fs";
+import {ec_source_path} from "../plugins/ec-proce";
+import EC_Cron from "../plugins/ec-cron";
+
+import type {IPCModelTypeMain, IPCModelTypeRender,ECScheduledTask} from "../core/models";
 
 export default class Test extends Service {
     logger: EC_Logger;
     ecupdate?: ECUpdate;
     ec_dll!: EC_DLL;
+
+    timerTask: ECScheduledTask | null = null;
+    ecFS!: ECFileSystem;
+    eCron!: EC_Cron;
     constructor() {
         super();
         this.logger = new EC_Logger();
@@ -137,5 +145,74 @@ export default class Test extends Service {
      */
     DownLoadUpdate(_: IPCModelTypeMain): void {
         this.ecupdate!.DownloadUpdate();
+    }
+
+    /**
+     * 测试读取ec文件方法
+     * @param _
+     * @returns
+     */
+    async readEC(_: IPCModelTypeMain): Promise<IPCModelTypeRender> {
+        const ecFS = new ECFileSystem();
+        const data = await ecFS.readEC_File({path: ec_source_path + "/timer.ec"});
+
+        return IPCResult(true, "测试读取EC框架专属格式的文件", {data});
+    }
+
+    /**
+     * 测试文件系统读写
+     * @param args
+     * @returns
+     */
+    async writeEC(args: IPCModelTypeMain): Promise<IPCModelTypeRender> {
+        const content = args.data?.content;
+        if (!content) {
+            return Promise.resolve(IPCResult(false, "参数错误"));
+        }
+        if (!this.ecFS) {
+            this.ecFS = new ECFileSystem();
+        }
+        return this.ecFS.writeEC_File({path: ec_source_path + "/test.ec", content});
+    }
+
+    /**
+     * 启动定时推送任务
+     * @param _
+     * @returns
+     */
+    starTimer(_: IPCModelTypeMain): IPCModelTypeRender {
+        if (this.timerTask) {
+            return IPCResult(false, "定时任务已启动");
+        }
+        if (!this.eCron) {
+            this.eCron = new EC_Cron();
+        }
+        // 每秒执行一次定时任务
+        if (!this.ecFS) {
+            this.ecFS = new ECFileSystem();
+        }
+        this.timerTask = this.eCron.startCronJob("test", "*/1 * * * * *", () => {
+            this.ecFS.writeEC_File({path: ec_source_path + "/timer.ec", content: `定时任务执行:执行时间:${new Date().toLocaleString()},任务内容:无\n`, options: {write: "a"}});
+            GlobalStatus.control.SendRenderMsgToAll(IPCResult(true, `定时任务执行:执行时间:${new Date().toLocaleString()},任务内容:无`, {type: "ec-timer"}));
+        });
+        return IPCResult(true, "定时任务开始执行");
+    }
+
+    /**
+     * 结束任务
+     * @param _
+     * @returns
+     */
+    stopTimer(_: IPCModelTypeMain): IPCModelTypeRender {
+        if (!this.timerTask) {
+            return IPCResult(false, "定时器未启动");
+        }
+        if (!this.eCron) {
+            this.eCron = new EC_Cron();
+        }
+        this.eCron.stopCronJob(this.timerTask.name);
+        clearInterval(Number(this.timerTask));
+        this.timerTask = null;
+        return IPCResult(true, "定时器已停止");
     }
 }

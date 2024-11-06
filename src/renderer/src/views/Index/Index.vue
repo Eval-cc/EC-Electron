@@ -2,18 +2,19 @@
     <div class="common-layout">
         <el-container>
             <el-aside style="width: auto">
-                <AsideView :childCallback />
+                <EC_AsideView :childCallback />
             </el-aside>
             <el-main>
                 <template v-if="currMenu === 'home'">
                     <div class="ec-grid-from">
                         <div class="ec-grid-lab">按钮组</div>
-                        <div class=" ec-grid-item-body">
+                        <div class="ec-grid-item-body">
                             <div class="notify ec-grid-item">
                                 <el-button type="primary" plain @click="openWin" :loading>新建窗口</el-button>
                             </div>
                             <div class="notify ec-grid-item">
                                 <el-button type="primary" plain @click="Test" :loading>调用测试消息</el-button>
+                                <!-- <el-button type="primary" plain @click="Test_1" :loading>调用测试消息</el-button> -->
                             </div>
                         </div>
                     </div>
@@ -21,7 +22,7 @@
                         <div class="ec-grid-lab">调用DLL示例</div>
                         <div class="ec-grid-item-body">
                             <div class="ec-grid-item">
-                                <DLL />
+                                <EC_DLL />
                             </div>
                         </div>
                     </div>
@@ -29,7 +30,7 @@
                         <div class="ec-grid-lab">文件拖拽示例</div>
                         <div class="ec-grid-item-body">
                             <div class="ec-grid-item">
-                                <DragFile />
+                                <EC_DragFile />
                             </div>
                         </div>
                     </div>
@@ -41,6 +42,22 @@
                                     <template #prepend>EC气泡</template>
                                 </el-input>
                                 <el-button type="primary" plain @click="InvokerNotify" :loading>测试气泡消息</el-button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ec-grid-from">
+                        <div class="ec-grid-lab">一言接口</div>
+                        <div class="ec-grid-item-body">
+                            <div class="ec-grid-item">
+                                <EC_EWord />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ec-grid-from">
+                        <div class="ec-grid-lab">定时消息</div>
+                        <div class="ec-grid-item-body">
+                            <div class="ec-grid-item">
+                                <EC_Timer />
                             </div>
                         </div>
                     </div>
@@ -70,9 +87,11 @@
 import utils from "@renderer/utils";
 import {ref} from "vue";
 
-import AsideView from "@renderer/components/Aside.vue";
-import DLL from "@renderer/components/DLL.vue";
-import DragFile from "@renderer/components/DragFile.vue";
+import EC_AsideView from "@renderer/components/EC_Aside.vue";
+import EC_DLL from "@renderer/components/EC_DLL.vue";
+import EC_DragFile from "@renderer/components/EC_DragFile.vue";
+import EC_EWord from "@renderer/components/EC_EWord.vue";
+import EC_Timer from "@renderer/components/EC_Timer.vue";
 
 // 变量声明
 const notifyMsg = ref<string>("");
@@ -85,9 +104,13 @@ const loading = ref<boolean>(false);
  */
 const openWin = (): void => {
     loading.value = true;
-    utils.Debouncing(() => {
-        loading.value = false;
-    }, 1);
+    utils.Debouncing(
+        "new-win",
+        () => {
+            loading.value = false;
+        },
+        1,
+    );
     utils.ipc("openWin");
 };
 
@@ -97,14 +120,17 @@ const Test = async (): Promise<void> => {
         utils.message(res.msg);
     });
 };
-
 // 调用气泡消息
 const InvokerNotify = () => {
     if (!notifyMsg.value.trim().length) return;
     loading.value = true;
-    utils.Debouncing(() => {
-        loading.value = false;
-    }, 1);
+    utils.Debouncing(
+        "notify",
+        () => {
+            loading.value = false;
+        },
+        1,
+    );
     utils.ipc("nityfier", {message: notifyMsg.value.trim()});
 };
 
@@ -123,6 +149,7 @@ const childCallback = (data: any): void => {
         currMenu.value = data;
     }
 };
+
 </script>
 
 <style lang="less" scoped>
