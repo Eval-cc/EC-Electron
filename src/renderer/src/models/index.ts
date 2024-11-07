@@ -13,6 +13,7 @@ type MessageType = "success" | "error" | "info" | "warning";
  * IPC通信模型--返回给渲染进程
  */
 export interface IPCModelTypeRender {
+    winID?: string; // 窗口ID,  没有ID的视为主窗体
     success: boolean;
     /** 返回的消息 */
     msg: string;
@@ -28,8 +29,8 @@ export interface IPCModelTypeMain {
     fun: string;
     /** 传递的参数 */
     data?: any;
-    win_type: string; // 当前发送消息的窗体类型
-    winID: string; // 窗口ID,  没有ID的视为主窗体
+    win_type?: string; // 当前发送消息的窗体类型
+    winID?: string; // 窗口ID,  没有ID的视为主窗体
 }
 
 // 弹窗类型

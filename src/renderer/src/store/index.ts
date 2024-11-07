@@ -1,165 +1,100 @@
-import {createStore} from "vuex";
-import {IPCModelTypeRender, IPCModelTypeMain} from "@renderer/models";
+import {IPCModelTypeMain, IPCModelTypeRender} from "@renderer/models";
 import utils from "@renderer/utils";
+import {defineStore} from "pinia";
 
-const store = createStore({
-    state() {
-        return {
-            win: null as any,
-            // 主进程窗体对象
-            mainWin: null as any,
-            childID: "" as string,
-            // 事件池
-            ECEVent: {} as Record<string, Function[]>,
-        };
-    },
-    mutations: {
+export const useECStore = defineStore("ec-store", {
+    state: () => ({
+        /** 主进程窗体对象 */
+        mainWin: null as any,
+        /** 事件池 */
+        ECEVent: {} as Record<string, Function[]>,
+    }),
+    getters: {},
+    actions: {
         /**
          * 初始化IPC事件监听,开始接收主进程发送的信息
-         * @param state
          * @param value
          */
-        async initIPC(state, value: any) {
-            state.win = value;
-            store.commit("initChildIPC", value);
-            // 监听来自主进程的消息
-            value.electron.ipcRenderer.removeAllListeners();
-            value.electron.ipcRenderer.on("message-from-main", (_: any, message: IPCModelTypeRender) => {
-                // console.log("收到主进程信息", message);
-                if (message.data.type === "winID") {
-                    state.mainWin = {
-                        winID: message.data.winID,
-                    };
-                } else if (message.data.type === "tip") {
-                    utils.message(message.msg, message.success);
-                } else if (message.data.type === "dialog") {
-                    utils.messageBox(message.data.title, message.msg, message.data.options);
-                } else if (message.data.type === "loading") {
-                    utils.loading(message.msg, {}, {stamp: message.data.stamp || 2});
-                } else if (message.data.type === "ec-timer") {
-                    // 调用 emit 方法
-                    utils.emit("ec-timer", {msg: message.msg, data: message.data});
-                }
-            });
+        async initIPC(value: any) {
+            this.mainWin = value;
+            if (this.mainWin.win_type == "main") {
+                this.mainWin.electron.ipcRenderer.removeAllListeners();
+                this.mainWin.electron.ipcRenderer.on("ec-channel-message", this.handlerECMessage);
+            } else {
+                this.mainWin.electron.ipcRenderer.removeAllListeners();
+                this.mainWin.electron.ipcRenderer.on("ec-channel-message-child", this.handlerECMessage);
+            }
         },
 
-        /**
-         * 初始化子进程IPC
-         * @param state
-         * @param value
-         */
-        async initChildIPC(state, value: any) {
-            if (value.win_type == "main") return;
-            state.win = value;
-            value.electron.ipcRenderer.removeAllListeners();
-            value.electron.ipcRenderer.on("message-from-child", (_: any, message: IPCModelTypeRender) => {
-                if (message.data.type === "winID") {
-                    state.mainWin = {
-                        winID: message.data.winID,
-                    };
-                } else if (message.data.type === "tip") {
-                    utils.message(message.msg, message.success);
-                } else if (message.data.type === "dialog") {
-                    utils.messageBox(message.data.title, message.msg, message.data.options);
-                } else if (message.data.type === "loading") {
-                    utils.loading(message.msg, {}, {stamp: message.data.stamp || 2});
-                } else if (message.data.type === "ec-timer") {
-                    utils.emit("ec-timer", message);
-                }
-            });
+        handlerECMessage(_: any, message: IPCModelTypeRender) {
+            if (message.data.type === "winID") {
+                this.mainWin.winID = message.winID;
+            } else if (message.data.type === "tip") {
+                utils.message(message.msg, message.success);
+            } else if (message.data.type === "dialog") {
+                utils.messageBox(message.data.title, message.msg, message.data.options);
+            } else if (message.data.type === "loading") {
+                utils.loading(message.msg, {}, {stamp: message.data.stamp || 2});
+            } else if (message.data.type === "ec-timer") {
+                utils.emit("ec-timer", message);
+            }
         },
 
         /**
          * 追加事件
-         * @param state
          * @param value
          */
-        addListener(state, {name, fn}: {name: string; fn: Function}) {
-            if (!state.ECEVent[name]) {
-                state.ECEVent[name] = [];
+        addListener({name, fn}: {name: string; fn: Function}) {
+            if (!this.ECEVent[name]) {
+                this.ECEVent[name] = [];
             }
-            state.ECEVent[name].push(fn);
+            this.ECEVent[name].push(fn);
         },
 
         /**
          * 移除事件
-         * @param state
          * @param value
          */
-        removeListener(state, {name}: {name: string}) {
-            delete state.ECEVent[name];
+        removeListener({name}: {name: string}) {
+            delete this.ECEVent[name];
         },
 
         /**
          * 触发事件
-         * @param state
          * @param value
          */
-        triggerListener(state, {name, data}: {name: string; data: any}) {
-            const fn = state.ECEVent[name];
+        triggerListener({name, data}: {name: string; data: any}) {
+            const fn = this.ECEVent[name];
             if (fn) {
                 fn.forEach((fun) => {
                     fun.call(this, data);
                 });
             }
         },
-    },
-    actions: {
         /**
          * 发送消息 给主进程
-         * @param param0
-         * @param value
+         * @param options
          * @returns
          */
-        async EC_Main_IPC_Send({state}, value: IPCModelTypeMain): Promise<IPCModelTypeRender> {
-            if (!state.win) {
+        async EC_Main_IPC_Send(options: IPCModelTypeMain): Promise<IPCModelTypeRender> {
+            if (!this.mainWin) {
                 return {success: false, msg: "出错了,请重启!"};
             }
-            value.win_type = state.win.win_type;
-            value.winID = state.mainWin?.winID || null;
+            options.win_type = this.mainWin.win_type;
+            options.winID = this.mainWin.winID || null;
             try {
-                if (state.win.win_type == "main") {
-                    return await state.win.IPCcontrol.IPCcontrol(value);
+                if (this.mainWin.win_type == "main") {
+                    return await this.mainWin.IPCcontrol.IPCcontrol(options);
                 }
 
-                return await state.win.IPCcontrolChild.IPCcontrolChild(value);
+                return await this.mainWin.IPCcontrolChild.IPCcontrolChild(options);
             } catch (e: any) {
-                console.error(value);
+                console.error(options);
                 if (String(e).includes("Error: An object could not be cloned.")) {
                     return {success: false, msg: "无法传递对象,请检查数据类型![不可克隆的对象]"};
                 }
                 return {success: false, msg: "出错了,请重启!"};
             }
         },
-
-        /**
-         * 开始监听事件
-         * @param param0
-         * @param value
-         */
-        ec_on({commit}, value: any) {
-            commit("addListener", {name: value.name, fn: value.fn});
-        },
-
-        /**
-         * 移除监听
-         * @param param0
-         * @param value
-         */
-        ec_off({commit}, value: any) {
-            commit("removeListener", {name: value.name});
-        },
-
-        /**
-         * 触发事件
-         * @param param0
-         * @param param1
-         */
-        ec_emit({commit}, {name, data}) {
-            commit("triggerListener", {name, data});
-        },
     },
-    getters: {},
 });
-
-export default store;

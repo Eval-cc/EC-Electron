@@ -39,8 +39,8 @@ extraResources:
       to: "extraResources"
     - from: "resources/assets/"
       to: "assets/"
-    - from: "src/bin/ec.config.json"
-      to: "ec.config.json"
+    - from: "src/bin/ec.config.jsonc"
+      to: "ec.config.jsonc"
 asar: true
 # 把不需要打包进asar的模块放到这里
 asarUnpack:

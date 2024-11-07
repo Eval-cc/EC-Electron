@@ -6,14 +6,13 @@
 import {ElMessage, ElLoading, ElMessageBox} from "element-plus";
 import type {MessageHandler, MessageOptions} from "element-plus";
 import {MsgBoxType, MsgBoxPromptType, LoadingType, IPCModelTypeRender} from "@renderer/models";
-import store from "@renderer/store";
+import {useECStore} from "@renderer/store";
 
 class Utils {
     private debounTime: Record<string, any>; // 防抖定时器
     constructor() {
         this.debounTime = {};
     }
-
     /**
      * 调用主进程方法
      * @param method 主进程方法名
@@ -21,7 +20,8 @@ class Utils {
      * @returns
      */
     ipc = (method: string, args?: any): Promise<IPCModelTypeRender> => {
-        return store.dispatch("EC_Main_IPC_Send", {fun: method, data: args}) as Promise<IPCModelTypeRender>;
+        const store = useECStore();
+        return store.EC_Main_IPC_Send({fun: method, data: args});
     };
 
     /**
@@ -30,7 +30,8 @@ class Utils {
      * @param callback
      */
     on = (name: string, callback: Function) => {
-        store.dispatch("ec_on", {name, fn: callback});
+        const store = useECStore();
+        store.addListener({name, fn: callback});
     };
 
     /**
@@ -38,7 +39,8 @@ class Utils {
      * @param name
      */
     off = (name: string) => {
-        store.dispatch("ec_off", {name});
+        const store = useECStore();
+        store.removeListener({name});
     };
 
     /**
@@ -48,7 +50,8 @@ class Utils {
      * @returns
      */
     emit = (name: string, data: any) => {
-        store.dispatch("ec_emit", {name, data});
+        const store = useECStore();
+        store.triggerListener({name, data});
     };
 
     /**

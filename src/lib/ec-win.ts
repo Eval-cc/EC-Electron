@@ -7,6 +7,7 @@ import {app, shell, BrowserWindow, Menu} from "electron";
 import {join} from "path";
 import {electronApp, optimizer, is} from "@electron-toolkit/utils";
 import icon from "../../resources/assets/icon.png?asset";
+import linu_icon from "../../resources/assets/linux-icon.ico?asset";
 import Core from "../core/core";
 
 class EC_Win {
@@ -15,7 +16,7 @@ class EC_Win {
         // Electron 完成初始化并准备创建浏览器窗口时调用此方法。
         app.whenReady().then(() => {
             // 为 Windows 设置应用程序用户模型 ID。
-            electronApp.setAppUserModelId("com.electron.eval");
+            electronApp.setAppUserModelId("ec.electron.app");
             app.on("browser-window-created", (_, window) => {
                 optimizer.watchWindowShortcuts(window);
             });
@@ -36,7 +37,7 @@ class EC_Win {
             minHeight: 700,
             show: false,
             autoHideMenuBar: true,
-            ...(process.platform === "linux" ? {icon} : {icon}),
+            ...(process.platform === "linux" ? {linu_icon} : {icon}),
             webPreferences: {
                 webviewTag: true,
                 contextIsolation: true,

@@ -15,7 +15,7 @@ import ECFileSystem from "../plugins/ec-fs";
 import {ec_source_path} from "../plugins/ec-proce";
 import EC_Cron from "../plugins/ec-cron";
 
-import type {IPCModelTypeMain, IPCModelTypeRender,ECScheduledTask} from "../core/models";
+import type {IPCModelTypeMain, IPCModelTypeRender, ECScheduledTask} from "../core/models";
 
 export default class Test extends Service {
     logger: EC_Logger;
@@ -84,9 +84,12 @@ export default class Test extends Service {
      */
     openWin(args?: IPCModelTypeMain): void {
         if (!args) return;
-        if (args?.win_type === "child-win" && args.winID) {
-            const win = GlobalStatus.core.GetWinByWinID(String(args.winID));
-            win && GlobalStatus.control.SendRenderMsgChild(win, {success: true, msg: "已关闭子窗口调用新窗口功能"});
+        const win = GlobalStatus.core.GetWinByWinID(String(args.winID));
+        if (!win) {
+            throw new Error("未找到指定窗口:" + args.winID);
+        }
+        if (win["win_type"] === "child-win") {
+            GlobalStatus.control.SendRenderMsg({success: true, msg: "已关闭子窗口调用新窗口功能"}, win);
             return;
         }
         GlobalStatus.core.openWin(args?.data?.url);

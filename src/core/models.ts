@@ -10,6 +10,8 @@ import type {ScheduledTask} from "node-cron";
  * IPC通信模型--返回给渲染进程
  */
 export interface IPCModelTypeRender {
+    // 窗口ID
+    winID?: number;
     /** 返回类型 */
     success: boolean;
     /** 返回的消息 */
@@ -44,6 +46,13 @@ export interface IPCModelTypeMain {
 export interface ECFrameworkModelType {
     /** 应用名称 */
     app_name?: string;
+    /** 是否开机自启动 */
+    auto_launch?: {
+        /** 是否激活开机自启动 */
+        active: boolean;
+        /** 开机自启动是否显示窗口 */
+        isHidden: boolean;
+    };
     /** 托盘的类型声明 */
     tray?: {
         /** 是否激活托盘图标 */

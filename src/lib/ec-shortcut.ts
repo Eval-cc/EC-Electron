@@ -25,7 +25,7 @@ class EC_Shortcut {
                 // 当快捷键被触发时执行的操作
                 GlobalStatus.winMain.webContents.toggleDevTools();
                 // 包括子窗体
-                Object.values(GlobalStatus.childWin)
+                Object.values(GlobalStatus.ecWinList)
                     .filter((win) => win.id !== GlobalStatus.winMain.id)
                     .forEach((win) => {
                         win.webContents.toggleDevTools();

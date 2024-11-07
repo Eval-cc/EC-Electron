@@ -1,5 +1,9 @@
 {
     "app_name": "EC-Electron EC框架",
+    "auto_launch": {
+        "active": false,
+        "isHidden": true
+    },
     "tray": {
         "active": true,
         "title": "EC-Electron EC框架",

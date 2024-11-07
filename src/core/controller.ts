@@ -56,9 +56,9 @@ class Controller {
     /**
      * 主动向页面推送消息
      * @param msg 消息体
-     * @param channel 消息通道,-默认主推主进程
+     * @param win 需要给哪个窗口推送消息, 默认是主窗口
      */
-    SendRenderMsg = (msg: IPCModelTypeRender, channel: string = "message-from-main") => {
+    SendRenderMsg = (msg: IPCModelTypeRender, win: BrowserWindow = GlobalStatus.winMain) => {
         // 如果没有指定类型,那么默认就是普通的弹窗消息
         if (!msg.data) {
             msg.data = {};
@@ -66,39 +66,50 @@ class Controller {
         if (!msg.data?.type) {
             msg.data["type"] = "tip";
         }
-        GlobalStatus.winMain.webContents.send(channel, msg);
+        msg.winID = win.id;
+        if ((win["win_type"] === "main")) {
+            win.webContents.send("ec-channel-message", msg);
+        } else {
+            win.webContents.send("ec-channel-message-child", msg);
+        }
     };
 
     /**
      * 主动向子进程推送消息
-     * @param msg
+     * @param win 目前子窗体
+     * @param options 消息体
      */
-    SendRenderMsgChild = (win: BrowserWindow, msg: IPCModelTypeRender) => {
+    SendRenderMsgChild = (win: BrowserWindow, options: IPCModelTypeRender) => {
         // 如果没有指定类型,那么默认就是普通的弹窗消息
-        if (!msg.data) {
-            msg.data = {};
+        if (!options.data) {
+            options.data = {};
         }
-        if (!msg.data?.type) {
-            msg.data["type"] = "tip";
+        if (!options.data?.type) {
+            options.data["type"] = "tip";
         }
-        win.webContents.send("message-from-child", msg);
+        options.winID = win.id;
+        win.webContents.send("ec-channel-message-child", options);
     };
 
     /**
      * 给所有的窗体推送消息
-     * @param msg
+     * @param options
      */
-    SendRenderMsgToAll = (msg: IPCModelTypeRender) => {
+    SendRenderMsgToAll = (options: IPCModelTypeRender) => {
         // 如果没有指定类型,那么默认就是普通的弹窗消息
-        if (!msg.data) {
-            msg.data = {};
+        if (!options.data) {
+            options.data = {};
         }
-        if (!msg.data?.type) {
-            msg.data["type"] = "tip";
+        if (!options.data?.type) {
+            options.data["type"] = "tip";
         }
-        GlobalStatus.winMain.webContents.send("message-from-main", msg);
-        Object.values(GlobalStatus.childWin).forEach((win) => {
-            win.webContents.send("message-from-child", msg);
+        Object.values(GlobalStatus.ecWinList).forEach((win) => {
+            options.winID = win.id;
+            if ((win["win_type"] = "main")) {
+                win.webContents.send("ec-channel-message", options);
+            } else {
+                win.webContents.send("ec-channel-message-child", options);
+            }
         });
     };
 }

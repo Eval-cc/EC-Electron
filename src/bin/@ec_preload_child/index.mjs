@@ -26,8 +26,7 @@ function compileTypeScript() {
     };
     const result = ts.transpileModule(tsFile, {compilerOptions});
 
-    const fileName = path.basename(tsFilePath, ".ts") + ".js";
-    const outputFilePath = path.join(outDir, fileName);
+    const outputFilePath = path.join(outDir, "index.js");
     fs.writeFileSync(outputFilePath, result.outputText);
     console.log("编译预加载脚本完成,输出目录:" + outputFilePath);
 }

@@ -25,8 +25,8 @@ class GlobalStatus {
     /** 主窗体 */
     public static winMain: BrowserWindow;
 
-    /** 子窗口,以窗口的id作为键 */
-    public static childWin: {[key: string]: BrowserWindow} = {};
+    /** 以窗口的id作为键,存放所有的窗口对象 */
+    public static ecWinList: {[key: string]: BrowserWindow} = {};
 
     /** 托盘 */
     private static __tray: TrayMgr;
@@ -82,7 +82,7 @@ class GlobalStatus {
         GlobalStatus.core = core;
         GlobalStatus.control = new Controller();
         // 保存窗口对象
-        GlobalStatus.childWin[win.id] = win;
+        GlobalStatus.ecWinList[win.id] = win;
     }
 
     /**

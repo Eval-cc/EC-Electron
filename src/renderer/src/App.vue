@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import store from "./store";
 import {onMounted, ref} from "vue";
+import {useECStore} from "./store";
 
 const loading = ref(5);
 const playAnmi = ref(false);
 onMounted(() => {
     // 初始化IPC模块
-    store.commit("initIPC", window);
+    const store = useECStore();
+    store.initIPC(window);
     const interval = setInterval(() => {
         loading.value--;
         if (loading.value <= 3) {
