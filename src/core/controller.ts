@@ -9,6 +9,7 @@ import {IPCModelTypeMain, IPCModelTypeRender} from "../core/models";
 import {IPCResult} from "../core/IPCResult";
 import GlobalStatus from "../core/global";
 import {Service} from "../core/service";
+import fs from "fs-extra";
 
 class Controller {
     logger: EC_Logger;
@@ -51,6 +52,19 @@ class Controller {
             this.logger.error("注册服务时出错:" + error);
             throw new Error("注册服务时出错:" + error.stack);
         }
+        // 动态注册插件服务
+        fs.readdir(`${process.cwd()}/plugins`, (error: any, files: string[]) => {
+            if (error) throw new Error(error.stack);
+            files.forEach((file: string) => {
+                if (file.endsWith(".js")) {
+                    try {
+                        require(`${process.cwd()}/plugins/${file}`).install(GlobalStatus);
+                    } catch (error: any) {
+                        this.logger.error(`注册插件服务出错:${error.stack}`);
+                    }
+                }
+            });
+        });
     }
 
     /**
@@ -67,7 +81,7 @@ class Controller {
             msg.data["type"] = "tip";
         }
         msg.winID = win.id;
-        if ((win["win_type"] === "main")) {
+        if (win["win_type"] === "main") {
             win.webContents.send("ec-channel-message", msg);
         } else {
             win.webContents.send("ec-channel-message-child", msg);

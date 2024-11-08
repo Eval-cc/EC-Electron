@@ -1,6 +1,7 @@
-import {resolve} from "path";
+import path, {resolve} from "path";
 import {bytecodePlugin, defineConfig, externalizeDepsPlugin} from "electron-vite";
 import vue from "@vitejs/plugin-vue";
+import electron from "vite-plugin-electron";
 
 export default defineConfig({
     main: {
@@ -11,7 +12,29 @@ export default defineConfig({
         plugins: [externalizeDepsPlugin(), bytecodePlugin({transformArrowFunctions: false, removeBundleJS: true})],
     },
     preload: {
-        plugins: [externalizeDepsPlugin(), bytecodePlugin({transformArrowFunctions: false, removeBundleJS: true})],
+        plugins: [
+            electron([
+                {
+                    entry: path.join(__dirname, "src/preload/child-preload.ts"),
+                    onstart({reload}) {
+                        reload();
+                    },
+                    vite: {
+                        build: {
+                            outDir: path.join(__dirname, "out/preload"),
+                            rollupOptions: {
+                                output: {
+                                    inlineDynamicImports: true,
+                                },
+                            },
+                            target: "esnext", // 确保目标是最新的 ES 版本，以便支持字节码打包
+                        },
+                    },
+                },
+            ]),
+            externalizeDepsPlugin(),
+            bytecodePlugin({transformArrowFunctions: false, removeBundleJS: true}),
+        ],
     },
     renderer: {
         resolve: {
@@ -19,6 +42,6 @@ export default defineConfig({
                 "@renderer": resolve("src/renderer/src"),
             },
         },
-        plugins: [vue(),externalizeDepsPlugin(), bytecodePlugin({transformArrowFunctions: false, removeBundleJS: true})],
+        plugins: [vue(), externalizeDepsPlugin(), bytecodePlugin({transformArrowFunctions: false, removeBundleJS: true})],
     },
 });

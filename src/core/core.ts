@@ -136,7 +136,8 @@ class Core {
             autoHideMenuBar: true,
             ...(process.platform === "linux" ? {icon} : {icon}),
             webPreferences: {
-                preload: EC_Join(__dirname, "../child-preload/index.js"), // 加载预加载脚本
+                // preload: EC_Join(__dirname, "../child-preload/index.js"), // 加载预加载脚本
+                preload: EC_Join(__dirname, "../preload/child-preload.js"), // 加载预加载脚本
                 contextIsolation: true,
                 sandbox: false,
             },
