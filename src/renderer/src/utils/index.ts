@@ -107,11 +107,13 @@ class Utils {
         const background = options.background ? options.background : "rgba(0, 0, 0, 0.7)";
         const lock = options.lock ? options.lock : true;
         const fullscreen = options.fullscreen ? options.fullscreen : true;
+        const target = options.target ? options.target : "body";
         const win = ElLoading.service({
             lock,
             text,
             fullscreen,
             background,
+            target,
         });
         win["active"] = true;
         if (timeout?.stamp) {

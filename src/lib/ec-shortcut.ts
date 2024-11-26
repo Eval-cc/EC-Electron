@@ -6,12 +6,10 @@
 
 import {globalShortcut} from "electron";
 import EC_Logger from "../plugins/ec-log";
-import GlobalStatus from "../core/global";
+import GlobalStatus from "../core/ec-global";
 
 class EC_Shortcut {
-    private logger: EC_Logger;
     constructor() {
-        this.logger = new EC_Logger();
         this.OnRegister();
     }
 
@@ -34,7 +32,7 @@ class EC_Shortcut {
 
             // 检查快捷键是否注册成功
             if (!ret) {
-                this.logger.error("注册快捷键失败");
+                GlobalStatus.logger.error("注册快捷键失败");
             }
         }
     }

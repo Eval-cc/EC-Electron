@@ -6,7 +6,7 @@
 
 import log from "electron-log";
 import {join as EC_Join} from "path";
-import GlobalStatus from "../core/global";
+import GlobalStatus from "../core/ec-global";
 
 class EC_Logger {
     constructor() {

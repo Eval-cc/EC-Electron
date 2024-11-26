@@ -6,14 +6,11 @@
 
 import http from "http";
 import https from "https";
-import {IPCResult} from "../core/IPCResult";
-import EC_Logger from "./ec-log";
+import {IPCResult} from "../core/ec-IPCResult";
+import GlobalStatus from "../core/ec-global";
 
 class Request {
-    logger: EC_Logger;
-    constructor() {
-        this.logger = new EC_Logger();
-    }
+    constructor() {}
 
     /**
      * 根据不同的请求协议返回对应的请求头
@@ -60,7 +57,7 @@ class Request {
 
                 // 请求错误处理
                 request.on("error", (error) => {
-                    this.logger.error(`请求地址:${url} 出错,${error}`);
+                    GlobalStatus.logger.error(`请求地址:${url} 出错,${error}`);
                     resolve(IPCResult(false, error.message));
                 });
             } else {
@@ -81,7 +78,7 @@ class Request {
 
                 // 请求错误处理
                 request.on("error", (error) => {
-                    this.logger.error(`请求地址:${url} 出错,${error}`);
+                    GlobalStatus.logger.error(`请求地址:${url} 出错,${error}`);
                     resolve(IPCResult(false, error.message));
                 });
             }

@@ -8,7 +8,7 @@ import {join} from "path";
 import {electronApp, optimizer, is} from "@electron-toolkit/utils";
 import icon from "../../resources/assets/icon.png?asset";
 import linu_icon from "../../resources/assets/linux-icon.ico?asset";
-import Core from "../core/core";
+import Core from "../core/ec-core";
 
 class EC_Win {
     constructor() {

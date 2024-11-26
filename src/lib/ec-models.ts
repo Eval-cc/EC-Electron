@@ -148,6 +148,8 @@ export interface ECWriteFileModelType {
     options?: {
         /** r:只读, w:可读可写, a:追加 */
         write: "r" | "w" | "a";
+        /** 对于json写入生效, 格式化json的间距 */
+        ident?: number;
     };
 }
 

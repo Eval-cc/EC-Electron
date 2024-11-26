@@ -5,7 +5,7 @@
  */
 import {Tray, Menu, nativeImage} from "electron";
 import path from "path";
-import GlobalStatus from "../core/global";
+import GlobalStatus from "../core/ec-global";
 
 class TrayMgr {
     private tray!: Tray;

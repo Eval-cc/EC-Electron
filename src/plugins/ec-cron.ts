@@ -4,7 +4,7 @@
  * @description 定时任务调度
  */
 import nodeCron from "node-cron";
-import type {ECScheduledTask} from "../core/models";
+import type {ECScheduledTask} from "../lib/ec-models";
 
 class CronJobError extends Error {
     constructor(message: string) {

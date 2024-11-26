@@ -4,17 +4,15 @@
  * @description 接受事件控制层
  */
 import {ipcMain, IpcMainInvokeEvent, BrowserWindow} from "electron";
-import EC_Logger from "../plugins/ec-log";
-import {IPCModelTypeMain, IPCModelTypeRender} from "../core/models";
-import {IPCResult} from "../core/IPCResult";
-import GlobalStatus from "../core/global";
-import {Service} from "../core/service";
+import {IPCModelTypeMain, IPCModelTypeRender} from "../lib/ec-models";
+import {IPCResult} from "./ec-IPCResult";
+import GlobalStatus from "./ec-global";
+import {Service} from "./ec-service";
 import fs from "fs-extra";
+import ecModules from "../lib/ec-modules";
 
 class Controller {
-    logger: EC_Logger;
     constructor() {
-        this.logger = new EC_Logger();
         // 把controller注入到全局-避免主线程重复监听事件抛出异常
         if (GlobalStatus.control) return;
         GlobalStatus.control = this;
@@ -32,12 +30,12 @@ class Controller {
                     if (result) return result;
                     return IPCResult(false, "无返回值");
                 } catch (e: any) {
-                    this.logger.error(`调用服务出错:${e.stack}`);
+                    GlobalStatus.logger.error(`调用服务出错:${e.stack}`);
                     return IPCResult(false, e.message);
                 }
             });
         } catch (error: any) {
-            this.logger.error("监听handleIPC事件出错:" + error.stack);
+            GlobalStatus.logger.error("监听handleIPC事件出错:" + error.stack);
         }
         // 注册服务
         this.RegisterService();
@@ -46,25 +44,23 @@ class Controller {
      * 注册服务
      */
     RegisterService() {
-        try {
-            import("../services/test").then((model) => new model.default());
-        } catch (error: any) {
-            this.logger.error("注册服务时出错:" + error);
-            throw new Error("注册服务时出错:" + error.stack);
-        }
-        // 动态注册插件服务
-        fs.readdir(`${process.cwd()}/plugins`, (error: any, files: string[]) => {
-            if (error) throw new Error(error.stack);
-            files.forEach((file: string) => {
-                if (file.endsWith(".js")) {
-                    try {
-                        require(`${process.cwd()}/plugins/${file}`).install(GlobalStatus);
-                    } catch (error: any) {
-                        this.logger.error(`注册插件服务出错:${error.stack}`);
-                    }
-                }
+        ecModules();
+        const pluginsPath = `${process.cwd()}/plugins`;
+        if (fs.pathExistsSync(pluginsPath)) {
+            // 动态注册插件服务
+            fs.readdir(pluginsPath, (error: any, files: string[]) => {
+                if (error) throw new Error(error.stack);
+                files
+                    .filter((file) => file.endsWith(".js"))
+                    .forEach((file: string) => {
+                        try {
+                            require(`${process.cwd()}/plugins/${file}`).install(GlobalStatus);
+                        } catch (error: any) {
+                            GlobalStatus.logger.error(`注册插件服务出错:${error.stack}`);
+                        }
+                    });
             });
-        });
+        }
     }
 
     /**

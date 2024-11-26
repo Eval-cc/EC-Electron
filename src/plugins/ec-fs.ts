@@ -5,8 +5,8 @@
  */
 
 import fs from "fs-extra";
-import {IPCResult} from "../core/IPCResult";
-import type {ECReadFileModelType, ECWriteFileModelType, IPCModelTypeRender} from "../core/models";
+import {IPCResult} from "../core/ec-IPCResult";
+import type {ECReadFileModelType, ECWriteFileModelType, IPCModelTypeRender} from "../lib/ec-models";
 
 /**
  * 校验文件操作
@@ -40,9 +40,26 @@ function ValidateFile(expectedExtension: string) {
 }
 
 class ECFileSystem {
-    constructor() {
-        console.log("初始化EC框架文件管理器");
+    constructor() {}
+
+    /**
+     * 指定路径是否存在
+     * @param filePath
+     * @param iswrite 是否强制写入
+     * @returns
+     */
+    fileExist(filePath: string, iswrite: boolean): boolean {
+        const exist = fs.pathExistsSync(filePath);
+        try {
+            if (!exist && iswrite) {
+                fs.ensureDirSync(filePath);
+            }
+        } catch (error: any) {
+            throw new Error(`创建目录失败：${error.message}`);
+        }
+        return exist;
     }
+
     /**
      * 读取json文件
      * @param filePath 文件路径
@@ -63,7 +80,7 @@ class ECFileSystem {
     @ValidateFile("json")
     writeJson(options: ECWriteFileModelType): IPCModelTypeRender {
         try {
-            fs.writeJsonSync(options.path, options.content);
+            fs.writeJsonSync(options.path, options.content, {spaces: options.options?.ident || 2});
             return IPCResult(true, "写入文件成功");
         } catch (error: any) {
             return IPCResult(false, `写入文件失败：${error.message}`);
@@ -202,6 +219,40 @@ class ECFileSystem {
             return IPCResult(true, "写入文件成功");
         } catch (error: any) {
             return IPCResult(false, `写入文件失败：${error.message}`);
+        }
+    }
+
+    /**
+     * 读取任何格式的文件
+     * @param options
+     * @returns
+     */
+    readFile(options: ECReadFileModelType): IPCModelTypeRender {
+        if (!fs.existsSync(options.path)) {
+            return IPCResult(false, "文件路径不存在");
+        }
+        try {
+            const data = fs.readFileSync(options.path);
+            return IPCResult(true, "读取文件成功", {data: data.toString()});
+        } catch (error: any) {
+            return IPCResult(false, `读取文件失败：${error.message}`, {message: error.stack});
+        }
+    }
+
+    /**
+     * 写入其他格式的文件
+     * @param options
+     * @returns
+     */
+    writeFile(options: ECWriteFileModelType): IPCModelTypeRender {
+        if (!fs.existsSync(options.path)) {
+            return IPCResult(false, "文件路径不存在");
+        }
+        try {
+            fs.writeFileSync(options.path, options.content.toString(), "utf-8");
+            return IPCResult(true, "写入文件成功");
+        } catch (error: any) {
+            return IPCResult(false, `写入文件失败：${error.message}`, {message: error.stack});
         }
     }
 }

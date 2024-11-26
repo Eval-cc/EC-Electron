@@ -3,10 +3,9 @@
  * @author Eval
  * @description 测试服务类
  */
-import {Service} from "../core/service";
-import {IPCResult} from "../core/IPCResult";
-import EC_Logger from "../plugins/ec-log";
-import GlobalStatus from "../core/global";
+import {Service} from "../core/ec-service";
+import {IPCResult} from "../core/ec-IPCResult";
+import GlobalStatus from "../core/ec-global";
 import {shell} from "electron";
 
 import ECUpdate from "../plugins/ec-update";
@@ -15,10 +14,9 @@ import ECFileSystem from "../plugins/ec-fs";
 import {ec_source_path} from "../plugins/ec-proce";
 import EC_Cron from "../plugins/ec-cron";
 
-import type {IPCModelTypeMain, IPCModelTypeRender, ECScheduledTask} from "../core/models";
+import type {IPCModelTypeMain, IPCModelTypeRender, ECScheduledTask} from "../lib/ec-models";
 
 export default class Test extends Service {
-    logger: EC_Logger;
     ecupdate?: ECUpdate;
     ec_dll!: EC_DLL;
 
@@ -27,7 +25,6 @@ export default class Test extends Service {
     eCron!: EC_Cron;
     constructor() {
         super();
-        this.logger = new EC_Logger();
     }
 
     test() {
@@ -112,7 +109,7 @@ export default class Test extends Service {
             shell.openExternal(url);
             return IPCResult(true, "正在打开浏览器...");
         } catch (error: any) {
-            this.logger.error(`打开浏览器出错: ${error}`);
+            GlobalStatus.logger.error(`打开浏览器出错: ${error}`);
             return IPCResult(false, `打开浏览器出错: ${error.message}`);
         }
     }

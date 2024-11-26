@@ -5,13 +5,10 @@
  */
 
 import {app, dialog} from "electron";
-import EC_Logger from "../plugins/ec-log";
-import GlobalStatus from "../core/global";
+import GlobalStatus from "../core/ec-global";
 
 class EC_Event {
-    private logger: EC_Logger;
     constructor() {
-        this.logger = new EC_Logger();
 
         // 当所有窗口关闭时退出应用程序，但在 macOS 上除外。
         // 在 macOS 上，应用程序和菜单栏通常会保持活动状态，直到用户使用 Cmd + Q 明确退出。
@@ -27,7 +24,7 @@ class EC_Event {
             if (GlobalStatus.winMain.isDestroyed()) {
                 return;
             }
-            this.logger.error(`EC框架异常,${error.stack}`);
+            GlobalStatus.logger.error(`EC框架异常,${error.stack}`);
             if (GlobalStatus.control) {
                 GlobalStatus.control.SendRenderMsg({success: false, msg: error.message, data: {title: "EC框架异常", type: "dialog"}});
             } else {

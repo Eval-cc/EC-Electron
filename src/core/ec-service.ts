@@ -3,7 +3,7 @@
  * @author Eval
  * @description 服务注册类
  */
-import {IPCModelTypeMain} from "../core/models";
+import {IPCModelTypeMain} from "../lib/ec-models";
 
 export class Service {
     private static contro: any = new Map();

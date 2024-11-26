@@ -5,17 +5,14 @@
  */
 
 import {autoUpdater, UpdateInfo} from "electron-updater";
-import GlobalStatus from "../core/global";
-import {IPCResult} from "../core/IPCResult";
+import GlobalStatus from "../core/ec-global";
+import {IPCResult} from "../core/ec-IPCResult";
 import {app} from "electron";
-import EC_Logger from "./ec-log";
-import { IPCModelTypeRender } from "../core/models";
+import { IPCModelTypeRender } from "../lib/ec-models";
 
 class ECUpdate {
-    logger: EC_Logger;
     constructor() {
-        this.logger = new EC_Logger();
-        this.logger.info("ECUpdate 更新插件初始化");
+        GlobalStatus.logger.info("ECUpdate 更新插件初始化");
         this.initialize();
     }
 
@@ -123,12 +120,12 @@ class ECUpdate {
                     autoUpdater.downloadUpdate(); // 手动开始下载
                 } else {
                     GlobalStatus.control.SendRenderMsg(IPCResult(false, "没有可用的更新进行下载"));
-                    this.logger.info("没有可用的更新进行下载");
+                    GlobalStatus.logger.info("没有可用的更新进行下载");
                 }
             })
             .catch((error) => {
                 GlobalStatus.control.SendRenderMsg(IPCResult(false, `检查更新失败: ${error}`));
-                this.logger.error(`检查更新失败: ${error}`);
+                GlobalStatus.logger.error(`检查更新失败: ${error}`);
             });
     }
 

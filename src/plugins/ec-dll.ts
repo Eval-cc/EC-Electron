@@ -8,16 +8,13 @@ import edgeJSInvokerDLL from "electron-edge-js";
 import {exec} from "child_process";
 import {extraPath} from "../plugins/ec-proce";
 import {resolve as EC_PathResolve} from "path";
-import EC_Logger from "./ec-log";
-import {IPCResult} from "../core/IPCResult";
-import {ECDllModelType} from "../core/models";
+import {IPCResult} from "../core/ec-IPCResult";
+import {ECDllModelType} from "../lib/ec-models";
 import {existsSync} from "fs-extra";
+import GlobalStatus from "../core/ec-global";
 
 class EC_DLL {
-    private logger: EC_Logger;
-    constructor() {
-        this.logger = new EC_Logger();
-    }
+    constructor() {}
 
     /**
      * 调用DLL
@@ -58,11 +55,10 @@ class EC_DLL {
         const argsType = params.argsType; // 参数类型
         const args = params.args; // 参数列表
         /**
-         * 
-        //     const myLibrary = Koffi.load(dllPath); // 定义函数
-        //     const call = myLibrary.func("__stdcall", "hello", "int", ["int", "int", "int"]); // 定义函数
-        //     调用函数
-        //     const result = addNum(...params);
+         * const myLibrary = Koffi.load(dllPath); // 定义函数
+         * const call = myLibrary.func("__stdcall", "hello", "int", ["int", "int", "int"]); // 定义函数
+         * 调用函数
+         * const result = addNum(...params);
          */
         const call = myLibrary.func("__stdcall", methodName, returnType, argsType); // 定义函数
 
@@ -81,7 +77,6 @@ class EC_DLL {
         const typeName = params.className; // 命名空间.类名 (没有命名空间的可忽略)
         const methodName = params.methodName; // 方法名
         const args = params.args; // 参数列表
-        // 读取失败 尝试读取C#类型的程序集
         const call = edgeJSInvokerDLL.func({
             assemblyFile: dllPath,
             typeName,
@@ -90,7 +85,7 @@ class EC_DLL {
         return new Promise((resolve) => {
             call(args, (error: any, result: any) => {
                 if (error) {
-                    this.logger.error(`调用 dll 出错: ${error}`);
+                    GlobalStatus.logger.error(`调用 dll 出错: ${error}`);
                     resolve(IPCResult(false, `调用 dll 出错: ${error}`));
                 } else {
                     resolve(IPCResult(true, `edge调用:${result}`));
@@ -117,10 +112,10 @@ class EC_DLL {
         return new Promise((resolve, _) => {
             exec(command, (error: any, stdout: any, stderr: any) => {
                 if (error) {
-                    this.logger.error(`执行出错: ${error}`);
+                    GlobalStatus.logger.error(`执行出错: ${error}`);
                     resolve(IPCResult(false, `执行出错: ${error}`));
                 } else if (stderr) {
-                    this.logger.error(`执行出错: ${stderr}`);
+                    GlobalStatus.logger.error(`执行出错: ${stderr}`);
                     const hex = stderr.trim();
                     // 将十六进制字符串分割成字节对并转换为 Uint8Array
                     const bytes = new Uint8Array(hex.match(/.{1,2}/g)?.map((byte: string) => parseInt(byte, 16)));

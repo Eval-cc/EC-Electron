@@ -5,13 +5,14 @@
  */
 import crypto from "crypto";
 import iconv from "iconv-lite";
-import Controller from "../core/controller";
+import Controller from "./ec-controller";
 import {BrowserWindow, dialog} from "electron";
 import TrayMgr from "../plugins/ec-tray";
 import fs from "fs-extra";
-import {ECFrameworkModelType} from "../core/models";
-import Core from "./core";
+import {ECFrameworkModelType} from "../lib/ec-models";
+import Core from "./ec-core";
 import {ec_config_path, ec_is_test} from "../plugins/ec-proce";
+import EC_Logger from "../plugins/ec-log";
 
 class GlobalStatus {
     /**
@@ -27,6 +28,9 @@ class GlobalStatus {
 
     /** 以窗口的id作为键,存放所有的窗口对象 */
     public static ecWinList: {[key: string]: BrowserWindow} = {};
+
+    /** 日志对象 */
+    public static logger: EC_Logger;
 
     /** 托盘 */
     private static __tray: TrayMgr;
@@ -83,6 +87,7 @@ class GlobalStatus {
         GlobalStatus.control = new Controller();
         // 保存窗口对象
         GlobalStatus.ecWinList[win.id] = win;
+        GlobalStatus.logger = new EC_Logger();
     }
 
     /**
