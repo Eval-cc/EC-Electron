@@ -46,6 +46,8 @@ export interface IPCModelTypeMain {
 export interface ECFrameworkModelType {
     /** 应用名称 */
     app_name?: string;
+    /** 是否能直接关闭程序,如果为 true, 那么将会隐藏在托盘(前提是托盘未被禁用) */
+    standby?: boolean;
     /** 是否开机自启动 */
     auto_launch?: {
         /** 是否激活开机自启动 */

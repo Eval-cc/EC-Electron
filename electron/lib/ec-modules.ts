@@ -4,8 +4,8 @@
  * @description 服务模块导入
  */
 
-import Test from "../services/test";
+// import Test from "@/services/test";
 
 export default () => {
-    new Test();
+    // new Test();
 };

@@ -1,5 +1,6 @@
 {
     "app_name": "EC-Electron EC框架",
+    "standby": false,
     "auto_launch": {
         "active": false,
         "isHidden": true

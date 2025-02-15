@@ -23,7 +23,7 @@ onMounted(() => {
 <template>
     <template v-if="loading">
         <div class="ec-logo" :class="{'play-ani': playAnmi}">
-            <img src="./assets/ec-logo.webp" alt="" />
+            <img src="./assets/ec-logo.png" alt="" />
         </div>
     </template>
     <router-view v-else />

@@ -9,7 +9,6 @@ import GlobalStatus from "../core/ec-global";
 
 class EC_Event {
     constructor() {
-
         // 当所有窗口关闭时退出应用程序，但在 macOS 上除外。
         // 在 macOS 上，应用程序和菜单栏通常会保持活动状态，直到用户使用 Cmd + Q 明确退出。
         app.on("window-all-closed", () => {
@@ -60,7 +59,24 @@ class EC_Event {
         });
 
         /**
-         * * 主窗口关闭时, 销毁所有子窗口
+         * * 主窗口关闭前, 销毁所有子窗口
+         */
+        GlobalStatus.winMain.on("close", (event: Electron.Event) => {
+            Object.values(GlobalStatus.ecWinList).forEach((win) => {
+                if (win["win_type"] === "main") {
+                    event.preventDefault();
+                    if (GlobalStatus.config.tray?.active && GlobalStatus.config.standby) {
+                        win.hide();
+                        GlobalStatus.tray.setMsg("程序正在运行中,隐藏窗口时间为:" + new Date().toLocaleString());
+                        return;
+                    }
+                }
+                win.destroy();
+            });
+        });
+
+        /**
+         * * 主窗口关闭后, 销毁所有子窗口
          */
         GlobalStatus.winMain.on("closed", () => {
             Object.values(GlobalStatus.ecWinList).forEach((win) => {

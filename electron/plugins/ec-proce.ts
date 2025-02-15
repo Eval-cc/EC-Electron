@@ -14,7 +14,7 @@ export const ec_is_test = is.dev && process.env["ELECTRON_RENDERER_URL"] != null
 export const extraPath = path.join(process.cwd(), ec_is_test ? "build/extraResources" : "resources/extraResources");
 
 /** 返回框架配置文件路径 */
-export const ec_config_path = path.join(process.cwd(), ec_is_test ? "src/bin/ec.config.jsonc" : "resources/ec.config.jsonc");
+export const ec_config_path = path.join(process.cwd(), ec_is_test ? "electron/bin/ec.config.json" : "resources/ec.config.json");
 
 /** 返回框架资源目录路径 */
 export const ec_source_path = path.join(process.cwd(), ec_is_test ? "resources" : "resources");

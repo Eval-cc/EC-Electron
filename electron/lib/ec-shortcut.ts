@@ -5,7 +5,6 @@
  */
 
 import {globalShortcut} from "electron";
-import EC_Logger from "../plugins/ec-log";
 import GlobalStatus from "../core/ec-global";
 
 class EC_Shortcut {

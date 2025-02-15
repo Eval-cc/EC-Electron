@@ -3,16 +3,16 @@
  * @author Eval
  * @description 测试服务类
  */
-import {Service} from "../core/ec-service";
-import {IPCResult} from "../core/ec-IPCResult";
-import GlobalStatus from "../core/ec-global";
+import {Service} from "../../electron/core/ec-service";
+import {IPCResult} from "../../electron/core/ec-IPCResult";
+import GlobalStatus from "../../electron/core/ec-global";
 import {shell} from "electron";
 
-import ECUpdate from "../plugins/ec-update";
-import EC_DLL from "../plugins/ec-dll";
-import ECFileSystem from "../plugins/ec-fs";
-import {ec_source_path} from "../plugins/ec-proce";
-import EC_Cron from "../plugins/ec-cron";
+import ECUpdate from "../../electron/plugins/ec-update";
+import EC_DLL from "../../electron/plugins/ec-dll";
+import ECFileSystem from "../../electron/plugins/ec-fs";
+import {ec_source_path} from "../../electron/plugins/ec-proce";
+import EC_Cron from "../../electron/plugins/ec-cron";
 
 import type {IPCModelTypeMain, IPCModelTypeRender, ECScheduledTask} from "../lib/ec-models";
 
@@ -134,7 +134,7 @@ export default class Test extends Service {
      */
     async CheckUpdate(_: IPCModelTypeMain): Promise<IPCModelTypeRender> {
         if (!this.ecupdate) {
-            this.ecupdate = new (await import("../plugins/ec-update")).default();
+            this.ecupdate = new (await import("../../electron/plugins/ec-update")).default();
         }
         return this.ecupdate.CheckUpdate();
     }
