@@ -40,7 +40,7 @@ onMounted(() => {
     utils.on("ec-timer", (data: any) => {
         msgList.push(data);
         nextTick(() => {
-            if(messageList.value?.scrollHeight){
+            if (messageList.value?.scrollHeight) {
                 messageList.value!.scrollTop = messageList.value.scrollHeight;
             }
         });
@@ -69,10 +69,14 @@ const readEcFile = () => {
     msgList.splice(0, msgList.length);
     setTimeout(() => {
         utils.ipc("readEC").then(async (res) => {
+            utils.closeLoading(layer);
+            if (!res.success) {
+                utils.message(res.msg, res.success);
+                return;
+            }
             for (let [_, item] of res.data.data.split("\n").filter(Boolean).entries()) {
                 msgList.push({msg: item});
             }
-            utils.closeLoading(layer);
             utils.message(`读取文件内容完成,共:${msgList.length}行`, true);
             messageList.value!.scrollTop = messageList.value!.scrollHeight;
         });

@@ -1,11 +1,21 @@
 {
-    "extends": "@electron-toolkit/tsconfig/tsconfig.node.json", 
-     "include": ["electron.vite.config.*", "electron/main/**/*", "electron/preload/**/*", "electron/core/**/*", "electron/lib/**/*","electron/services/**/*", "electron/plugins/**/*"],
+    "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
+    "include": [
+      "electron.vite.config.*",
+      "electron/main/**/*",
+      "electron/preload/**/*",
+      "electron/core/**/*",
+      "electron/lib/**/*",
+      "electron/services/**/*",
+      "electron/plugins/**/*"
+    ],
     "compilerOptions": {
       "composite": true,
-      "types": ["electron-vite/node"],
+      "types": [
+        "electron-vite/node"
+      ],
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true,
-      "sourceMap": false}
+      "sourceMap": false,
+    }
   }
-  

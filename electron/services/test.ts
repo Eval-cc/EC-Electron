@@ -154,9 +154,13 @@ export default class Test extends Service {
      */
     async readEC(_: IPCModelTypeMain): Promise<IPCModelTypeRender> {
         const ecFS = new ECFileSystem();
-        const data = await ecFS.readEC_File({path: ec_source_path + "/timer.ec"});
+        try {
+            const data = await ecFS.readEC_File({path: ec_source_path + "/timer.ec"});
 
-        return IPCResult(true, "测试读取EC框架专属格式的文件", {data});
+            return IPCResult(true, "测试读取EC框架专属格式的文件", {data});
+        } catch (error: any) {
+            return IPCResult(false, "测试读取EC框架专属格式的文件失败", {error: error.message});
+        }
     }
 
     /**

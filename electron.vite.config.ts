@@ -35,20 +35,38 @@ export default defineConfig({
         build: {
             rollupOptions: {
                 input: "./electron/main/index.ts", // 确保这里指定了正确的入口文件路径
+                external: [],
             },
         },
-        // root: './',
+        // root: "./electron",
         // resolve: {
         //     alias: {
-        //         "@": resolve(__dirname, "./"), // 确保别名指向项目根目录
+        //         "/@": path.resolve(__dirname, "electron"), // 确保别名指向项目根目录
         //     },
-        // }
+        // },
     },
     preload: {
         plugins: [
             electron([
                 {
                     entry: path.join(__dirname, "electron/preload/child-preload.ts"),
+                    onstart({reload}) {
+                        reload();
+                    },
+                    vite: {
+                        build: {
+                            outDir: path.join(__dirname, "out/preload"),
+                            rollupOptions: {
+                                output: {
+                                    inlineDynamicImports: true,
+                                },
+                            },
+                            target: "esnext", // 确保目标是最新的 ES 版本，以便支持字节码打包
+                        },
+                    },
+                },
+                {
+                    entry: path.join(__dirname, "electron/preload/index.ts"),
                     onstart({reload}) {
                         reload();
                     },
@@ -75,23 +93,23 @@ export default defineConfig({
         },
     },
     renderer: {
-        root: './renderer',
+        root: "./renderer",
         resolve: {
             alias: {
                 "@renderer": resolve("renderer/src"),
             },
         },
         build: {
-            outDir: path.resolve(__dirname, 'out',"renderer"), // 输出目录
+            outDir: path.resolve(__dirname, "out", "renderer"), // 输出目录
             rollupOptions: {
                 input: {
-                    index: resolve(__dirname,"renderer", "index.html"),
+                    index: resolve(__dirname, "renderer", "index.html"),
                 },
                 output: {
-                  // 使用 fileName 而不是 name
-                  entryFileNames: 'index.html', // 设置输出文件名
-                  chunkFileNames: '[name]-[hash].js', // 如果有 chunk 文件
-                  assetFileNames: '[name]-[hash][extname]', // 设置其他静态资源文件的输出格式
+                    // 使用 fileName 而不是 name
+                    entryFileNames: "index.html", // 设置输出文件名
+                    chunkFileNames: "[name]-[hash].js", // 如果有 chunk 文件
+                    assetFileNames: "[name]-[hash][extname]", // 设置其他静态资源文件的输出格式
                 },
             },
         },

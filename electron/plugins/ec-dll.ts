@@ -3,8 +3,8 @@
  * @author Eval
  * @description EC 框架调用DLL插件
  */
-import Koffi from "koffi";
-import edgeJSInvokerDLL from "electron-edge-js";
+// import Koffi from "koffi";
+// import edgeJSInvokerDLL from "electron-edge-js";
 import {exec} from "child_process";
 import {extraPath} from "../plugins/ec-proce";
 import {resolve as EC_PathResolve} from "path";
@@ -30,16 +30,17 @@ class EC_DLL {
         }
 
         // 尝试加载DLL
-        const tryLoadDll = (loadFunction: Function) => {
-            try {
-                return loadFunction(dllPath, params);
-            } catch (error) {
-                return null;
-            }
-        };
+        // const tryLoadDll = (loadFunction: Function) => {
+        //     try {
+        //         return loadFunction(dllPath, params);
+        //     } catch (error) {
+        //         return null;
+        //     }
+        // };
 
         // 默认尝试读取C++ 类型的程序集
-        return tryLoadDll(this.Koffi) || tryLoadDll(this.EdgeJS) || this.Abnormal(dllPath, params);
+        return this.Abnormal(dllPath, params);
+        // return tryLoadDll(this.Koffi) || tryLoadDll(this.EdgeJS) || this.Abnormal(dllPath, params);
     }
 
     /**
@@ -48,24 +49,25 @@ class EC_DLL {
      * @param params
      * @returns
      */
-    private Koffi(dllPath: string, params: ECDllModelType) {
-        const myLibrary = Koffi.load(dllPath); // 定义函数
-        const methodName = params.methodName; // 方法名
-        const returnType = params.returnType; // 返回值类型
-        const argsType = params.argsType; // 参数类型
-        const args = params.args; // 参数列表
-        /**
-         * const myLibrary = Koffi.load(dllPath); // 定义函数
-         * const call = myLibrary.func("__stdcall", "hello", "int", ["int", "int", "int"]); // 定义函数
-         * 调用函数
-         * const result = addNum(...params);
-         */
-        const call = myLibrary.func("__stdcall", methodName, returnType, argsType); // 定义函数
+    // private Koffi(dllPath: string, params: ECDllModelType) {
+    //     // const myLibrary = Koffi.load(dllPath); // 定义函数
+    //     // const methodName = params.methodName; // 方法名
+    //     // const returnType = params.returnType; // 返回值类型
+    //     // const argsType = params.argsType; // 参数类型
+    //     // const args = params.args; // 参数列表
+    //     // /**
+    //     //  * const myLibrary = Koffi.load(dllPath); // 定义函数
+    //     //  * const call = myLibrary.func("__stdcall", "hello", "int", ["int", "int", "int"]); // 定义函数
+    //     //  * 调用函数
+    //     //  * const result = addNum(...params);
+    //     //  */
+    //     // const call = myLibrary.func("__stdcall", methodName, returnType, argsType); // 定义函数
 
-        // 调用函数
-        const result = call(args);
-        return IPCResult(true, `Koffi调用:${result}`);
-    }
+    //     // 调用函数
+    //     // const result = call(args);
+    //     // return IPCResult(true, `Koffi调用:${result}`);
+    //     return null;
+    // }
 
     /**
      * 调用 C# DLL
@@ -73,26 +75,26 @@ class EC_DLL {
      * @param params
      * @returns
      */
-    private EdgeJS(dllPath: string, params: ECDllModelType) {
-        const typeName = params.className; // 命名空间.类名 (没有命名空间的可忽略)
-        const methodName = params.methodName; // 方法名
-        const args = params.args; // 参数列表
-        const call = edgeJSInvokerDLL.func({
-            assemblyFile: dllPath,
-            typeName,
-            methodName,
-        });
-        return new Promise((resolve) => {
-            call(args, (error: any, result: any) => {
-                if (error) {
-                    GlobalStatus.logger.error(`调用 dll 出错: ${error}`);
-                    resolve(IPCResult(false, `调用 dll 出错: ${error}`));
-                } else {
-                    resolve(IPCResult(true, `edge调用:${result}`));
-                }
-            });
-        });
-    }
+    // private EdgeJS(dllPath: string, params: ECDllModelType) {
+    //     const typeName = params.className; // 命名空间.类名 (没有命名空间的可忽略)
+    //     const methodName = params.methodName; // 方法名
+    //     const args = params.args; // 参数列表
+    //     const call = edgeJSInvokerDLL.func({
+    //         assemblyFile: dllPath,
+    //         typeName,
+    //         methodName,
+    //     });
+    //     return new Promise((resolve) => {
+    //         call(args, (error: any, result: any) => {
+    //             if (error) {
+    //                 GlobalStatus.logger.error(`调用 dll 出错: ${error}`);
+    //                 resolve(IPCResult(false, `调用 dll 出错: ${error}`));
+    //             } else {
+    //                 resolve(IPCResult(true, `edge调用:${result}`));
+    //             }
+    //         });
+    //     });
+    // }
 
     /**
      * 中间程序 调用 DLL

@@ -1,2 +1,2 @@
-import EC_Win from "../lib/ec-win";
+import EC_Win from "..//lib/ec-win";
 new EC_Win();

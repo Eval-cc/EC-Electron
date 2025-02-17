@@ -19,6 +19,7 @@ export class Service {
             }
             const method = this[name];
             Service.contro.set(name, method.bind(this));
+            console.log(`[注入成功] ${name}`);
         });
     }
 
