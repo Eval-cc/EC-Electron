@@ -18,7 +18,7 @@ export interface IPCModelTypeRender {
     msg: string;
     /** 传递的参数 */
     data?: {
-        type?: "tip" | "ec-timer" | "dialog" | "loading" | "winID";
+        type?: "tip" | "dialog" | "loading" | "winID" | string;
         [key: string]: any; // 允许任意其他属性
     };
 }

@@ -20,8 +20,7 @@
     "update": {
         "url": "http://localhost:8089/latest.yml",
         "autoDownload": false,
-        "autoInstallOnAppQuit": false,
-        "upgradeName":"ECUpgrade"
+        "autoInstallOnAppQuit": false
     },
     "dev_tool": {
         "active": false,

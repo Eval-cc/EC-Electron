@@ -2,8 +2,10 @@ appId: com.ec.eval
 productName: EC Framework
 copyright: © 2024 eval. All rights reserved.
 directories:
-    output: dist
+    output: release/set_up/build_v${version}
     buildResources: build
+# 构建的钩子
+afterPack: "./electron/bin/@afterPack/index.js"
 files:
     - "!**/.vscode/*"
     - "!src/*"
@@ -24,12 +26,11 @@ files:
     - "!.prettierrc"
     - "!tsconfig.json"
     - "!tsconfig.*.json"
-    - "!src/renderer/*"
-    - "!src/*/*.ts"
-    - "!src/bin/*"
+    - "!renderer/*"
+    - "!electron/*"
     - "!build-config/*"
-    - "!ec-logs/*"
-
+    - "!ev-logs/*"
+    - "!release/*"
 
 # extraFiles: 适合不需要被打包进 asar 的文件，通常在应用运行时直接使用的文件。
 # extraResources: 适合要打包进 asar 的文件，通常是资源文件，在应用中需要加载和使用
@@ -39,9 +40,10 @@ extraResources:
       to: "extraResources"
     - from: "resources/assets/"
       to: "assets/"
-    - from: "src/bin/ec.config.jsonc"
-      to: "ec.config.jsonc"
-asar: true
+    - from: "electron/bin/ec.config.json"
+      to: "ec.config.json"
+# 是否需要生成asar文件
+asar: false
 # 把不需要打包进asar的模块放到这里
 asarUnpack:
     - "**/node_modules/electron/**/*"
@@ -93,6 +95,6 @@ appImage:
 npmRebuild: false
 publish:
     provider: generic
-    url: http://localhost:8089/latest.json
+    url: http://localhost/latest.json
 electronDownload:
     mirror: https://npmmirror.com/mirrors/electron/

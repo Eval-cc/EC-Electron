@@ -30,13 +30,17 @@ export const useECStore = defineStore("ec-store", {
             if (message.data.type === "winID") {
                 this.mainWin.winID = message.winID;
             } else if (message.data.type === "tip") {
+                // 主进程推送的消息事件
                 utils.message(message.msg, message.success);
             } else if (message.data.type === "dialog") {
+                // 主进程推送的开窗事件
                 utils.messageBox(message.data.title, message.msg, message.data.options);
             } else if (message.data.type === "loading") {
+                // 主进程推送的loading事件
                 utils.loading(message.msg, {}, {stamp: message.data.stamp || 2});
-            } else if (message.data.type === "ec-timer") {
-                utils.emit("ec-timer", message);
+            } else if (String(message.data.type).startsWith("ec-")) {
+                // 接收主进程推送的专属事件
+                utils.emit(message.data.type, message);
             }
         },
 

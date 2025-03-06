@@ -6,6 +6,7 @@ out
 test.js
 .vscode/launch.json
 *.yaml
+release/*
 build/extraResources/test_1.dll
 build/extraResources/test_2.dll
 resources/timer.ec

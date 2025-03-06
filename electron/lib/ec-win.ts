@@ -9,6 +9,7 @@ import {electronApp, optimizer, is} from "@electron-toolkit/utils";
 import icon from "../../resources/assets/icon.png?asset";
 import linu_icon from "../../resources/assets/linux-icon.ico?asset";
 import Core from "../core/ec-core";
+import { cwd } from "process";
 
 class EC_Win {
     constructor() {
@@ -67,7 +68,7 @@ class EC_Win {
         if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
             mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
         } else {
-            mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
+            mainWindow.loadFile(join(cwd(), "./renderer/index.html"));
         }
     }
 }
