@@ -3,7 +3,7 @@
  * @author Eval
  * @description 全局控制脚本
  */
-import {app as EC_APP, shell as EC_SHELL, BrowserWindow} from "electron";
+import {BrowserWindow, app as EC_APP, shell as EC_SHELL} from "electron";
 import {join as EC_Join} from "path";
 import {notify as EC_Notify} from "node-notifier";
 import TrayMgr from "../plugins/ec-tray";
@@ -13,10 +13,11 @@ import GlobalStatus from "./ec-global";
 import EC_Event from "../lib/ec-event";
 import EC_Shortcut from "../lib/ec-shortcut";
 import AutoLaunch from "auto-launch";
+import {IBrowserWindow} from "../lib/ec-models";
 
 class Core {
     private icon: any;
-    constructor(win: BrowserWindow, icon: any) {
+    constructor(win: IBrowserWindow, icon: any) {
         // 直接显示,等待logo的时候开始加载配置信息
         win.show();
         // 初始化全局配置
@@ -36,7 +37,7 @@ class Core {
      * 初始化延迟加载
      * @param win
      */
-    private __init__delay(win: BrowserWindow) {
+    private __init__delay(win: IBrowserWindow) {
         GlobalStatus.control.SendRenderMsg({success: true, msg: "", data: {type: "winID"}});
         // 托盘可以延迟一点加载
         setTimeout(() => {
@@ -103,7 +104,7 @@ class Core {
      * @param winID
      * @returns
      */
-    GetWinByWinID(winID: string): BrowserWindow {
+    GetWinByWinID(winID: string): IBrowserWindow {
         return GlobalStatus.ecWinList[winID];
     }
 
@@ -141,13 +142,13 @@ class Core {
                 contextIsolation: true,
                 sandbox: false,
             },
-        });
+        }) as IBrowserWindow;
         win.setSkipTaskbar(false); // 不显示子窗口的任务栏图标
 
         win.on("ready-to-show", () => {
             win.title = `EC框架-子窗体:${win.id}`;
             // 设置窗口类型-为子窗口
-            win["win_type"] = "child-win";
+            win.win_type = "child-win";
             // 保存窗口对象
             GlobalStatus.ecWinList[win.id] = win;
             win.show();
@@ -170,7 +171,7 @@ class Core {
         });
         // 如果没有传入地址,那就默认新增小工具窗口
         if (!url) {
-            win.loadFile(EC_Join(__dirname, "../renderer/index.html"));
+            win.loadFile(EC_Join(__dirname, "../ec-renderer/index.html"));
         } else {
             win.loadURL(url);
         }
@@ -184,7 +185,7 @@ class Core {
     show_notifier = (message: string, options: any = {}): any => {
         const title = options?.title ? options.title : "气泡消息";
         const obj = EC_Notify({
-            appID: "EC-eval",
+            appID: "ECHub-eval",
             title,
             message,
             icon: EC_Join(process.cwd(), "resources\\assets\\icon.png"),

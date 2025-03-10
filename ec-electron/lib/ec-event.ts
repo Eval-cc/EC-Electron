@@ -63,7 +63,7 @@ class EC_Event {
          */
         GlobalStatus.winMain.on("close", (event: Electron.Event) => {
             Object.values(GlobalStatus.ecWinList).forEach((win) => {
-                if (win["win_type"] === "main") {
+                if (win.win_type === "main") {
                     event.preventDefault();
                     if (GlobalStatus.config.tray?.active && GlobalStatus.config.standby) {
                         win.hide();

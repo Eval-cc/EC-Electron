@@ -6,10 +6,10 @@
 import crypto from "crypto";
 import iconv from "iconv-lite";
 import Controller from "./ec-controller";
-import {BrowserWindow, dialog} from "electron";
+import {dialog} from "electron";
 import TrayMgr from "../plugins/ec-tray";
 import fs from "fs-extra";
-import {ECFrameworkModelType} from "../lib/ec-models";
+import {ECFrameworkModelType, IBrowserWindow} from "../lib/ec-models";
 import Core from "./ec-core";
 import {ec_config_path, ec_is_test} from "../plugins/ec-proce";
 import EC_Logger from "../plugins/ec-log";
@@ -24,10 +24,10 @@ class GlobalStatus {
     public static core: Core;
 
     /** 主窗体 */
-    public static winMain: BrowserWindow;
+    public static winMain: IBrowserWindow;
 
     /** 以窗口的id作为键,存放所有的窗口对象 */
-    public static ecWinList: {[key: string]: BrowserWindow} = {};
+    public static ecWinList: {[key: string]: IBrowserWindow} = {};
 
     /** 日志对象 */
     public static logger: EC_Logger;
@@ -59,7 +59,7 @@ class GlobalStatus {
      * 初始化全局配置信息,已经保存当前的主窗体对象
      * @param win
      */
-    public static loadConfig(win: BrowserWindow, core: Core): void {
+    public static loadConfig(win: IBrowserWindow, core: Core): void {
         const configPath = ec_config_path;
         if (!fs.pathExistsSync(configPath)) {
             dialog
@@ -81,7 +81,7 @@ class GlobalStatus {
             delete GlobalStatus.__config.dev_tool;
         }
         // 设置窗口类型
-        win["win_type"] = "main";
+        win.win_type = "main";
         GlobalStatus.winMain = win;
         GlobalStatus.core = core;
         GlobalStatus.control = new Controller();

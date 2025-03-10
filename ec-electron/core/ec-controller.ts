@@ -3,8 +3,8 @@
  * @author Eval
  * @description 接受事件控制层
  */
-import {ipcMain, IpcMainInvokeEvent, BrowserWindow} from "electron";
-import {IPCModelTypeMain, IPCModelTypeRender} from "../lib/ec-models";
+import {ipcMain, IpcMainInvokeEvent} from "electron";
+import {IBrowserWindow, IPCModelTypeMain, IPCModelTypeRender} from "../lib/ec-models";
 import {IPCResult} from "./ec-IPCResult";
 import GlobalStatus from "./ec-global";
 import {Service} from "./ec-service";
@@ -64,20 +64,20 @@ class Controller {
     }
 
     /**
-     * 主动向页面推送消息
+     * 主动向页面推送消息(主进程)
      * @param msg 消息体
      * @param win 需要给哪个窗口推送消息, 默认是主窗口
      */
-    SendRenderMsg = (msg: IPCModelTypeRender, win: BrowserWindow = GlobalStatus.winMain) => {
+    SendRenderMsg = (msg: IPCModelTypeRender, win: IBrowserWindow = GlobalStatus.winMain) => {
         // 如果没有指定类型,那么默认就是普通的弹窗消息
         if (!msg.data) {
             msg.data = {};
         }
         if (!msg.data?.type) {
-            msg.data["type"] = "tip";
+            msg.data.type = "tip";
         }
         msg.winID = win.id;
-        if (win["win_type"] === "main") {
+        if (win.win_type === "main") {
             win.webContents.send("ec-channel-message", msg);
         } else {
             win.webContents.send("ec-channel-message-child", msg);
@@ -89,13 +89,13 @@ class Controller {
      * @param win 目前子窗体
      * @param options 消息体
      */
-    SendRenderMsgChild = (win: BrowserWindow, options: IPCModelTypeRender) => {
+    SendRenderMsgChild = (win: IBrowserWindow, options: IPCModelTypeRender) => {
         // 如果没有指定类型,那么默认就是普通的弹窗消息
         if (!options.data) {
             options.data = {};
         }
         if (!options.data?.type) {
-            options.data["type"] = "tip";
+            options.data.type = "tip";
         }
         options.winID = win.id;
         win.webContents.send("ec-channel-message-child", options);
@@ -111,11 +111,11 @@ class Controller {
             options.data = {};
         }
         if (!options.data?.type) {
-            options.data["type"] = "tip";
+            options.data.type = "tip";
         }
         Object.values(GlobalStatus.ecWinList).forEach((win) => {
             options.winID = win.id;
-            if ((win["win_type"] = "main")) {
+            if ((win.win_type = "main")) {
                 win.webContents.send("ec-channel-message", options);
             } else {
                 win.webContents.send("ec-channel-message-child", options);

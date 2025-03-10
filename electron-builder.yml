@@ -5,7 +5,7 @@ directories:
     output: release/set_up/build_v${version}
     buildResources: build
 # 构建的钩子
-afterPack: "./electron/bin/@afterPack/index.js"
+afterPack: "./ec-electron/bin/@afterPack/index.js"
 files:
     - "!**/.vscode/*"
     - "!src/*"
@@ -14,7 +14,6 @@ files:
     - "!{.env,.env.*,.npmrc,pnpm-lock.yaml}"
     - "!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
     - "!node_modules/*"
-    - "!resources/texture/*"
     - "!.vscode/*"
     - "!*.eslintignore"
     - "!*.editorconfig"
@@ -26,8 +25,8 @@ files:
     - "!.prettierrc"
     - "!tsconfig.json"
     - "!tsconfig.*.json"
-    - "!renderer/*"
-    - "!electron/*"
+    - "!ec-renderer/*"
+    - "!ec-electron/*"
     - "!build-config/*"
     - "!ev-logs/*"
     - "!release/*"
@@ -40,7 +39,7 @@ extraResources:
       to: "extraResources"
     - from: "resources/assets/"
       to: "assets/"
-    - from: "electron/bin/ec.config.json"
+    - from: "ec-electron/bin/ec.config.json"
       to: "ec.config.json"
 # 是否需要生成asar文件
 asar: false

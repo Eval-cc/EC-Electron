@@ -148,6 +148,9 @@ class Utils {
     messageBox = (title: string = "标题", content: string = "弹窗内容", options: MsgBoxType = {}) => {
         const confirmText = options.confirmText || "确认";
         const cancelText = options.cancelText || "关闭";
+        if (options.content) {
+            content = options.content;
+        }
         ElMessageBox.confirm(content, title, {
             confirmButtonText: confirmText,
             cancelButtonText: cancelText,

@@ -12,7 +12,7 @@ export default defineConfig({
         plugins: [
             electron([
                 {
-                    entry: path.join(__dirname, "electron/main/index.ts"),
+                    entry: path.join(__dirname, "ec-electron/main/index.ts"),
                     onstart({reload}) {
                         reload();
                     },
@@ -34,7 +34,7 @@ export default defineConfig({
         ],
         build: {
             rollupOptions: {
-                input: "./electron/main/index.ts", // 确保这里指定了正确的入口文件路径
+                input: "./ec-electron/main/index.ts", // 确保这里指定了正确的入口文件路径
                 external: [],
             },
         },
@@ -49,7 +49,7 @@ export default defineConfig({
         plugins: [
             electron([
                 {
-                    entry: path.join(__dirname, "electron/preload/child-preload.ts"),
+                    entry: path.join(__dirname, "ec-electron/preload/child-preload.ts"),
                     onstart({reload}) {
                         reload();
                     },
@@ -66,7 +66,7 @@ export default defineConfig({
                     },
                 },
                 {
-                    entry: path.join(__dirname, "electron/preload/index.ts"),
+                    entry: path.join(__dirname, "ec-electron/preload/index.ts"),
                     onstart({reload}) {
                         reload();
                     },
@@ -88,22 +88,22 @@ export default defineConfig({
         ],
         build: {
             rollupOptions: {
-                input: "./electron/preload/child-preload.ts", // 确保这里指定了正确的入口文件路径
+                input: "./ec-electron/preload/child-preload.ts", // 确保这里指定了正确的入口文件路径
             },
         },
     },
     renderer: {
-        root: "./renderer",
+        root: "./ec-renderer",
         resolve: {
             alias: {
-                "@renderer": resolve("renderer/src"),
+                "@renderer": resolve("ec-renderer/src"),
             },
         },
         build: {
-            outDir: path.resolve(__dirname, "out", "renderer"), // 输出目录
+            outDir: path.resolve(__dirname, "out", "ec-renderer"), // 输出目录
             rollupOptions: {
                 input: {
-                    index: resolve(__dirname, "renderer", "index.html"),
+                    index: resolve(__dirname, "ec-renderer", "index.html"),
                 },
                 output: {
                     // 使用 fileName 而不是 name

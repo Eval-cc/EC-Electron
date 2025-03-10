@@ -18,10 +18,11 @@
         "format": "[{h}:{i}:{s}] [{level}]{scope} {text}"
     },
     "update": {
-        "url": "http://localhost:8089/latest.yml",
+        "url": "http://qn.llzfs.online",
         "autoDownload": false,
         "autoInstallOnAppQuit": false,
-        "upgradeName":"ECUpgrade"
+        "upgradeName":"ECUpgrade",
+        "savePath":"/update"
     },
     "dev_tool": {
         "active": false,

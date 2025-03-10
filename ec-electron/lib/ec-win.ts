@@ -68,7 +68,7 @@ class EC_Win {
         if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
             mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
         } else {
-            mainWindow.loadFile(join(cwd(), "./renderer/index.html"));
+            mainWindow.loadFile(join(cwd(), "./ec-renderer/index.html"));
         }
     }
 }

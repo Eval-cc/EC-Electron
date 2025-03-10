@@ -22,11 +22,11 @@
         "build": "npm run typecheck && electron-vite build",
         "postinstall": "electron-builder install-app-deps",
         "build:upgrade":"npm run build && node ./electron/bin/@ec_upgrade/index.mjs",
-        "build:unpack": "npm run build && electron-builder --config --dir",
-        "build:win": "npm run build && npm run encryp && electron-builder --config -w=nsis --win",
-        "build:mac": "npm run build && npm run encryp && electron-builder --config=build-config/builder.json --mac",
-        "build:linux": "npm run build && npm run encryp && electron-builder --config=build-config/builder.json --linux",
-        "build:wz": "npm run build  && npm run encryp && electron-builder  --config  -w=7z --win"
+        "build:unpack": "npm run build && electron-builder --dir",
+        "build:win": "npm run build && npm run encryp && electron-builder -w=nsis --win",
+        "build:mac": "npm run build && npm run encryp && electron-builder --mac",
+        "build:linux": "npm run build && npm run encryp && electron-builder --linux",
+        "build:wz": "npm run build  && npm run encryp && electron-builder   -w=7z --win"
     },
     "dependencies": {
         "@electron-toolkit/preload": "^3.0.0",

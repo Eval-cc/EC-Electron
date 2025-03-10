@@ -35,6 +35,8 @@ export interface IPCModelTypeMain {
 
 // 弹窗类型
 export interface MsgBoxType {
+    /** 覆盖原本的文字,一般由主进程进行传递 */
+    content?: string;
     /** 文字是否居中 */
     center?: boolean;
     /** 是否可拖动 */

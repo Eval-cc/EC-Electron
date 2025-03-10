@@ -3,7 +3,7 @@
  * @author Eval
  * @description 模型层
  */
-import type {IpcMainInvokeEvent as IpcMainInvokeEventType} from "electron";
+import type {BrowserWindow, IpcMainInvokeEvent as IpcMainInvokeEventType} from "electron";
 import type {ScheduledTask} from "node-cron";
 
 /**
@@ -91,6 +91,10 @@ export interface ECFrameworkModelType {
         autoDownload: boolean;
         /** 是否在应用退出时自动安装更新 */
         autoInstallOnAppQuit: boolean;
+        /** 增量更新包的名称 */
+        upgradeName: string;
+        /** 更新资源包的保存路径,基于:resources/ */
+        savePath:string;
     };
     /**
      * 控制台配置--生产环境下无效
@@ -163,4 +167,12 @@ export interface ECScheduledTask extends ScheduledTask {
      * 任务名称
      */
     name: string;
+}
+
+/**
+ * 创建窗口的类型声明
+ */
+export interface IBrowserWindow extends BrowserWindow {
+    /** 窗口类型 */
+    win_type?: string;
 }
