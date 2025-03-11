@@ -6,7 +6,7 @@
 
 // import {autoUpdater, UpdateInfo} from "electron-updater";
 import GlobalStatus from "../core/ec-global";
-import {IPCResult} from "../core/ec-IPCResult";
+import {IPCResult, IPResultDialog} from "../core/ec-IPCResult";
 import {IPCModelTypeRender} from "../lib/ec-models";
 import {ec_source_path} from "./ec-proce";
 import ECRequest from "./ec-request";
@@ -176,41 +176,33 @@ class ECUpdate {
                 return;
             }
             this.ecRequest
-                .Get(EC_Join(GlobalStatus.config.update.url, "as_assets.json"))
+                .Get(EC_Join(GlobalStatus.config.update.url, GlobalStatus.config.update.api))
                 .then((res) => {
                     if (res.success) {
                         // 获取本地版本号
                         const localPath = EC_Join(ec_source_path, "version", "version.json");
                         if (!fs.pathExistsSync(localPath)) {
-                            fs.ensureFileSync(localPath);
+                            fs.writeJSONSync(localPath, {version: "1.0.0"});
                         }
-                        let localVersion = fs.readFileSync(localPath).toString() as unknown as {[key: string]: any};
-                        if (localVersion.trim().length === 0) {
-                            localVersion = {version: "1.0.0"};
-                        }
-                        if (!localVersion || !localVersion.version) {
-                            localVersion.version = "1.0.0";
-                        }
+
+                        let localVersion = fs.readJSONSync(localPath);
                         const cloudeVer = res.data?.data ? JSON.parse(res.data.data) : {version: "1.0.0"};
                         if (cloudeVer.version !== localVersion.version) {
                             GlobalStatus.control.SendRenderMsg(
-                                IPCResult(true, "有可用的更新", {
-                                    type: "dialog",
-                                    title: "新版本发布了",
-                                    options: {
-                                        dangerouslyUseHTMLString: true,
-                                        type: "success",
-                                        "show-close": false,
-                                        closeOnClickModal: false,
-                                        closeOnPressEscape: false,
-                                        ipc: "DownLoadUpdate",
-                                        content: `有新版本发布了<br>版本号:v${cloudeVer.version}<br>发布时间:${cloudeVer.releaseDate},<br>更新内容:${cloudeVer.description}`,
-                                    },
+                                IPResultDialog(true, "有可用的更新", {
+                                    dangerouslyUseHTMLString: true,
+                                    type: "success",
+                                    "show-close": false,
+                                    closeOnClickModal: false,
+                                    closeOnPressEscape: false,
+                                    ipc: "DownLoadUpdate",
+                                    content: `有新版本发布了<br>版本号:v${cloudeVer.version}<br>发布时间:${cloudeVer.time},<br>更新内容:${cloudeVer.notes.join("\n")}`,
+                                    ipc_params: {url: cloudeVer.url, version: cloudeVer},
                                 }),
                             );
                             resolve(IPCResult(true, "新版本发布了"));
                         } else {
-                            resolve(IPCResult(false, "没有可用的更新"));
+                            resolve(IPCResult(true, "当前已经是最新版本"));
                         }
                     } else {
                         GlobalStatus.logger.error(`获取版本号失败: ${JSON.stringify(res)}`);
@@ -225,36 +217,68 @@ class ECUpdate {
     }
 
     /** 下载更新 */
-    async DownloadUpdate(url: string): Promise<IPCModelTypeRender> {
+    async DownloadUpdate({url, version}: {url: string; version: any}): Promise<IPCModelTypeRender> {
+        if (!url || !version) {
+            return IPCResult(false, "下载更新失败,url或version参数为空");
+        }
         const savePath = EC_Join(ec_source_path, GlobalStatus.config.update?.savePath as string);
         // 目录不存在就新建一个
         if (!fs.pathExistsSync(savePath)) {
             fs.ensureDirSync(savePath);
         }
-        const file_path = EC_Join(savePath, GlobalStatus.config.update?.upgradeName as string);
+        const file_path = EC_Join(savePath, GlobalStatus.config.update?.upgradeName as string) + ".zip";
         // 删除之前的资源包
         if (fs.existsSync(file_path)) {
             fs.removeSync(file_path);
         }
-        return await this.ecRequest.download(url, file_path);
+        return await this.ecRequest.download(url, file_path, (cbk) => {
+            if (cbk.type === "progress") {
+                GlobalStatus.control.SendRenderMsg(IPCResult(true, `下载进度: ${cbk.data.toFixed(2)}%`, {type: "process"}));
+            } else if (cbk.type === "end") {
+                GlobalStatus.control.SendRenderMsg(IPCResult(true, `下载完成,开始安装...`));
+                const install = this.InstallUpdate();
+                if (install.success) {
+                    // 写入本地文件
+                    const localPath = EC_Join(ec_source_path, "version", "version.json");
+                    version.time = new Date().toLocaleString();
+                    fs.writeJSONSync(localPath, version);
+                }
+                GlobalStatus.control.SendRenderMsg(install);
+            }
+        });
     }
 
     /** 安装更新 */
     InstallUpdate(): IPCModelTypeRender {
-        const savePath = EC_Join(ec_source_path, GlobalStatus.config.update?.savePath as string);
-        if (!fs.pathExistsSync(savePath)) {
-            return IPCResult(false, "无法安装更新,资源包包路径不存在");
+        const {savePath, upgradeName} = GlobalStatus.config.update!;
+        if (!savePath || !upgradeName) {
+            return IPCResult(false, "安装更新包失败,框架的配置文件,update.savePath或update.upgradeName参数为空");
         }
-        const zip_path = EC_Join(savePath, GlobalStatus.config.update?.upgradeName as string);
-
-        const zip = new AdmZip(zip_path);
-        // 解压文件到指定路径
-        zip.extractAllTo(savePath, /*overwrite*/ true);
-        setTimeout(() => {
-            // 删除更新压缩包
-            fs.removeSync(zip_path);
-        }, 1000);
-        return IPCResult(true, "开始安装更新...");
+        const zip_path = EC_Join(ec_source_path, savePath as string, upgradeName as string) + ".zip";
+        if (!fs.existsSync(zip_path)) {
+            return IPCResult(false, "无法安装更新包,资源包不存在");
+        }
+        const install_path = EC_Join(ec_source_path, "app");
+        try {
+            // 安装之前,把之前的渲染进程 Out/目录删除, 避免更新次数多了之后, 文件占用体积大
+            fs.renameSync(EC_Join(install_path, "out"), EC_Join(install_path, "out_bak"));
+            const zip = new AdmZip(zip_path);
+            // 解压文件到指定路径
+            zip.extractAllTo(install_path, /*overwrite*/ true);
+            setTimeout(() => {
+                // 删除更新压缩包
+                fs.remove(zip_path);
+                // 删除旧out包
+                fs.remove(EC_Join(install_path, "out_bak"));
+            }, 1000);
+        } catch (e: any) {
+            // 安装失败了, 把之前的渲染进程 Out/目录还原回来
+            if (fs.pathExistsSync(EC_Join(install_path, "out_bak"))) {
+                fs.renameSync(EC_Join(install_path, "out_bak"), EC_Join(install_path, "out"));
+            }
+            return IPCResult(false, `安装更新包失败: ${e.message}`);
+        }
+        return IPCResult(true, "安装更新包结束...");
     }
 }
 

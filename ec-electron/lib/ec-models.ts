@@ -18,7 +18,7 @@ export interface IPCModelTypeRender {
     msg: string;
     /** 传递的参数 */
     data?: {
-        type?: "tip" | "dialog" | "loading" | "winID" | string;
+        type?: "tip" | "dialog" | "loading" | "winID" | "process" | string;
         [key: string]: any; // 允许任意其他属性
     };
 }
@@ -94,7 +94,9 @@ export interface ECFrameworkModelType {
         /** 增量更新包的名称 */
         upgradeName: string;
         /** 更新资源包的保存路径,基于:resources/ */
-        savePath:string;
+        savePath: string;
+        /** 请求的更新文件api地址 */
+        api: string;
     };
     /**
      * 控制台配置--生产环境下无效

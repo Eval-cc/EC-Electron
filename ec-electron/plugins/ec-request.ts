@@ -67,8 +67,9 @@ class Request {
      * 发起下载资源的请求
      * @param url 下载的地址
      * @param savePath  需要写入的文件名, 而不是目录名称
+     * @param listen 监听下载事件
      */
-    async download(url: string, savePath: string): Promise<any> {
+    async download(url: string, savePath: string, listen:Function=()=>{}): Promise<any> {
         return await new Promise((resolve, reject) => {
             const request = this.GetRequest(url)
                 .get(url, (response) => {
@@ -79,8 +80,13 @@ class Request {
                         response.pipe(fileStream);
 
                         // 文件写入完成后，关闭流
+                        fileStream.on("data", (chunk) => {
+                            listen({type: "progress", data: chunk.length});
+                        });
+                        // 文件写入完成后，关闭流
                         fileStream.on("finish", () => {
                             fileStream.close();
+                            listen({type: "end", data: ""});
                         });
                         resolve(IPCResult(true, ""));
                     } else {

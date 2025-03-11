@@ -41,6 +41,8 @@ export const useECStore = defineStore("ec-store", {
             } else if (String(message.data.type).startsWith("ec-")) {
                 // 接收主进程推送的专属事件
                 utils.emit(message.data.type, message);
+            } else if (message.data.type === "progress") {
+                console.log(message.data);
             }
         },
 

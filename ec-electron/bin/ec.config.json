@@ -18,11 +18,13 @@
         "format": "[{h}:{i}:{s}] [{level}]{scope} {text}"
     },
     "update": {
-        "url": "http://qn.llzfs.online",
+        "url1": "http://qn.llzfs.online",
+        "url": "http://localhost:3000",
         "autoDownload": false,
         "autoInstallOnAppQuit": false,
-        "upgradeName":"ECUpgrade",
-        "savePath":"/update"
+        "upgradeName": "ECUpgrade",
+        "savePath": "/update",
+        "api": "/assets/upte_EC.json"
     },
     "dev_tool": {
         "active": false,

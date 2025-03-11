@@ -158,7 +158,7 @@ class Utils {
             ...options,
         })
             .then(() => {
-                options.ipc && this.ipc(options.ipc, {...options});
+                options.ipc && this.ipc(options.ipc, {...options.ipc_params});
                 options.confirm && options.confirm();
             })
             .catch(() => {

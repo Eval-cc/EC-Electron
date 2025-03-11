@@ -144,8 +144,7 @@ export default class Test extends Service {
      * @param _
      */
     DownLoadUpdate(Params: IPCModelTypeMain): void {
-        const url = Params.data?.url;
-        this.ecupdate!.DownloadUpdate(url);
+        this.ecupdate!.DownloadUpdate(Params.data as any);
     }
 
     /**

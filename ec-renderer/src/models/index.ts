@@ -60,7 +60,9 @@ export interface MsgBoxType {
     /** 是否可通过按下 ESC 键关闭 MessageBox */
     closeOnPressEscape?: boolean;
     /** 是否有需要执行的ipc回调 */
-    ipc?: string
+    ipc?: string;
+    /** ipc回调的参数 */
+    ipc_params?: {[key: string]: any};
 }
 // 弹窗类型
 export interface MsgBoxPromptType {
