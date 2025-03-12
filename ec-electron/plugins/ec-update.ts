@@ -162,7 +162,7 @@ class ECUpdate {
     /** 自动检查更新 */
     AutoCheckUpdate() {
         if (!this.dev_upgrade) {
-            GlobalStatus.control.SendRenderMsg(IPCResult(false, "开发环境无法检查更新,请先打包"));
+            GlobalStatus.control.SendRenderMsg(IPCResult(false, "开发环境无法检查更新"));
             return;
         }
         this.AutoCheckUpdate();
