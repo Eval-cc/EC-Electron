@@ -97,6 +97,10 @@ export interface ECFrameworkModelType {
         savePath: string;
         /** 请求的更新文件api地址 */
         api: string;
+        /** 是否启用后台静默下载安装,如果是启用的,那么不会提示用户安装完成 */
+        silent: boolean;
+        /** 是否启用安装结束之后使用气泡消息通知 */
+        notify: boolean;
     };
     /**
      * 控制台配置--生产环境下无效
@@ -177,4 +181,16 @@ export interface ECScheduledTask extends ScheduledTask {
 export interface IBrowserWindow extends BrowserWindow {
     /** 窗口类型 */
     win_type?: string;
+}
+
+/**
+ * 气泡消息通知的类型声明
+ */
+export interface INotify {
+    /** 气泡消息标题 */
+    title: string;
+    /** 气泡消息内容 */
+    message: string;
+    /** 气泡消息持续时间 */
+    duration?: number;
 }

@@ -5,7 +5,6 @@
  */
 import {BrowserWindow, app as EC_APP, shell as EC_SHELL} from "electron";
 import {join as EC_Join} from "path";
-import {notify as EC_Notify} from "node-notifier";
 import TrayMgr from "../plugins/ec-tray";
 import {IPCResult} from "./ec-IPCResult";
 import {ec_is_test} from "../plugins/ec-proce";
@@ -14,6 +13,7 @@ import EC_Event from "../lib/ec-event";
 import EC_Shortcut from "../lib/ec-shortcut";
 import AutoLaunch from "auto-launch";
 import {IBrowserWindow} from "../lib/ec-models";
+import ECUpdate from "../plugins/ec-update";
 
 class Core {
     private icon: any;
@@ -74,6 +74,10 @@ class Core {
             if (GlobalStatus.config.tray?.active) {
                 // 托盘
                 GlobalStatus.tray = new TrayMgr();
+            }
+            // 如果启用了静默更新,那么自动初始化更新插件触发更新
+            if (GlobalStatus.config.update?.silent) {
+                new ECUpdate().CheckUpdate();
             }
         }, 1000);
     }
@@ -177,21 +181,6 @@ class Core {
         }
     }
 
-    /**
-     * 触发气泡消息
-     * @param message
-     * @param options
-     */
-    show_notifier = (message: string, options: any = {}): any => {
-        const title = options?.title ? options.title : "气泡消息";
-        const obj = EC_Notify({
-            appID: "ECHub-eval",
-            title,
-            message,
-            icon: EC_Join(process.cwd(), "resources\\assets\\icon.png"),
-        });
-        return obj;
-    };
 }
 
 Core.toString = () => "[class Core]";

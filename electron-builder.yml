@@ -30,6 +30,7 @@ files:
     - "!build-config/*"
     - "!ev-logs/*"
     - "!release/*"
+    - "!resources/update/*"
 
 # extraFiles: 适合不需要被打包进 asar 的文件，通常在应用运行时直接使用的文件。
 # extraResources: 适合要打包进 asar 的文件，通常是资源文件，在应用中需要加载和使用

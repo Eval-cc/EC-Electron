@@ -10,7 +10,7 @@
         "title": "EC-Electron EC框架",
         "icon": "icon.png",
         "iconHide": "none.png",
-        "tooltip": "EC框架 @Eval"
+        "tooltip": "EC框架 @email:eval-email@qq.com"
     },
     "logConfig": {
         "path": "./ec-logs",
@@ -18,16 +18,18 @@
         "format": "[{h}:{i}:{s}] [{level}]{scope} {text}"
     },
     "update": {
-        "url1": "http://qn.llzfs.online",
         "url": "http://localhost:3000",
         "autoDownload": false,
         "autoInstallOnAppQuit": false,
         "upgradeName": "ECUpgrade",
         "savePath": "/update",
-        "api": "/assets/upte_EC.json"
+        "api": "/assets/upte_EC.json",
+        "silent": true,
+        "notify": true
     },
     "dev_tool": {
         "active": false,
-        "cmd": "CommandOrControl+Shift+F10"
+        "cmd": "CommandOrControl+Shift+F10",
+        "remark": "此配置默认仅开发环境生效"
     }
 }

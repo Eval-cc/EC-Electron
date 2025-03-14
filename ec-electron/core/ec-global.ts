@@ -9,10 +9,12 @@ import Controller from "./ec-controller";
 import {dialog} from "electron";
 import TrayMgr from "../plugins/ec-tray";
 import fs from "fs-extra";
-import {ECFrameworkModelType, IBrowserWindow} from "../lib/ec-models";
+import {ECFrameworkModelType, IBrowserWindow, INotify} from "../lib/ec-models";
 import Core from "./ec-core";
-import {ec_config_path, ec_is_test} from "../plugins/ec-proce";
+import {ec_config_path, ec_is_test, ec_source_path} from "../plugins/ec-proce";
 import EC_Logger from "../plugins/ec-log";
+import notifier from "node-notifier";
+import {join as EC_Join} from "path";
 
 class GlobalStatus {
     /**
@@ -88,6 +90,16 @@ class GlobalStatus {
         // 保存窗口对象
         GlobalStatus.ecWinList[win.id] = win;
         GlobalStatus.logger = new EC_Logger();
+
+        notifier.on("click", function (notifierObject, options, event) {
+            console.log("点击", notifierObject, options, event);
+            // Triggers if `wait: true` and user clicks notification
+        });
+
+        notifier.on("timeout", function (notifierObject, options) {
+            console.log("超时", notifierObject, options);
+            // Triggers if `wait: true` and notification closes
+        });
     }
 
     /**
@@ -157,9 +169,43 @@ class GlobalStatus {
     static get uuid() {
         return crypto.randomUUID();
     }
+
     static set uuid(_: any) {
         throw new Error("禁止修改EC框架集成的 uuid 模块");
     }
+
+    /**
+     * 给托盘推送消息, 如果没有启用托盘插件则不生效
+     * @param msg
+     */
+    static pushTrayMsg(msg: string) {
+        if (!GlobalStatus.tray) return;
+        GlobalStatus.tray.setMsg(msg);
+    }
+
+    /**
+     * 触发气泡消息
+     * @param options
+     */
+    static pushNotifyMsg = (options: INotify = {title: "气泡消息", message: ""}): void => {
+        notifier.notify(
+            {
+                appID: "ec-eval-notify",
+                ...options,
+                icon: EC_Join(ec_source_path, "assets/icon.png"),
+                sound: true, //仅限通知中心或 Windows Toasters
+                wait: true, // 等待回调，直到用户针对通知采取行动，不适用于 Windows Toasters，因为它们总是等待或通知发送，因为它不支持等待选项
+            },
+            function (err, response, metadata) {
+                if (err) {
+                    console.error("通知发送失败:", err);
+                } else {
+                    console.log("通知响应:", response);
+                    console.log("元数据:", metadata);
+                }
+            },
+        );
+    };
 }
 
 GlobalStatus.toString = () => "[class GlobalStatus]";
