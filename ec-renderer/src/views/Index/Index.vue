@@ -135,7 +135,7 @@ const InvokerNotify = () => {
 };
 
 // aside组件的回调
-const childCallback = (data: any): void => {
+const childCallback = (data: string): void => {
     if (data === "restart") {
         utils.ipc("Restart");
     } else if (data === "exit") {
@@ -149,7 +149,6 @@ const childCallback = (data: any): void => {
         currMenu.value = data;
     }
 };
-
 </script>
 
 <style lang="less" scoped>

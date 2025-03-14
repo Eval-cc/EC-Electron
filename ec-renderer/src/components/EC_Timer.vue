@@ -29,15 +29,16 @@
 </template>
 
 <script lang="ts" setup>
+import {IPCModelTypeRender} from "@renderer/models";
 import utils from "@renderer/utils";
 import {nextTick, onMounted, reactive, ref} from "vue";
 
-const msgList = reactive<any[]>([]);
+const msgList = reactive<IPCModelTypeRender[]>([]);
 const messageList = ref<HTMLUListElement>();
 
 onMounted(() => {
     // 任务开始之后, 开始定时接收主进程推送消息
-    utils.on("ec-timer", (data: any) => {
+    utils.on("ec-timer", (data: IPCModelTypeRender) => {
         msgList.push(data);
         nextTick(() => {
             if (messageList.value?.scrollHeight) {
@@ -75,7 +76,7 @@ const readEcFile = () => {
                 return;
             }
             for (let [_, item] of res.data.data.split("\n").filter(Boolean).entries()) {
-                msgList.push({msg: item});
+                msgList.push({success: true, msg: item});
             }
             utils.message(`读取文件内容完成,共:${msgList.length}行`, true);
             messageList.value!.scrollTop = messageList.value!.scrollHeight;

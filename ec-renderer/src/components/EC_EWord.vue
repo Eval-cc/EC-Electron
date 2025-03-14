@@ -20,7 +20,7 @@
 import utils from "@renderer/utils";
 import {onMounted, reactive, ref} from "vue";
 
-const Edata = reactive<any>({});
+const Edata = reactive< {[key: string]: any}>({});
 const loading = ref<boolean>(false);
 
 const Refresh = () => {

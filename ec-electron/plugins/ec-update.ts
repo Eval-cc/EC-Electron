@@ -278,7 +278,7 @@ class ECUpdate {
             }
             const zip = new AdmZip(zip_path);
             // 解压文件到指定路径
-            zip.extractAllTo(install_path, /*overwrite*/ true);
+            zip.extractAllTo(EC_Join(install_path, "out"), /*overwrite*/ true);
             setTimeout(() => {
                 // 删除更新压缩包
                 fs.rmdir(EC_Join(ec_source_path, savePath as string), {recursive: true});

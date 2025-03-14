@@ -7,9 +7,10 @@ import {ElMessage, ElLoading, ElMessageBox} from "element-plus";
 import type {MessageHandler, MessageOptions} from "element-plus";
 import {MsgBoxType, MsgBoxPromptType, LoadingType, IPCModelTypeRender} from "@renderer/models";
 import {useECStore} from "@renderer/store";
+import { LoadingInstance } from "element-plus/es/components/loading/src/loading";
 
 class Utils {
-    private debounTime: Record<string, any>; // 防抖定时器
+    private debounTime: Record<string, NodeJS.Timeout>; // 防抖定时器
     constructor() {
         this.debounTime = {};
     }
@@ -19,7 +20,7 @@ class Utils {
      * @param args 参数对象
      * @returns
      */
-    ipc = (method: string, args?: any): Promise<IPCModelTypeRender> => {
+    ipc = (method: string, args?: {[key: string]: any}): Promise<IPCModelTypeRender> => {
         const store = useECStore();
         return store.EC_Main_IPC_Send({fun: method, data: args});
     };
@@ -49,7 +50,7 @@ class Utils {
      * @param data
      * @returns
      */
-    emit = (name: string, data: any) => {
+    emit = (name: string, data: {[key: string]: any}) => {
         const store = useECStore();
         store.triggerListener({name, data});
     };
@@ -103,7 +104,7 @@ class Utils {
             }
         > = {},
         timeout: LoadingType | null = null,
-    ): any {
+    ): LoadingInstance {
         const background = options.background ? options.background : "rgba(0, 0, 0, 0.7)";
         const lock = options.lock ? options.lock : true;
         const fullscreen = options.fullscreen ? options.fullscreen : true;

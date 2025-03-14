@@ -46,7 +46,7 @@
 import utils from "@renderer/utils";
 import {reactive} from "vue";
 
-const dllFrom = reactive<any>({
+const dllFrom = reactive<{[key: string]: any}>({
     className: "Test.Add",
     methodName: "addNum",
     args: "1,2,3",

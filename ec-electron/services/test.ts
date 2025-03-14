@@ -70,8 +70,8 @@ export default class Test extends Service {
         if (!args.data || !args.data.message) {
             return IPCResult(false, "未传入必要参数:消息内容");
         }
-        const {message, callback} = args.data;
-        GlobalStatus.core.show_notifier(message, callback);
+        const {message} = args.data;
+        GlobalStatus.pushNotifyMsg(message);
         return IPCResult(true, "气泡已弹出");
     }
 
