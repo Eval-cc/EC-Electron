@@ -48,7 +48,7 @@ import {reactive} from "vue";
 
 const dllFrom = reactive<{[key: string]: any}>({
     className: "Test.Add",
-    methodName: "addNum",
+    methodName: "addNum_1",
     args: "1,2,3",
     dllName: "test",
     returnType: "int",

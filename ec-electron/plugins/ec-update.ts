@@ -147,7 +147,7 @@ import AdmZip from "adm-zip";
 class ECUpdate {
     dev_upgrade: boolean = true; // 是否允许开发环境执行更新
     ecRequest: ECRequest;
-    state: "none" | "checking" | "downloading" | "installing" = "none"; // 当前状态
+    state: "none" | "checking" | "downloading" | "installing" = "none"; // 当前状态, none: 空闲, checking: 检查更新, downloading: 下载更新, installing: 安装更新
     constructor() {
         GlobalStatus.logger.info("ECUpdate 更新插件初始化");
         this.ecRequest = new ECRequest();

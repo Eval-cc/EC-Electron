@@ -21,9 +21,7 @@
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
             <div class="el-upload__text">
                 拖拽 或者 <em>点击</em>
-                <p class="el-upload__tip">PS 1: 程序使用管理员权限启动的时候,文件是拖不进来的</p>
-                <p class="el-upload__tip">PS 2: 选中文件之后可以预览</p>
-                <p class="el-upload__tip">PS 3: 框架默认只能选择{{ maxUpload - fileList.length }}/{{ maxUpload }}个文件</p>
+                <p class="el-upload__tip">PS 1: 还能选择{{ maxUpload - fileList.length }}个文件(max:{{ maxUpload }})</p>
             </div>
         </el-upload>
         <ul class="el-upload__list" v-if="fileList.length">

@@ -39,8 +39,9 @@ class EC_DLL {
         // };
 
         // 默认尝试读取C++ 类型的程序集
-        return this.Abnormal(dllPath, params);
         // return tryLoadDll(this.Koffi) || tryLoadDll(this.EdgeJS) || this.Abnormal(dllPath, params);
+        // 框架仅提供中间程序调用的方式, 其他的方式自行在项目中实现
+        return this.Abnormal(dllPath, params);
     }
 
     /**
@@ -50,22 +51,22 @@ class EC_DLL {
      * @returns
      */
     // private Koffi(dllPath: string, params: ECDllModelType) {
-    //     // const myLibrary = Koffi.load(dllPath); // 定义函数
-    //     // const methodName = params.methodName; // 方法名
-    //     // const returnType = params.returnType; // 返回值类型
-    //     // const argsType = params.argsType; // 参数类型
-    //     // const args = params.args; // 参数列表
-    //     // /**
-    //     //  * const myLibrary = Koffi.load(dllPath); // 定义函数
-    //     //  * const call = myLibrary.func("__stdcall", "hello", "int", ["int", "int", "int"]); // 定义函数
-    //     //  * 调用函数
-    //     //  * const result = addNum(...params);
-    //     //  */
-    //     // const call = myLibrary.func("__stdcall", methodName, returnType, argsType); // 定义函数
+    //     const myLibrary = Koffi.load(dllPath); // 定义函数
+    //     const methodName = params.methodName; // 方法名
+    //     const returnType = params.returnType; // 返回值类型
+    //     const argsType = params.argsType; // 参数类型
+    //     const args = params.args; // 参数列表
+    //     /**
+    //      * const myLibrary = Koffi.load(dllPath); // 定义函数
+    //      * const call = myLibrary.func("__stdcall", "hello", "int", ["int", "int", "int"]); // 定义函数
+    //      * 调用函数
+    //      * const result = addNum(...params);
+    //      */
+    //     const call = myLibrary.func("__stdcall", methodName, returnType, argsType); // 定义函数
 
     //     // 调用函数
-    //     // const result = call(args);
-    //     // return IPCResult(true, `Koffi调用:${result}`);
+    //     const result = call(args);
+    //     return IPCResult(true, `Koffi调用:${result}`);
     //     return null;
     // }
 
@@ -132,7 +133,7 @@ class EC_DLL {
                     // 使用 TextDecoder 解码为字符串
                     const decoder = new TextDecoder("utf-8");
                     // 将字节转换为字符串
-                    resolve(IPCResult(true, `中间程序调用:${decoder.decode(bytes) || "无返回值"}`));
+                    resolve(IPCResult(true, `中间程序调用:${(decoder.decode(bytes) || "无返回值")}`));
                 }
             });
         });

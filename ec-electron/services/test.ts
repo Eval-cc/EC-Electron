@@ -71,7 +71,7 @@ export default class Test extends Service {
             return IPCResult(false, "未传入必要参数:消息内容");
         }
         const {message} = args.data;
-        GlobalStatus.pushNotifyMsg(message);
+        GlobalStatus.pushNotifyMsg({title: "气泡消息", message});
         return IPCResult(true, "气泡已弹出");
     }
 
