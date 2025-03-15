@@ -156,10 +156,9 @@ export default class Test extends Service {
         const ecFS = new ECFileSystem();
         try {
             const data = await ecFS.readEC_File({path: ec_source_path + "/timer.ec"});
-
             return IPCResult(true, "测试读取EC框架专属格式的文件", {data});
         } catch (error: any) {
-            return IPCResult(false, "测试读取EC框架专属格式的文件失败", {error: error.message});
+            return IPCResult(false, error.message, {error: error.message});
         }
     }
 

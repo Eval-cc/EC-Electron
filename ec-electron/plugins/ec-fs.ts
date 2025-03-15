@@ -19,17 +19,20 @@ function ValidateFile(expectedExtension: string) {
         descriptor.value = function (...args: ECReadFileModelType[] | ECWriteFileModelType[]) {
             // 检查文件后缀
             if (!args[0].path.endsWith(`.${expectedExtension}`)) {
-                return IPCResult(false, `文件后缀必须为.${expectedExtension}`);
+                throw new Error(`文件后缀必须为.${expectedExtension}`);
             }
-            if (args[0]["content"]) {
-                const options = args[0] as ECWriteFileModelType;
-                const filePath = args[0];
+            const options = args[0] as ECWriteFileModelType;
+            if (options.content) {
                 // 索引 1 是其他参数
                 const wirte: string = options.options?.write || "r";
                 // 检查文件路径 -- 以及 是否强制写入
                 if (!fs.existsSync(options.path)) {
-                    if (wirte === "r") return IPCResult(false, `不存在的路径：${filePath}`);
+                    if (wirte === "r") throw new Error(`不存在的路径：${options.path}`);
                     fs.createFileSync(options.path);
+                }
+            } else {
+                if (!fs.existsSync(options.path)) {
+                    throw new Error(`不存在的路径：${options.path}`);
                 }
             }
 

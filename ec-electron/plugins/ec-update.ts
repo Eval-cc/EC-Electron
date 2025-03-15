@@ -191,7 +191,7 @@ class ECUpdate {
                                         "show-close": false,
                                         closeOnClickModal: false,
                                         closeOnPressEscape: false,
-                                        ipc: "DownLoadUpdate",
+                                        ipc: "DownLoadUpdate", // 此方法的ipc回调需要确保在服务类里面注入了
                                         content: `有新版本发布了<br>版本号:v${cloudeVer.version}<br>发布时间:${cloudeVer.time},<br>更新内容:${cloudeVer.notes.join("\n")}`,
                                         ipc_params: {url: cloudeVer.url, version: cloudeVer},
                                     }),
