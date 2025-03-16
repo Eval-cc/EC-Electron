@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import utils from "@renderer/utils";
+import utils from "../utils";
 import {reactive} from "vue";
 
 const dllFrom = reactive<{[key: string]: any}>({

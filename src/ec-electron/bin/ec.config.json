@@ -24,7 +24,7 @@
         "upgradeName": "ECUpgrade",
         "savePath": "/update",
         "api": "/assets/upte_EC.json",
-        "silent": true,
+        "silent": false,
         "notify": true
     },
     "dev_tool": {

@@ -1,20 +1,21 @@
 {
     "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
     "include": [
-        "ec-renderer/src/env.d.ts",
-        "ec-renderer/src/**/*.vue",
-        "ec-renderer/src/**/*.ts",
-        "ec-renderer/src/**/*.png",
-        "ec-electron/preload/*.d.ts"
+        "src/renderer/src/env.d.ts",
+        "src/renderer/src/**/*.vue",
+        "src/renderer/src/**/*.ts",
+        "src/renderer/src/**/*.png",
+        "src/preload/*.d.ts"
     ],
-    "types": ["vue"],
     "compilerOptions": {
         "composite": true,
         "baseUrl": ".",
+        "moduleResolution": "node",
         "paths": {
-        "@renderer/*": [
-                "ec-renderer/src/*"
+            "@renderer/*": [
+                    "src/renderer/src/*"
             ]
         },
     }
 }
+

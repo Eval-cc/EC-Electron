@@ -1,16 +1,16 @@
 {
     "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
-    "include": [
-      "electron.vite.config.*",
-      "ec-electron/**/*",
-    ],
+    "include": ["electron.vite.config.*", "src/**/*", "src/ec-electron"],
     "compilerOptions": {
-      "composite": true,
-      "types": [
-        "electron-vite/node"
-      ],
-      "experimentalDecorators": true,
-      "emitDecoratorMetadata": true,
-      "sourceMap": false,
+        "composite": true,
+        "module": "esnext",
+        "types": ["electron-vite/node"],
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "moduleResolution": "node",
+        "baseUrl": ".",
+        "paths": {
+          "@/*": ["./"] // 确保路径别名配置正确
+        }
     }
-  }
+}

@@ -1,5 +1,5 @@
-import {IPCModelTypeMain, IPCModelTypeRender} from "@renderer/models";
-import utils from "@renderer/utils";
+import {IPCModelTypeMain, IPCModelTypeRender} from "../models";
+import utils from "../utils";
 import {defineStore} from "pinia";
 
 export const useECStore = defineStore("ec-store", {

@@ -4,7 +4,7 @@ const routes = [
     {
         path: "/",
         name: "Index",
-        component: () => import("@renderer/views/Index/Index.vue"),
+        component: () => import("../views/Index/Index.vue"),
     },
 ];
 

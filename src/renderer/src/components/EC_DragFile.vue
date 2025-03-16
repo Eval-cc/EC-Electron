@@ -60,7 +60,7 @@ import {UploadFilled, Close} from "@element-plus/icons-vue";
 import {ref} from "vue";
 
 import type {UploadProps, UploadUserFile} from "element-plus";
-import utils from "@renderer/utils";
+import utils from "../utils";
 
 const fileList = ref<UploadUserFile[]>([]);
 // 默认限制的上传数量

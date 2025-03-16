@@ -29,8 +29,8 @@
 </template>
 
 <script lang="ts" setup>
-import {IPCModelTypeRender} from "@renderer/models";
-import utils from "@renderer/utils";
+import {IPCModelTypeRender} from "../models";
+import utils from "../utils";
 import {nextTick, onMounted, reactive, ref} from "vue";
 
 const msgList = reactive<IPCModelTypeRender[]>([]);

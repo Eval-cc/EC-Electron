@@ -84,14 +84,14 @@
 </template>
 
 <script lang="ts" setup>
-import utils from "@renderer/utils";
+import utils from "../../utils";
 import {ref} from "vue";
 
-import EC_AsideView from "@renderer/components/EC_Aside.vue";
-import EC_DLL from "@renderer/components/EC_DLL.vue";
-import EC_DragFile from "@renderer/components/EC_DragFile.vue";
-import EC_EWord from "@renderer/components/EC_EWord.vue";
-import EC_Timer from "@renderer/components/EC_Timer.vue";
+import EC_AsideView from "../../components/EC_Aside.vue";
+import EC_DLL from "../../components/EC_DLL.vue";
+import EC_DragFile from "../../components/EC_DragFile.vue";
+import EC_EWord from "../../components/EC_EWord.vue";
+import EC_Timer from "../../components/EC_Timer.vue";
 
 // 变量声明
 const notifyMsg = ref<string>("");

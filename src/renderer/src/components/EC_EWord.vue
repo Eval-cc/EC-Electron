@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import utils from "@renderer/utils";
+import utils from "../utils";
 import {onMounted, reactive, ref} from "vue";
 
 const Edata = reactive< {[key: string]: any}>({});
