@@ -5,17 +5,18 @@
         "src/renderer/src/**/*.vue",
         "src/renderer/src/**/*.ts",
         "src/renderer/src/**/*.png",
+        "src/renderer/src/store/*.ts",
+        "src/renderer/src/router/*.ts",
+        "src/renderer/src/utils/*.ts",
         "src/preload/*.d.ts"
     ],
     "compilerOptions": {
         "composite": true,
         "baseUrl": ".",
-        "moduleResolution": "node",
         "paths": {
-            "@renderer/*": [
-                    "src/renderer/src/*"
-            ]
-        },
+        "@renderer/*": [
+            "src/renderer/src/*"
+        ]
+        }
     }
 }
-

@@ -175,7 +175,7 @@ class Core {
         });
         // 如果没有传入地址,那就默认新增小工具窗口
         if (!url) {
-            win.loadFile(EC_Join(__dirname, "../ec-renderer/index.html"));
+            win.loadFile(EC_Join(__dirname, "src/renderer/index.html"));
         } else {
             win.loadURL(url);
         }

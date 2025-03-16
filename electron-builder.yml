@@ -25,7 +25,6 @@ files:
     - "!.prettierrc"
     - "!tsconfig.json"
     - "!tsconfig.*.json"
-    - "!ec-renderer/*"
     - "!ec-electron/*"
     - "!build-config/*"
     - "!ev-logs/*"
