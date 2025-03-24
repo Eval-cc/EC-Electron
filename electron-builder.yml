@@ -5,7 +5,7 @@ directories:
     output: release/set_up/build_v${version}
     buildResources: build
 # 构建的钩子
-afterPack: "./ec-electron/bin/@afterPack/index.js"
+afterPack: "./src/ec-electron/bin/@afterPack/index.js"
 files:
     - "!**/.vscode/*"
     - "!src/*"
@@ -45,7 +45,7 @@ extraResources:
 asar: false
 # 把不需要打包进asar的模块放到这里
 asarUnpack:
-    - "**/node_modules/electron/**/*"
+    - "**/node_modules/**/*"
 win:
     icon: ./resources/assets/icon-256.ico
     # 程序安装之后显示的名称

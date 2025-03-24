@@ -1,9 +1,9 @@
 export interface IElectronAPI {
-    IPCcontrol: () => Promise<void>;
+    IPCcontrol: () => Promise<void>
 }
 
 declare global {
     interface Window {
-        electronAPI: IElectronAPI;
+        electronAPI: IElectronAPI
     }
 }

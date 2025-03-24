@@ -44,7 +44,7 @@
                 </div>
                 <div class="file-name">
                     <span> 文件名: {{ file.name }} </span>
-                    <span> 路径: {{ file.raw?.path }} </span>
+                    <span> 路径: {{ file.raw }} </span>
                 </div>
                 <div class="close" @click="rmFile(index)">
                     <el-icon><Close /> </el-icon>

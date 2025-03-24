@@ -84,12 +84,12 @@ class GlobalStatus {
         }
         // 设置窗口类型
         win.win_type = "main";
+        GlobalStatus.logger = new EC_Logger();
         GlobalStatus.winMain = win;
         GlobalStatus.core = core;
         GlobalStatus.control = new Controller();
         // 保存窗口对象
         GlobalStatus.ecWinList[win.id] = win;
-        GlobalStatus.logger = new EC_Logger();
 
         notifier.on("click", function (notifierObject, options, event) {
             console.log("点击", notifierObject, options, event);

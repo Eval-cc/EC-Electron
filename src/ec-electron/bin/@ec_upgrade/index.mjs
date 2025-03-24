@@ -24,7 +24,7 @@ class Upgrade {
         if (!fs.pathExistsSync(releasePath)) {
             fs.mkdirpSync(releasePath, {recursive: true});
         }
-        const confFile = path.join(process.cwd(), "ec-electron", "bin", "ec.config.json");
+        const confFile = path.join(process.cwd(), "src", "ec-electron", "bin", "ec.config.json");
         if (!fs.pathExistsSync(confFile)) {
             throw new Error("配置文件不存在, confFile:" + confFile);
         }
@@ -33,7 +33,7 @@ class Upgrade {
         // 清空或创建临时目录
         fs.emptyDirSync(tempDir);
         // 需要复制的子目录列表
-        const subDirsToCopy = ["main", "preload", "ec-renderer"];
+        const subDirsToCopy = ["main", "preload", "renderer"];
         // 复制指定的子目录到临时目录
         subDirsToCopy.forEach((subDir) => {
             const subDirPath = path.join(rootPath, subDir);
