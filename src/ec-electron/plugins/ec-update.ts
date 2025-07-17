@@ -8,7 +8,7 @@
 import GlobalStatus from "../core/ec-global";
 import {IPCResult, IPResultDialog} from "../core/ec-IPCResult";
 import {IPCModelTypeRender} from "../lib/ec-models";
-import {ec_source_path} from "./ec-proce";
+import {ec_source_path, extraPath} from "./ec-proce";
 import ECRequest from "./ec-request";
 import {join as EC_Join} from "path";
 import fs from "fs-extra";
@@ -285,6 +285,38 @@ class ECUpdate {
                 // 删除旧out包
                 fs.remove(EC_Join(install_path, "out_bak"));
             }, 1000);
+            
+            // 读取一下得到的更新包里面有没有需要更新的dll文件
+            const dll_path = EC_Join(install_path, "out", "dll");
+            if (fs.pathExistsSync(dll_path)) {
+                fs.readdirSync(dll_path).forEach((df:string) => {
+                    // 把dll移动到额外资源目录里面
+                    fs.moveSync(EC_Join(dll_path, df), EC_Join(extraPath, df), {overwrite: true});
+                });
+                fs.removeSync(dll_path);
+            }
+            // 对比一下库模块, 把新增的模块移动到程序的node_modules目录里面,确保新版本增加了模块之后, 更新没问题
+            const modules_path = EC_Join(install_path, "out", "modules");
+            if (fs.pathExistsSync(modules_path)) {
+                const items = fs.readdirSync(modules_path);
+                for (const item of items) {
+                    try {
+                        const srcPath = EC_Join(modules_path, item);
+                        const destPath = EC_Join(install_path, "node_modules", item);
+
+                        // 检查目标路径是否存在
+                        const exists = fs.pathExistsSync(destPath);
+
+                        if (exists) {
+                            continue;
+                        }
+                        fs.moveSync(srcPath, destPath);
+                    } catch (e: any) {
+                        GlobalStatus.logger.error(`执行包迁移出错: ${e.stack}`);
+                    }
+                }
+                fs.removeSync(modules_path);
+            }
             if (GlobalStatus.config.update?.notify) {
                 GlobalStatus.pushNotifyMsg({title: "ec-hub", message: "更新完成, 请重启应用以完成更新"});
             }
