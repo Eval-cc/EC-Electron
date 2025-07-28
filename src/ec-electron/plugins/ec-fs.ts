@@ -64,6 +64,15 @@ class ECFileSystem {
     }
 
     /**
+     * 文件是否存在
+     * @param filePath
+     * @returns
+     */
+    existFile(filePath: string): boolean {
+        return fs.pathExistsSync(filePath);
+    }
+
+    /**
      * 读取json文件
      * @param filePath 文件路径
      * @returns
@@ -155,7 +164,7 @@ class ECFileSystem {
      * @returns
      */
     @ValidateFile("ec")
-    readEC_File(options: ECReadFileModelType): Promise<string> {
+    readEC_File(options: ECReadFileModelType): Promise<IPCModelTypeRender> {
         try {
             return new Promise((resolve, reject) => {
                 let content = "";
@@ -173,15 +182,14 @@ class ECFileSystem {
                                 return str;
                             })
                             .join("") || "";
-                    resolve(data);
+                    resolve(IPCResult(true, "读取文件成功", {data}));
                 });
                 stream.on("error", (error) => {
                     reject(`读取文件失败：${error.message}`);
                 });
-                return IPCResult(true, "读取文件成功", {content});
             });
         } catch (error: any) {
-            return Promise.resolve(`读取文件失败：${error.message}`);
+            return Promise.resolve(IPCResult(false, `读取文件失败：${error.message}`));
         }
     }
 

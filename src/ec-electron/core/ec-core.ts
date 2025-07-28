@@ -11,15 +11,11 @@ import {ec_is_test} from "../plugins/ec-proce";
 import GlobalStatus from "./ec-global";
 import EC_Event from "../lib/ec-event";
 import EC_Shortcut from "../lib/ec-shortcut";
-import AutoLaunch from "auto-launch";
 import {IBrowserWindow} from "../lib/ec-models";
-import ECUpdate from "../plugins/ec-update";
 
 class Core {
     private icon: any;
-    constructor(win: IBrowserWindow, icon: any) {
-        // 直接显示,等待logo的时候开始加载配置信息
-        win.show();
+    constructor(win: IBrowserWindow, icon: any, CreateLogo: Function) {
         // 初始化全局配置
         GlobalStatus.loadConfig(win, this);
         new EC_Event();
@@ -30,19 +26,21 @@ class Core {
             throw new Error("请设置应用名称");
         }
         // 延迟加载不重要的配置
-        this.__init__delay(win);
+        this.__init__delay(win, CreateLogo);
     }
 
     /**
      * 初始化延迟加载
      * @param win
      */
-    private __init__delay(win: IBrowserWindow) {
+    private __init__delay(win: IBrowserWindow, CreateLogo: Function) {
         GlobalStatus.control.SendRenderMsg({success: true, msg: "", data: {type: "winID"}});
+        win.title = GlobalStatus.config.app_name as string;
+        CreateLogo();
+        // // 直接显示,等待logo的时候开始加载配置信息
+        // win.show();
         // 托盘可以延迟一点加载
         setTimeout(() => {
-            win.title = GlobalStatus.config.app_name as string;
-
             if (ec_is_test && GlobalStatus.config.dev_tool?.active) {
                 if (!win.webContents.isDevToolsOpened()) {
                     win.webContents.toggleDevTools();
@@ -51,33 +49,10 @@ class Core {
             // 注册快捷键
             new EC_Shortcut();
 
-            const autoLaunch = new AutoLaunch({
-                name: GlobalStatus.config.app_name as string, // 设置应用名称
-                isHidden: GlobalStatus.config.auto_launch?.isHidden, // 启动时是否隐藏窗口
-            });
-            // 启用开机自启动
-            autoLaunch
-                .isEnabled()
-                .then((isEnabled: boolean) => {
-                    //  读取配置文件是否配置了自启动
-                    if (GlobalStatus.config.auto_launch?.active && !isEnabled) {
-                        autoLaunch.enable(); // 启用自启动
-                    } else {
-                        autoLaunch.disable(); // 关闭自启动
-                    }
-                })
-                .catch((error: any) => {
-                    throw new Error(`EC框架-自动启动失败:${error.stack}`);
-                });
-
             // 托盘开关是否打开
             if (GlobalStatus.config.tray?.active) {
                 // 托盘
                 GlobalStatus.tray = new TrayMgr();
-            }
-            // 如果启用了静默更新,那么自动初始化更新插件触发更新
-            if (GlobalStatus.config.update?.silent) {
-                new ECUpdate().CheckUpdate();
             }
         }, 1000);
     }
@@ -175,12 +150,15 @@ class Core {
         });
         // 如果没有传入地址,那就默认新增小工具窗口
         if (!url) {
-            win.loadFile(EC_Join(__dirname, "src/renderer/index.html"));
+            if (ec_is_test && process.env["ELECTRON_RENDERER_URL"]) {
+                win.loadURL(process.env["ELECTRON_RENDERER_URL"]);
+            } else {
+                win.loadFile(EC_Join(__dirname, "../renderer/child.html"));
+            }
         } else {
             win.loadURL(url);
         }
     }
-
 }
 
 Core.toString = () => "[class Core]";

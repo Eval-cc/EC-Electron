@@ -4,12 +4,13 @@
  * @description 主视图相关
  */
 import {app, shell, BrowserWindow, Menu} from "electron";
-import {join} from "path";
+import {join as EC_Join} from "path";
 import {electronApp, optimizer, is} from "@electron-toolkit/utils";
-import icon from "@/resources/assets/icon.png?asset";
-import linu_icon from "@/resources/assets/linux-icon.ico?asset";
+import icon from "@resources/assets/icon.png?asset";
+import linu_icon from "@resources/assets/linux-icon.ico?asset";
 import Core from "../core/ec-core";
-import { cwd } from "process";
+import GlobalStatus from "../core/ec-global";
+import {ec_is_test} from "../plugins/ec-proce";
 
 class EC_Win {
     constructor() {
@@ -42,7 +43,7 @@ class EC_Win {
             webPreferences: {
                 webviewTag: true,
                 contextIsolation: true,
-                preload: join(__dirname, "../preload/index.js"), // 加载预加载脚本
+                preload: EC_Join(__dirname, "../preload/index.js"), // 加载预加载脚本
                 sandbox: false,
             },
         });
@@ -60,7 +61,7 @@ class EC_Win {
                 // 退出当前重复打开的实例-
                 app.quit();
             } else {
-                new Core(mainWindow, icon);
+                new Core(mainWindow, icon, this.CreateLogo);
             }
         });
 
@@ -68,7 +69,60 @@ class EC_Win {
         if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
             mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
         } else {
-            mainWindow.loadFile(join(cwd(), "src/renderer/index.html"));
+            // mainWindow.loadURL("https://github.com/Eval-cc?tab=repositories")
+            mainWindow.loadFile(EC_Join(__dirname, "../renderer/index.html"));
+        }
+    }
+
+    /**
+     * 弹出小logo展示
+     * @param url 新窗体的加载路径
+     */
+    CreateLogo() {
+        // 创建浏览器窗口。
+        const win = new BrowserWindow({
+            width: 400,
+            height: 400,
+            minWidth: 400,
+            minHeight: 400,
+            maxWidth: 400,
+            maxHeight: 400,
+            frame: false, // 隐藏标题栏
+            transparent: true, // 窗口透明
+            modal: true,
+            show: true,
+            autoHideMenuBar: true,
+            ...(process.platform === "linux" ? {icon} : {icon}),
+            webPreferences: {
+                preload: EC_Join(__dirname, "../preload/child-preload.js"), // 加载预加载脚本
+                contextIsolation: true,
+                sandbox: false,
+            },
+        });
+        win.setSkipTaskbar(true); // 不显示子窗口的任务栏图标
+
+        win.on("ready-to-show", () => {
+            GlobalStatus.winMain.hide();
+            // 设置窗口类型-为子窗口
+            win["win_type"] = "child-widget";
+            win.show();
+            // 设置窗口置顶
+            win.setAlwaysOnTop(true, "screen-saver");
+            win.setIgnoreMouseEvents(true); // 忽略鼠标事件
+            setTimeout(() => {
+                GlobalStatus.winMain.show();
+                win.close();
+            }, 1500);
+        });
+
+        // 关闭子窗口之后,从主进程的窗口管理里面去除
+        win.on("close", () => {
+            win.destroy();
+        });
+        if (ec_is_test) {
+            win.loadURL("http://localhost:5173/child.html");
+        } else {
+            win.loadFile(EC_Join(__dirname, "../renderer/child.html"));
         }
     }
 }

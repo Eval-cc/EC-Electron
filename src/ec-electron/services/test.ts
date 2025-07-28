@@ -15,6 +15,7 @@ import {ec_source_path} from "../plugins/ec-proce";
 import EC_Cron from "../plugins/ec-cron";
 
 import type {IPCModelTypeMain, IPCModelTypeRender, ECScheduledTask} from "../lib/ec-models";
+import EcSqlite3 from "../plugins/ec-sqllite3";
 
 export default class Test extends Service {
     ecupdate?: ECUpdate;
@@ -217,5 +218,19 @@ export default class Test extends Service {
         clearInterval(Number(this.timerTask));
         this.timerTask = null;
         return IPCResult(true, "定时器已停止");
+    }
+
+    queryUser(params: IPCModelTypeMain): IPCModelTypeRender {
+        const db = new EcSqlite3();
+        if (!db.hasTable("user")) {
+            db.createTable("user", {
+                id: {type: "TEXT", primaryKey: true},
+                name: {type: "TEXT", notNull: true},
+                age: {type: "INTEGER", notNull: true},
+            });
+            db.run("INSERT INTO user (id, name, age) VALUES (?,?,?)", ["1", "Eval", 25]);
+        }
+
+        return IPCResult(true, "查询成功", db.queryAll("SELECT * FROM user WHERE id=?", [params.data?.id]));
     }
 }

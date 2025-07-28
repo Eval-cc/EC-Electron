@@ -1,6 +1,6 @@
 {
     "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
-    "include": ["electron.vite.config.*", "src/**/*", "src/ec-electron"],
+    "include": ["electron.vite.config.*", "src/ec-electron"],
     "compilerOptions": {
         "composite": true,
         "module": "esnext",
@@ -10,7 +10,7 @@
         "moduleResolution": "node",
         "baseUrl": ".",
         "paths": {
-          "@/*": ["./"] // 确保路径别名配置正确
+            "@/*": ["./"] // 确保路径别名配置正确
         }
     }
 }

@@ -16,7 +16,7 @@ onMounted(() => {
         if (loading.value <= 0) {
             clearInterval(interval);
         }
-    }, 500);
+    }, 300);
 });
 </script>
 
